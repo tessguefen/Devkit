@@ -132,8 +132,10 @@
 	|		ADD: l, D
 	|
 	|	MONTH
-	|		m, n
-	|		ADD: F, M
+	|		m, n, F, M
+	|
+	|	YEAR
+	|		Y, y
 	|		
 	|	
 	|
@@ -153,61 +155,98 @@
 
 	<MvASSIGN NAME = "l.time_zone"	VALUE = "{ g.Merchant_Local_Timezone }">
 
-	<MvIF EXPR = "{ 'd' CIN l.format }">
-		<MvASSIGN NAME = "l.d" VALUE = "{ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'd', l.d ) }">
-	</MvIF>
+	<MvASSIGN NAME = "l.output" VALUE = "">
 
-	<MvIF EXPR = "{ 'j' CIN l.format }">
-		<MvASSIGN NAME = "l.j" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'j', l.j ) }">
-	</MvIF>
+	<MvASSIGN NAME = "l.months_long" VALUE = "{ miva_array_deserialize( 'January,February,March,April,May,June,July,August,September,October,November,December' ) }">
+	<MvASSIGN NAME = "l.months_short" VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Augt,Sept,Oct,Nov,Dec' ) }">
 
-	<MvIF EXPR = "{ 'N' CIN l.format }">
-		<MvCOMMENT>
-		|
-		| (Sunday=1) :|
-		|
-		</MvCOMMENT>
-		<MvASSIGN NAME = "l.N" VALUE = "{ time_t_dayofweek( l.timestamp, l.time_zone ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'N', l.N ) }">
-	</MvIF>
+	<MvFOR INDEX = "l.pos" COUNT = "{ len_var( l.format ) }">
+		<MvASSIGN NAME = "l.char" VALUE = "{ substring_var( l.format, l.pos, 1 ) }">
 
-	<MvIF EXPR = "{ 'S' CIN l.format }">
-		<MvASSIGN NAME = "l.dow" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
-		<MvASSIGN NAME = "l.dow_a" VALUE = "{ l.dow MOD 10 }">
-		<MvASSIGN NAME = "l.dow_b" VALUE = "{ l.dow MOD 100 }">
-
-		<MvIF EXPR = "{ ( l.dow_a EQ 1 ) AND ( l.dow_b NE 11) }">
-			<MvASSIGN NAME = "l.S" VALUE = "st">
-		<MvELSEIF EXPR = "{ ( l.dow_a EQ 2) AND ( l.dow_b NE 12 ) }">
-			<MvASSIGN NAME = "l.S" VALUE = "nd">
-		<MvELSEIF EXPR = "{ ( l.dow_a EQ 3 ) AND ( l.dow_b NE 13 ) }">
-			<MvASSIGN NAME = "l.S" VALUE = "rd">
-		<MvELSE>
-			<MvASSIGN NAME = "l.S" VALUE = "th">
+		<MvIF EXPR = "{ NOT ( l.char CIN 'djNSzmnFMYyaAgGhH' ) }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
+			<MvFORCONTINUE />
 		</MvIF>
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'S', l.S ) }">
-	</MvIF>
 
-	<MvIF EXPR = "{ 'z' CIN l.format }">
-		<MvASSIGN NAME = "l.z" VALUE = "{ time_t_dayofyear( l.timestamp, l.time_zone ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'z', l.z ) }">
-	</MvIF>
+		<MvIF EXPR = "{ l.char EQ 'd' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'j' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'N' }">
+			<MvCOMMENT>
+			|
+			| (Sunday=1) :|
+			|
+			</MvCOMMENT>
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofweek( l.timestamp, l.time_zone ) }">		
+		<MvELSEIF EXPR = "{ l.char EQ 'S' }">
+			<MvASSIGN NAME = "l.dow" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+			<MvASSIGN NAME = "l.dow_a" VALUE = "{ l.dow MOD 10 }">
+			<MvASSIGN NAME = "l.dow_b" VALUE = "{ l.dow MOD 100 }">
 
-	<MvIF EXPR = "{ 'm' CIN l.format }">
-		<MvASSIGN NAME = "l.m" VALUE = "{ padl( time_t_month( l.timestamp, l.time_zone ), 2, 0 ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'm', l.m ) }">
-	</MvIF>
+			<MvIF EXPR = "{ ( l.dow_a EQ 1 ) AND ( l.dow_b NE 11) }">
+				<MvASSIGN NAME = "l.S" VALUE = "st">
+			<MvELSEIF EXPR = "{ ( l.dow_a EQ 2) AND ( l.dow_b NE 12 ) }">
+				<MvASSIGN NAME = "l.S" VALUE = "nd">
+			<MvELSEIF EXPR = "{ ( l.dow_a EQ 3 ) AND ( l.dow_b NE 13 ) }">
+				<MvASSIGN NAME = "l.S" VALUE = "rd">
+			<MvELSE>
+				<MvASSIGN NAME = "l.S" VALUE = "th">
+			</MvIF>
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.S }">
+		<MvELSEIF EXPR = "{ l.char EQ 'z' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofyear( l.timestamp, l.time_zone ) }">		
+		<MvELSEIF EXPR = "{ l.char EQ 'm' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_month( l.timestamp, l.time_zone ), 2, 0 ) }">		
+		<MvELSEIF EXPR = "{ l.char EQ 'n' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_month( l.timestamp, l.time_zone ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'F' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ miva_variable_value( 'l.months_long[ ' $ time_t_month( l.timestamp, l.time_zone ) $ ' ]') }">
+		<MvELSEIF EXPR = "{ l.char EQ 'M' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ miva_variable_value( 'l.months_short[ ' $ time_t_month( l.timestamp, l.time_zone ) $ ' ]') }">
+		<MvELSEIF EXPR = "{ l.char EQ 'Y' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_year( l.timestamp, l.time_zone ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'y' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ substring_var( time_t_year( l.timestamp, l.time_zone ), 3, 2) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'a' }">
+			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+			<MvIF EXPR = "{ l.hour GT 11 }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'pm' }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'am' }">
+			</MvIF>
+		<MvELSEIF EXPR = "{ l.char EQ 'A' }">
+			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+			<MvIF EXPR = "{ l.hour GT 11 }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'PM' }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'AM' }">
+			</MvIF>
+		<MvELSEIF EXPR = "{ l.char EQ 'g' }">
+			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+			<MvIF EXPR = "{ l.hour GT 12 }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ ( l.hour - 12 ) }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.hour }">
+			</MvIF>
+		<MvELSEIF EXPR = "{ l.char EQ 'G' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_hour( l.timestamp, l.time_zone ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'h' }">
+			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+			<MvIF EXPR = "{ l.hour GT 12 }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( ( l.hour - 12 ), 2, 0 ) }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( l.hour, 2, 0 ) }">
+			</MvIF>
+		<MvELSEIF EXPR = "{ l.char EQ 'H' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_hour( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
+		</MvIF>
 
-	<MvIF EXPR = "{ 'n' CIN l.format }">
-		<MvASSIGN NAME = "l.n" VALUE = "{ time_t_month( l.timestamp, l.time_mone ) }">
-		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'n', l.n ) }">
-	</MvIF>
+	</MvFOR>
 
-
-
-	<MvASSIGN NAME = "{ l.parameters[3] }" VALUE = "{ l.format }">
+	<MvASSIGN NAME = "{ l.parameters[3] }" VALUE = "{ l.output }">
 
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
