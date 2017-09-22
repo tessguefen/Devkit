@@ -118,7 +118,7 @@
 <MvCOMMENT>
 |
 |	Custom Functions
-|		Developer_Utilities_Function( param, function_name, parameters, parameter_count )
+|		Developer_Utilities_Function( all_settings var, param, function_name, parameters, parameter_count )
 |
 |	Component Helpers
 |		Parse_Function_Parameters( string, function_name var, parameters var, parameter_count var )
@@ -138,6 +138,8 @@
 
 	<MvIF EXPR = "{ l.function_name EQ 'format_currency' }">
 		<MvFUNCTIONRETURN VALUE = "{ Format_Currency( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
+	<MvELSEIF EXPR = "{ l.function_name EQ 'upcharge' }">
+		<MvFUNCTIONRETURN VALUE = "{ Upcharge( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
 	</MvIF>
 	
 </MvFUNCTION>
