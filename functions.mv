@@ -17,14 +17,18 @@
 	</MvCOMMENT>
 
 	<MvIF EXPR = "{ l.parameter_count NE 2 }">
-		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '2 Paramters are required for this function.' ) }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '2 parameters are required for this function.' ) }">
 	</MvIF>
 
 	<MvIF EXPR = "{ NOT Is_Variable( l.parameters[2] ) }">
 		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The second parameter must be a variable.' ) }">
 	</MvIF>
 
-	<MvDO NAME = "{ l.parameters[2] }" FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.parameters[1] ) }" />
+	<MvIF EXPR = "{ Is_Variable( l.parameters[1] ) }">
+		<MvASSIGN NAME = "{ l.parameters[1] }"		VALUE = "{ miva_variable_value( l.parameters[1] ) }">
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "{ l.parameters[2] }" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.parameters[1] ) }" />
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
@@ -34,12 +38,26 @@
 	|	Upcharge( charge_name, charge_type, amount, tax_exempt )
 	|
 	</MvCOMMENT>
+
 	<MvIF EXPR = "{ l.parameter_count NE 4 }">
-		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '4 Paramters are required for this function.' ) }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '4 parameters are required for this function.' ) }">
 	</MvIF>
 	
 	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].BasketCharge_Delete_All_Type( g.Basket:basket_id, l.parameters[2] ) }">
 		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'An error occured' ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ Is_Variable( l.parameters[1] ) }">
+		<MvASSIGN NAME = "{ l.parameters[1] }"		VALUE = "{ miva_variable_value( l.parameters[1] ) }">
+	</MvIF>
+	<MvIF EXPR = "{ Is_Variable( l.parameters[2] ) }">
+		<MvASSIGN NAME = "{ l.parameters[2] }"		VALUE = "{ miva_variable_value( l.parameters[2] ) }">
+	</MvIF>
+	<MvIF EXPR = "{ Is_Variable( l.parameters[3] ) }">
+		<MvASSIGN NAME = "{ l.parameters[3] }"		VALUE = "{ miva_variable_value( l.parameters[3] ) }">
+	</MvIF>
+	<MvIF EXPR = "{ Is_Variable( l.parameters[4] ) }">
+		<MvASSIGN NAME = "{ l.parameters[4] }"		VALUE = "{ miva_variable_value( l.parameters[4] ) }">
 	</MvIF>
 
 	<MvIF EXPR = "{ l.parameters[3] GT 0 }">
@@ -59,13 +77,78 @@
 	</MvCOMMENT>
 
 	<MvFOREACH ITERATOR = "l.charge" ARRAY = "l.charges" COUNT = "{ [ g.Module_Library_DB ].BasketChargeList_Load_Basket( g.Basket:basket_id, l.charges ) }">
-		<MvDO NAME = "l.charge:formatted_amount" FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:amount ) }" />
-		<MvDO NAME = "l.charge:formatted_disp_amt" FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:disp_amt ) }" />
+		<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.charge:formatted_amount" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:amount ) }" />
+		<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.charge:formatted_disp_amt" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:disp_amt ) }" />
 	</MvFOREACH>
 	<MvASSIGN NAME = "l.all_settings:basket:charges" VALUE = "{ l.charges }">
 	
 	<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.all_settings:basket:total" VALUE = "{ Basket_Total( g.Basket:basket_id ) }">
 	<MvDO FILE = "{ g.Module_Store_Module_Currency }" NAME = "l.all_settings:basket:formatted_total" VALUE = "{ CurrencyModule_AddFormatting( g.Store_Module_Currency, l.all_settings:basket:total ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Variant_Array" PARAMETERS = "all_settings var, param var, parameters var, parameter_count" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Variant_Array( product_id, variants var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ l.parameter_count NE 2 }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '2 parameters are required for this function.' ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT Is_Variable( l.parameters[2] ) }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The second parameter must be a variable.' ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "{ l.parameters[2] }" VALUE = "🔜">
+	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "Date" PARAMETERS = "all_settings var, param var, parameters var, parameter_count" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Date( format, timestamp, return var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ l.parameter_count NE 3 }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '3 parameters are required for this function.' ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT Is_Variable( l.parameters[3] ) }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The third parameter must be a variable.' ) }">
+	</MvIF>
+
+	<MvCOMMENT>
+	|
+	| Using some of PHP's Date Formatting
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Is_Variable( l.parameters[1] ) }">
+		<MvASSIGN NAME = "l.format"		VALUE = "{ miva_variable_value( l.parameters[1] ) }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.format"		VALUE = "{ l.parameters[1] }">
+	</MvIF>
+
+	<MvIF EXPR = "{ Is_Variable( l.parameters[2] ) }">
+		<MvASSIGN NAME = "l.timestamp"		VALUE = "{ miva_variable_value( l.parameters[2] ) }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.timestamp"		VALUE = "{ l.parameters[2] }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.time_zone"	VALUE = "{ g.Merchant_Local_Timezone }">
+
+	<MvIF EXPR = "{ 'd' CIN l.format }">
+		<MvASSIGN NAME = "l.d" VALUE = "{ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'd', l.d ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "{ l.parameters[3] }" VALUE = "{ l.format }">
 
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>

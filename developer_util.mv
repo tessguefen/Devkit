@@ -140,6 +140,10 @@
 		<MvFUNCTIONRETURN VALUE = "{ Format_Currency( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
 	<MvELSEIF EXPR = "{ l.function_name EQ 'upcharge' }">
 		<MvFUNCTIONRETURN VALUE = "{ Upcharge( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
+	<MvELSEIF EXPR = "{ l.function_name EQ 'variant_array' }">
+		<MvFUNCTIONRETURN VALUE = "{ Variant_Array( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
+	<MvELSEIF EXPR = "{ l.function_name EQ 'date' }">
+		<MvFUNCTIONRETURN VALUE = "{ Date( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
 	</MvIF>
 	
 </MvFUNCTION>
