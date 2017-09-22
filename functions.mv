@@ -127,6 +127,16 @@
 	|
 	| Using some of PHP's Date Formatting
 	|
+	|	DAY
+	|		d, j, N, S, z
+	|		ADD: l, D
+	|
+	|	MONTH
+	|		m, n
+	|		ADD: F, M
+	|		
+	|	
+	|
 	</MvCOMMENT>
 
 	<MvIF EXPR = "{ Is_Variable( l.parameters[1] ) }">
@@ -147,6 +157,55 @@
 		<MvASSIGN NAME = "l.d" VALUE = "{ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
 		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'd', l.d ) }">
 	</MvIF>
+
+	<MvIF EXPR = "{ 'j' CIN l.format }">
+		<MvASSIGN NAME = "l.j" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'j', l.j ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ 'N' CIN l.format }">
+		<MvCOMMENT>
+		|
+		| (Sunday=1) :|
+		|
+		</MvCOMMENT>
+		<MvASSIGN NAME = "l.N" VALUE = "{ time_t_dayofweek( l.timestamp, l.time_zone ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'N', l.N ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ 'S' CIN l.format }">
+		<MvASSIGN NAME = "l.dow" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+		<MvASSIGN NAME = "l.dow_a" VALUE = "{ l.dow MOD 10 }">
+		<MvASSIGN NAME = "l.dow_b" VALUE = "{ l.dow MOD 100 }">
+
+		<MvIF EXPR = "{ ( l.dow_a EQ 1 ) AND ( l.dow_b NE 11) }">
+			<MvASSIGN NAME = "l.S" VALUE = "st">
+		<MvELSEIF EXPR = "{ ( l.dow_a EQ 2) AND ( l.dow_b NE 12 ) }">
+			<MvASSIGN NAME = "l.S" VALUE = "nd">
+		<MvELSEIF EXPR = "{ ( l.dow_a EQ 3 ) AND ( l.dow_b NE 13 ) }">
+			<MvASSIGN NAME = "l.S" VALUE = "rd">
+		<MvELSE>
+			<MvASSIGN NAME = "l.S" VALUE = "th">
+		</MvIF>
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'S', l.S ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ 'z' CIN l.format }">
+		<MvASSIGN NAME = "l.z" VALUE = "{ time_t_dayofyear( l.timestamp, l.time_zone ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'z', l.z ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ 'm' CIN l.format }">
+		<MvASSIGN NAME = "l.m" VALUE = "{ padl( time_t_month( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'm', l.m ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ 'n' CIN l.format }">
+		<MvASSIGN NAME = "l.n" VALUE = "{ time_t_month( l.timestamp, l.time_mone ) }">
+		<MvASSIGN NAME = "l.format" VALUE = "{ glosub( l.format, 'n', l.n ) }">
+	</MvIF>
+
+
 
 	<MvASSIGN NAME = "{ l.parameters[3] }" VALUE = "{ l.format }">
 
