@@ -2,20 +2,22 @@
 
 All the things!
 
-## Load_Product(s)
+## Load_Product
 
 ```xml
-<mvt:assign name="l.options:code" value="'my-product-code'" />
-<mvt:assign name="l.options:include" value="'attributes,inventory,runtime_price'" />
-<mvt:assign name="l.options:image_types" value="'main:500x500,alt_1:500x500'" />
-<mvt:assign name="l.options:custom_fields" value="'brand,price_range'" />
-<mvt:assign name="l.options:cached" value="1" />
+<h2>Component</h2>
 
-<mvt:item name="developer_utils" param="Load_Product(l.options, l.product)" />
-
+<mvt:assign name="g.options:code" value="'apple'" />
+<mvt:item name="developer_util" param="Load_Product(g.options, g.product_foo)" />
+<hr>
+<mvt:eval expr="glosub(miva_array_serialize(g.product_foo), ',', '<br>')" />
 
 
-<mvt:assign name="l.options:codes" value="'code-123,code-456,code-789'" />
-
-<mvt:item name="developer_utils" param="Load_Products(l.options, l.products)" />
+<h2>mvt:do</h2>
+<mvt:assign name="l.options:code" value="'apple'" />
+<mvt:assign name="l.options:include" value="'runtime,currency,uris,url'" />
+	<mvt:assign name="g.Module_Developer_Utitlities" value="g.Module_Root $ 'modules/util/developer_util.mvc'" /><mvt:comment><!-- Find way for module path global variable to be available to page by default --></mvt:comment>
+<mvt:do file="g.Module_Developer_Utitlities" name="l.product_v2" value="_Load_Product(l.options)" />
+<hr>
+<mvt:eval expr="glosub(miva_array_serialize(l.product_v2), ',', '<br>')" />
 ```
