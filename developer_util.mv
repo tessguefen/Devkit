@@ -105,7 +105,82 @@
 <MvFUNCTION NAME = "ComponentModule_Prerender" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
 </MVFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Render_Start" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Render_Start" PARAMETERS = "module var, item, settings var, item_settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
+	<MvIF EXPR = "{ NOT Parse_Function_Parameters( l.param, l.function_name, l.parameters, l.parameter_count ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+	
+	<MvIF EXPR = "{ ( l.function_name EQ 'test' ) }">		
+		<MvIF EXPR = "{ l.parameter_count EQ 2 }">
+			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ', l.item_settings )' }">
+		<MvELSEIF EXPR = "{ l.parameter_count EQ 3 }">
+			<MvIF EXPR = "{ NOT Is_Variable( l.parameters[ 3 ] ) }">
+				<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The third parameter must be a variable' ) }">
+			</MvIF>
+			
+			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
+		<MvELSE>
+			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '\'' $ l.function_name $ '\' takes 2 or 3 parameters' ) }">
+		</MvIF>
+	</MvIF>
+	
+	<MvASSEMBLY>
+		.string asm_0 "l.new_param"
+		.string asm_1 "g.Module_Root"
+		.string asm_2 "l.module"
+		.string asm_3 "module"
+		.string asm_4 "g.MvDO_Error"
+
+			pushc		asm_1
+			pushn
+			pushc		asm_2
+			pushn
+			pushc		asm_3
+			memb_ro
+			cat
+			pushc		asm_0
+			pushn
+			tagerror	22, 0
+			do_function
+			pop
+			tagerror	22, 3
+			pushc		asm_4
+			pushn
+			jmp_eq		L_asm_success
+			retn
+		L_asm_success:				
+    </MvASSEMBLY>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<MvASSIGN NAME = "l.param" VALUE = "{ glosub(l.param, 'l.settings', 'l.all_settings') }">
 
 	<MvIF EXPR = "{ NOT Parse_Function_Parameters( l.param, l.function_name, l.parameters, l.parameter_count ) }">
@@ -113,6 +188,10 @@
 	</MvIF>
 
 	<MvFUNCTIONRETURN VALUE = "{ Developer_Utilities_Function( l.all_settings, l.param, l.function_name, l.parameters, l.parameter_count ) }" />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Test" PARAMETERS = "module var, param, test_the_first, test_the_second, destination var" STANDARDOUTPUTLEVEL = "">
+	<MvASSIGN NAME = "l.destination" VALUE = "Helllo world">
 </MvFUNCTION>
 
 <MvCOMMENT>
