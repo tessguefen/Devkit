@@ -1,0 +1,29 @@
+<MvCOMMENT>
+|
+|	Custom Functions per Item
+|
+|	Function Setup:
+|
+|	<MvFUNCTION NAME = "XXXXX" PARAMETERS = "all_settings var, param var, parameters var, parameter_count" STANDARDOUTPUTLEVEL = "">
+|
+|
+</MvCOMMENT>
+
+<MvFUNCTION NAME = "Format_Currency" PARAMETERS = "all_settings var, param var, parameters var, parameter_count" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Format_Currency( plain_price, formatted_price var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ l.parameter_count NE 2 }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '2 Paramters are required for this function' ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT Is_Variable( l.parameters[2] ) }">
+		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The second parameter must be a variable' ) }">
+	</MvIF>
+
+	<MvDO NAME = "{ l.parameters[2] }" FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.parameters[1] ) }" />
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
