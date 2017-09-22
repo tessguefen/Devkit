@@ -109,21 +109,22 @@
 	<MvIF EXPR = "{ NOT Parse_Function_Parameters( l.param, l.function_name, l.parameters, l.parameter_count ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
-	
-	<MvIF EXPR = "{ ( l.function_name EQ 'test' ) }">		
+
+	<MvIF EXPR = "{ ( l.function_name EQ 'test' ) }">
 		<MvIF EXPR = "{ l.parameter_count EQ 2 }">
 			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ', l.item_settings )' }">
 		<MvELSEIF EXPR = "{ l.parameter_count EQ 3 }">
 			<MvIF EXPR = "{ NOT Is_Variable( l.parameters[ 3 ] ) }">
 				<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The third parameter must be a variable' ) }">
 			</MvIF>
-			
+
 			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
 		<MvELSE>
 			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '\'' $ l.function_name $ '\' takes 2 or 3 parameters' ) }">
 		</MvIF>
 	</MvIF>
-	
+
+	<MvCOMMENT>
 	<MvASSEMBLY>
 		.string asm_0 "l.new_param"
 		.string asm_1 "g.Module_Root"
@@ -148,8 +149,9 @@
 			pushn
 			jmp_eq		L_asm_success
 			retn
-		L_asm_success:				
+		L_asm_success:
     </MvASSEMBLY>
+    </MvCOMMENT>
 
 
 
@@ -223,28 +225,30 @@
 		<MvFUNCTIONRETURN VALUE = "{ Variant_Array( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
 	<MvELSEIF EXPR = "{ l.function_name EQ 'date' }">
 		<MvFUNCTIONRETURN VALUE = "{ Date( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
+	<MvELSEIF EXPR = "{ l.function_name EQ 'load_product' }">
+		<MvFUNCTIONRETURN VALUE = "{ Load_Product( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
 	</MvIF>
-	
+
 </MvFUNCTION>
 
 <MvINCLUDE FILE = "functions.mv">
 
 
-<MvFUNCTION NAME = "Parse_Function_Parameters" PARAMETERS = "string, function_name var, parameters var, parameter_count var" STANDARDOUTPUTLEVEL = "">	
+<MvFUNCTION NAME = "Parse_Function_Parameters" PARAMETERS = "string, function_name var, parameters var, parameter_count var" STANDARDOUTPUTLEVEL = "">
 	<MvASSIGN NAME = "l.parameter_count" 	VALUE = 0>
 	<MvASSIGN NAME = "l.loop_counter" 		VALUE = 0>
 	<MvASSIGN NAME = "l.string" 			VALUE = "{ trim( l.string ) }">
 	<MvASSIGN NAME = "l.starting_pos" 		VALUE = "{ indexof( '(', l.string, 1 ) + 1 }">
 	<MvASSIGN NAME = "l.function_name" 		VALUE = "{ tolower( substring_var( l.string, 1, l.starting_pos - 2 ) ) }">
-	
+
 	<MvIF EXPR = "{ l.starting_pos EQ 1 }">
 		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Expected \'(\' to start the function call' ) }">
 	</MvIF>
-	
+
 	<MvIF EXPR = "{ ISNULL l.function_name }">
 		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Missing function name' ) }">
 	</MvIF>
-	
+
 	<MvIF EXPR = "{ substring_var( l.string, len_var( l.string ), 1 ) NE ')' }">
 		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Expected \')\' to end the function call' ) }">
 	</MvIF>
@@ -257,11 +261,11 @@
 		<MvIF EXPR = "{ l.quote_pos AND NOT l.end_quote_pos }">
 			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Missing single quote' ) }">
 		</MvIF>
-		
+
 		<MvWHILE EXPR = "{ ( l.comma_pos LT l.end_quote_pos ) AND ( l.comma_pos GT l.quote_pos ) }"> <MvCOMMENT> comma in a quoted string </MvCOMMENT>
 			<MvASSIGN NAME = "l.comma_pos" VALUE = "{ indexof( ',', l.string, l.comma_pos + 1 ) }">
 		</MvWHILE>
-		
+
 		<MvIF EXPR = "{ l.comma_pos EQ 0 }"> <MvCOMMENT> on the last parameter or we only have 1 parameter </MvCOMMENT>
 			<MvASSIGN NAME = "l.start" 			VALUE = "{ l.starting_pos }">
 			<MvASSIGN NAME = "l.end" 			VALUE = "{ len_var( l.string ) - l.starting_pos }">
@@ -274,17 +278,17 @@
 		</MvIF>
 
 		<MvASSIGN NAME = "l.param" VALUE = "{ trim( substring_var( l.string, l.start, l.end ) ) }">
-		
+
 		<MvIF EXPR = "{ ISNULL l.param }">
 			<MvIF EXPR = "{ l.comma_pos EQ 0 AND l.parameter_count EQ 0 }">
 				<MvFUNCTIONRETURN VALUE = 1>
 			</MvIF>
-			
+
 			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Parameter number ' $ ( ++l.parameter_count ) $ ' cannot be empty' ) }">
 		</MvIF>
-		
+
 		<MvASSIGN NAME = "l.parameters" INDEX = "{ ++l.parameter_count }" VALUE = "{ l.param }">
-		
+
 		<MvIF EXPR = "{ l.quote_pos EQ 0 AND l.comma_pos EQ 0 }">
 			<MvWHILESTOP>
 		</MvIF>
@@ -292,10 +296,10 @@
 		<MvIF EXPR = "{ l.loop_counter GT 1000 }">
 			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.string, 'Error parsing parameters' ) }">
 		</MvIF>
-		
+
 		<MvASSIGN NAME = "l.loop_counter" VALUE = "{ l.loop_counter + 1 }">
 	</MvWHILE>
-	
+
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
@@ -303,7 +307,7 @@
 	<MvASSIGN NAME = "l.error_count"														VALUE = "{ miva_array_elements( g.Session:wailist ) }">
 	<MvASSIGN NAME = "g.Session:dev_util" INDEX = "{ l.error_count + 1 }" MEMBER = "param"	VALUE = "{ l.param }">
 	<MvASSIGN NAME = "g.Session:dev_util" INDEX = "{ l.error_count + 1 }" MEMBER = "message"	VALUE = "{ l.message }">
-	
+
 	<MvFUNCTIONRETURN VALUE = 0>
 </MvFUNCTION>
 
@@ -320,15 +324,15 @@
 							( l.char NE '_' ) }">
 				<MvFUNCTIONRETURN VALUE = 0>
 			</MvIF>
-			
+
 			<MvFORCONTINUE>
 		</MvIF>
-		
+
 		<MvIF EXPR = "{ l.char EQ '[' }">
 			<MvASSIGN NAME = "l.bracket_count" 				VALUE = "{ l.bracket_count + 1 }">
 			<MvASSIGN NAME = "l.opening_square_bracket_pos" VALUE = "{ indexof( '[', l.variable, l.pos + 1 ) }">
 			<MvASSIGN NAME = "l.closing_square_bracket_pos" VALUE = "{ indexof( ']', l.variable, l.pos ) }">
-			
+
 			<MvIF EXPR = "{ ( l.opening_square_bracket_pos GT 0 ) AND
 							( l.opening_square_bracket_pos LT l.closing_square_bracket_pos ) }">
 				<MvASSIGN NAME = "l.pos" VALUE = "{ l.opening_square_bracket_pos - 1 }">
@@ -339,7 +343,7 @@
 			<MvASSIGN NAME = "l.bracket_count" 				VALUE = "{ l.bracket_count - 1 }">
 			<MvASSIGN NAME = "l.opening_square_bracket_pos" VALUE = "{ indexof( '[', l.variable, l.pos ) }">
 			<MvASSIGN NAME = "l.closing_square_bracket_pos" VALUE = "{ indexof( ']', l.variable, l.pos + 1 ) }">
-			
+
 			<MvIF EXPR = "{ ( l.opening_square_bracket_pos GT 0 ) AND
 							( l.opening_square_bracket_pos LT l.closing_square_bracket_pos ) }">
 				<MvASSIGN NAME = "l.pos" VALUE = "{ l.opening_square_bracket_pos - 1 }">
@@ -354,10 +358,10 @@
 			</MvIF>
 		</MvIF>
 	</MvFOR>
-	
+
 	<MvIF EXPR = "{ l.bracket_count NE 0 }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
-	
+
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
