@@ -195,3 +195,10 @@ Output!:
 [1]:product_id=290
 [1]:variant_id=334
 ```
+## SQL
+```xml
+<mvt:assign name="l.settings:parameters:query" value="'SELECT * FROM ' $ g.Store_Table_Prefix $ 'Products WHERE id = ?'" />
+<mvt:assign name="l.success" value="miva_array_insert( l.settings:parameters:bind_parameters, '290', -1 )" />
+<mvt:item name="dev_util" param="SQL( l.settings:parameters )" />
+<mvt:eval expr="glosub(miva_array_serialize(l.settings:parameters:results ), ',', '<br />')" />
+```
