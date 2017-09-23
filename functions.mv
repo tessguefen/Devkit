@@ -66,10 +66,62 @@
 	<MvCOMMENT>
 	|
 	|	Variant_Array( product_id, variants var )
+	|	Yaaaas, Kween.
 	|
 	</MvCOMMENT>
-	<MvASSIGN NAME = "l.variants" VALUE = "🔜">
-	<MvFUNCTIONRETURN VALUE = 1>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvOPENVIEW NAME	= "Merchant"
+				VIEW	= "ProductVariants"
+				QUERY	= "{ 'SELECT * FROM ' $ g.Store_Table_Prefix $ 'ProductVariants WHERE product_id = ? GROUP BY variant_id' }"
+				FIELDS	= "l.product_id">
+	<MvIF EXPR = "{ g.MvOPENVIEW_Error }">
+		<MvFUNCTIONRETURN VALUE = "{ [ g.Library_Filename_Utilities ].Error( 'MER-DBE-ATT-00009', g.MvOPENVIEW_Error ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.variant_count" VALUE = 0>
+	<MvWHILE EXPR = "{ NOT ProductVariants.d.EOF }">
+		<MvASSIGN NAME = "l.variant_count"												VALUE = "{ l.variant_count + 1 }">
+		
+		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "product_id"	VALUE = "{ ProductVariants.d.product_id }">
+		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "variant_id"	VALUE = "{ ProductVariants.d.variant_id }">
+		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "dimensions"	VALUE = "{ ProductVariants.d.dimensions }">
+		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "part_count"	VALUE = "{ ProductVariants.d.part_count }">
+
+		<MvSKIP NAME = "Merchant" VIEW = "ProductVariants" ROWS = 1>
+	</MvWHILE>
+	<MvCLOSEVIEW NAME = "Merchant" VIEW = "ProductVariants">
+
+	<MvFOREACH ITERATOR = "l.variant" ARRAY = "l.variants" INDEX = "l.vpos">
+		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:parts ) }">
+		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductVariantList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:attributes ) }">
+
+		<MvASSIGN NAME = "l.variant:overall_inventory:id" VALUE = "{ l.variant:product_id }">
+		<MvDO FILE = "{ g.Module_Feature_INV_RT }" NAME = "l.success" VALUE = "{ Inventory_Load_Variant( l.variant:overall_inventory, l.variant:variant_id ) }">
+
+		<MvFOREACH ITERATOR = "l.attribute" ARRAY = "l.variant:attributes">
+			<MvASSIGN NAME = "l.attribute:dimensions" VALUE = "">
+			<MvASSIGN NAME = "l.attribute:variant_id" VALUE = "">
+			<MvASSIGN NAME = "l.attribute:product_id" VALUE = "">
+			<MvASSIGN NAME = "l.attribute:part_count" VALUE = "">
+
+			<MvIF EXPR = "{ l.attribute:attmpat_id GT 0 }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplateAttr_Load_ID( l.attribute:attmpat_id, l.attribute:attr ) }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplate_Load_ID( l.attribute:attr:attemp_id, l.attribute:template ) }">
+				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
+					<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplateOption_Load_ID( l.attribute:option_id, l.attribute:option ) }">
+				</MvIF>
+			<MvELSE>
+				<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Attribute_Load_ID( l.attribute:attr_id, l.attribute:attr ) }">
+				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
+					<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Option_Load_ID( l.attribute:option_id, l.attribute:option ) }">
+				</MvIF>
+			</MvIF>
+		</MvFOREACH>
+	</MvFOREACH>
 </MvFUNCTION>
 
 
@@ -314,12 +366,12 @@
 	|	Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
 	|
 	</MvCOMMENT>
-	
-	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
-	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
