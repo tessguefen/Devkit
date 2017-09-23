@@ -21,3 +21,8 @@ All the things!
 <hr>
 <mvt:eval expr="glosub(miva_array_serialize(l.product_v2), ',', '<br>')" />
 ```
+### Other Examples
+```xml
+<mvt:item name="dev_util" param="Date('D M j, Y G:i:s a', s.time_t, l.settings:my_date)" />
+Test Date: &mvt:my_date;
+```
