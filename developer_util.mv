@@ -40,7 +40,33 @@
 
 <MvFUNCTION NAME = "Module_Utility_Content" PARAMETERS = "module var, tab, load_fields" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
 	<MvIF EXPR = "{ l.tab EQ 'DEVUTIL' }">
-		Hai there.
+		<h1>List of Functions</h1>
+		<h3>This should be made pretty later.</h3>
+		<hr />
+		<div class="devutil-function-row">
+			<div class="devutil-function">Format_Currency( price, formatted_price var )</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">Upcharge( charge_name, charge_type, amount, tax_exempt )</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">Variant_Array( product_id, variants var )</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">Date( format, timestamp, return var )</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">Load_Product( options var, product var )</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )</div>
+		</div>
+
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -115,7 +141,8 @@
 					( l.function_name EQ 'upcharge' )				OR
 					( l.function_name EQ 'variant_array' )			OR
 					( l.function_name EQ 'date' )					OR
-					( l.function_name EQ 'load_product' )
+					( l.function_name EQ 'load_product' )			OR
+					( l.function_name EQ 'product_load_imagetype' )
 				}">
 		<MvCOMMENT>
 		|

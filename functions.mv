@@ -307,3 +307,39 @@
 
 	<MvFUNCTIONRETURN VALUE = "{ l.product }" />
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Product_Load_Imagetype" PARAMETERS = "module var, param, product_id, type_code, image_width, image_height, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
+	|
+	</MvCOMMENT>
+	
+	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product_id, l.imagetype:id, l.product_imagetype ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_Load_Dimensions( l.product_imagetype:image_id, l.image_width, l.image_height, l.cropped_image ) }">
+		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_ID( l.product_imagetype:image_id, l.imagedata ) }">
+			<MvFUNCTIONRETURN VALUE = 0>
+		</MvIF>
+
+		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_File( l.imagedata:image, l.product_image ) }">
+			<MvFUNCTIONRETURN VALUE = 0>
+		</MvIF>
+
+		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_FindOrInsert_Image_Dimensions( l.product_image, l.image_width, l.image_height, l.cropped_image ) }">
+			<MvFUNCTIONRETURN VALUE = 0>
+		</MvIF>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.cropped_image:image }">
+</MvFUNCTION>
