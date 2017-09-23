@@ -1,10 +1,10 @@
 <MvFUNCTION NAME = "Module_Description" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "compresswhitespace">
 	<MvASSIGN NAME = "l.module:code"		VALUE = "developer_util">
-	<MvASSIGN NAME = "l.module:name"		VALUE = "Developer Utilities">
+	<MvASSIGN NAME = "l.module:name"		VALUE = "Devkit">
 	<MvASSIGN NAME = "l.module:provider"	VALUE = "Some Developers">
 	<MvASSIGN NAME = "l.module:version"		VALUE = "1.000">
 	<MvASSIGN NAME = "l.module:api_ver"		VALUE = "9.00">
-	<MvASSIGN NAME = "l.module:description"	VALUE = "Toolkit V2, Bruh.">
+	<MvASSIGN NAME = "l.module:description"	VALUE = "Super Fantastic Awesome Magic Fireworks, and also a developer toolkit.">
 	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component">
 </MvFUNCTION>
 

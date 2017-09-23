@@ -161,7 +161,7 @@
 	<MvASSIGN NAME = "l.output" VALUE = "">
 
 	<MvASSIGN NAME = "l.months_long" VALUE = "{ miva_array_deserialize( 'January,February,March,April,May,June,July,August,September,October,November,December' ) }">
-	<MvASSIGN NAME = "l.months_short" VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Augt,Sept,Oct,Nov,Dec' ) }">
+	<MvASSIGN NAME = "l.months_short" VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sept,Oct,Nov,Dec' ) }">
 
 	<MvASSIGN NAME = "l.days_long" VALUE = "{ miva_array_deserialize( 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday' ) }">
 	<MvASSIGN NAME = "l.days_short" VALUE = "{ miva_array_deserialize( 'Sun,Mon,Tues,Wed,Thurs,Fri,Sat' ) }">
@@ -553,4 +553,17 @@
 			<MvASSIGN NAME = "l.parameters:results" VALUE = "1">
 		<MvCOMMIT NAME = "Merchant">
 	</MvIF>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Category_Product_Image" PARAMETERS = "module var, param, category_id, type_code, image_width, image_height, ouput var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Category_Product_Image( category_id, type_code, image_width, image_height, output var )
+	|	Retrieves an image from the first runtime product from the category.
+	|
+	|	Load runtime category products, 1 at a time. while loop until image is found. Cut off at 20??
+	|	
+	|	TODO: later.
+	|
+	</MvCOMMENT>
 </MvFUNCTION>
