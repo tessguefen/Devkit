@@ -397,3 +397,160 @@
 
 	<MvASSIGN NAME = "l.output" VALUE = "{ l.cropped_image:image }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "ProductArray_Load_Imagetype" PARAMETERS = "module var, param, product_array var, type_code, image_width, image_height, member" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	ProductArray_Load_Imagetype( product_array var, type_code, image_width, image_height, member )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvFOREACH ITERATOR = "l.product" ARRAY = "l.product_array">
+		<MvASSIGN NAME = "l.product_imagetype"	VALUE = "">
+		<MvASSIGN NAME = "l.imagedata"			VALUE = "">
+		<MvASSIGN NAME = "l.product_image"		VALUE = "">
+		<MvASSIGN NAME = "l.cropped_image"		VALUE = "">
+
+		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product:id, l.loaded_product ) }">
+			<MvFOREACHCONTINUE />
+		</MvIF>
+
+		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product:id, l.imagetype:id, l.product_imagetype ) }">
+			<MvFOREACHCONTINUE />
+		</MvIF>
+
+		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_Load_Dimensions( l.product_imagetype:image_id, l.image_width, l.image_height, l.cropped_image ) }">
+			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_ID( l.product_imagetype:image_id, l.imagedata ) }">
+				<MvFOREACHCONTINUE />
+			</MvIF>
+
+			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_File( l.imagedata:image, l.product_image ) }">
+				<MvFOREACHCONTINUE />
+			</MvIF>
+
+			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_FindOrInsert_Image_Dimensions( l.product_image, l.image_width, l.image_height, l.cropped_image ) }">
+				<MvFOREACHCONTINUE />
+			</MvIF>
+		</MvIF>
+
+		<MvASSIGN NAME = "l.product" MEMBER = "{ l.member }" VALUE = "{ l.cropped_image:image }">
+	</MvFOREACH>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "SQL" PARAMETERS = "module var, param, parameters var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	SQL( parameters var )
+	|	Taken from Gassan's module
+	|
+	|	l.parameters:query
+	|	l.parameters:bind_parameters (array)
+	|
+	|	Returns to l.parameters:results
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT len( l.parameters:query ) GT 0 }">
+		
+		<MvIF EXPR = "{ l.parameters:assign_error EQ 1 }">
+			<MvASSIGN NAME  =  "l.parameters:error" VALUE = "{ g.MvOPENVIEW_Error }">
+			<MvFUNCTIONRETURN VALUE  =  0 />
+		<MvELSE>
+			<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'SQL-QUERIES-0002', 'No Query Found Although One Was Expected' ) }">
+		</MvIF>
+	</MvIF>
+
+	<MvCOMMENT>Determine what type of query was passed</MvCOMMENT>
+	<MvASSIGN NAME = "l.parameters:query" VALUE = "{ trim(l.parameters:query) }" />
+	<MvIF EXPR = "{ indexofi('SELECT', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "SELECT" />
+	<MvELSEIF EXPR = "{ indexofi('INSERT', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "INSERT" />
+	<MvELSEIF EXPR = "{ indexofi('UPDATE', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "UPDATE" />
+	<MvELSEIF EXPR = "{ indexofi('DELETE', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "DELETE" />
+	<MvELSEIF EXPR = "{ indexofi('EXPLAIN', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "EXPLAIN" />
+	<MvELSEIF EXPR = "{ indexofi('DROP', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "DROP" />
+	<MvELSEIF EXPR = "{ indexofi('CREATE', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "CREATE" />
+	<MvELSEIF EXPR = "{ indexofi('ALTER', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "ALTER" />
+	<MvELSEIF EXPR = "{ indexofi('SHOW', l.parameters:query, 1) EQ 1 }">
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "SHOW" />
+	<MvELSE>
+		<MvASSIGN NAME = "l.parameters:query_type" VALUE = "OTHER" />
+	</MvIF>
+
+	<MvCOMMENT>Build Prepared Query Bind Parameters</MvCOMMENT>
+	<MvIF EXPR = "{ miva_array_elements(l.parameters:bind_parameters) GT 0 AND miva_array_collapse(l.parameters:bind_parameters) }">
+		<MvFOREACH ITERATOR = "l.bind_parameter" ARRAY = "l.parameters:bind_parameters" INDEX = "l.index">
+			<MvIF EXPR = "{ l.index EQ 1 }">
+				<MvASSIGN NAME = "l.parameters:bind_parameter_list" VALUE = "{ 'l.parameters:bind_parameters[' $ l.index $ ']' }" />
+			<MvELSE>
+				<MvASSIGN NAME = "l.parameters:bind_parameter_list" VALUE = "{ l.parameters:bind_parameter_list $ ', l.parameters:bind_parameters[' $ l.index $ ']' }" />
+			</MvIF>
+		</MvFOREACH>		
+	</MvIF>
+
+	<MvCOMMENT>If the passed parameter structure contains a result set, lets clear it out before loading the new one</MvCOMMENT>
+	<MvIF EXPR = "{ miva_array_elements(l.parameters:results) }">
+		<MvASSIGN NAME = "l.null" VALUE = "{ miva_array_clear(l.parameters:results, 1, miva_array_elements(l.parameters:results)) }">
+	</MvIF>
+
+	<MvCOMMENT>Execute the Query</MvCOMMENT>
+	<MvIF EXPR = "{ l.parameters:query_type EQ 'SELECT' OR l.parameters:query_type EQ 'EXPLAIN' OR l.parameters:query_type EQ 'SHOW' }">
+		<MvOPENVIEW NAME =  "Merchant" VIEW = "SQL" QUERY = "{ l.parameters:query }" FIELDS =  "{ l.parameters:bind_parameter_list }">
+
+			<MvIF EXPR = "{ g.MvOPENVIEW_Error }">
+				<MvIF EXPR = "{ l.parameters:assign_error EQ 1 }">
+					<MvASSIGN NAME  =  "l.parameters:error" VALUE = "{ g.MvOPENVIEW_Error }">
+					<MvFUNCTIONRETURN VALUE  =  0 />
+				<MvELSE>
+					<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'SQL-QUERY-0001', g.MvOPENVIEW_Error ) }">
+				</MvIF>
+			</MvIF>
+
+			
+			<MvCOMMENT>Determine what fields we have from this query result set to build the result array</MvCOMMENT>
+			<MvREVEALSTRUCTURE NAME = "MERCHANT" VIEW = "SQL" VARIABLE = "l.fields">
+
+			<MvCOMMENT>Build an array of the result sets in the data structure passed to this function</MvCOMMENT>
+			<MvASSIGN NAME = "l.index" VALUE = "1">
+			<MvWHILE EXPR = "{ NOT SQL.d.EOF }">
+				<MvFOREACH ITERATOR = "l.field" ARRAY = "l.fields" INDEX = "l.field_index">
+					<MvASSIGN NAME = "l.parameters:results" INDEX = "{ l.index }" MEMBER = "{ l.field:field_name }" VALUE = "{ miva_variable_value('SQL.d.' $ l.field:field_name) }">
+				</MvFOREACH>
+
+				<MvASSIGN NAME = "l.index" VALUE = "{ l.index + 1 }">
+				<MvSKIP NAME = "Merchant" VIEW = "SQL" ROWS = 1>
+			</MvWHILE>
+
+			<MvASSIGN NAME = "l.parameters:fields" VALUE = "{ l.fields }" />
+			
+		<MvCLOSEVIEW NAME = "Merchant" VIEW = "SQL">
+	<MvELSE>
+		<MvTRANSACT NAME = "Merchant">
+			<MvQUERY NAME = "Merchant" QUERY = "{ l.parameters:query }" FIELDS = "{ l.parameters:bind_parameter_list }">
+
+			<MvIF EXPR = "{ g.MvQUERY_Error }">
+				<MvROLLBACK NAME = "Merchant">
+				<MvIF EXPR = "{ l.parameters:assign_error EQ 1 }">
+					<MvASSIGN NAME  =  "l.parameters:error" VALUE = "{ g.MvOPENVIEW_Error }">
+					<MvFUNCTIONRETURN VALUE  =  0 />
+				<MvELSE>
+					<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'SQL-QUERIES-0001', g.MvQUERY_Error ) }">
+				</MvIF>
+				
+			</MvIF>
+
+			<MvASSIGN NAME = "l.parameters:results" VALUE = "1">
+		<MvCOMMIT NAME = "Merchant">
+	</MvIF>
+</MvFUNCTION>

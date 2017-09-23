@@ -44,27 +44,53 @@
 		<h3>This should be made pretty later.</h3>
 		<hr />
 		<div class="devutil-function-row">
-			<div class="devutil-function">Format_Currency( price, formatted_price var )</div>
+			<div class="devutil-function">
+				Format_Currency( price, formatted_price var )
+			</div>
 		</div>
 
 		<div class="devutil-function-row">
-			<div class="devutil-function">Upcharge( charge_name, charge_type, amount, tax_exempt )</div>
+			<div class="devutil-function">
+				Upcharge( charge_name, charge_type, amount, tax_exempt )
+			</div>
 		</div>
 
 		<div class="devutil-function-row">
-			<div class="devutil-function">Variant_Array( product_id, variants var )</div>
+			<div class="devutil-function">
+				Variant_Array( product_id, variants var )
+			</div>
 		</div>
 
 		<div class="devutil-function-row">
-			<div class="devutil-function">Date( format, timestamp, return var )</div>
+			<div class="devutil-function">
+				Date( format, timestamp, return var )
+			</div>
 		</div>
 
 		<div class="devutil-function-row">
-			<div class="devutil-function">Load_Product( options var, product var )</div>
+			<div class="devutil-function">
+				Load_Product( options var, product var )
+			</div>
 		</div>
 
 		<div class="devutil-function-row">
-			<div class="devutil-function">Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )</div>
+			<div class="devutil-function">
+				Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
+			</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">
+				ProductArray_Load_Imagetype( product_array var, type_code, image_width, image_height, member )
+			</div>
+		</div>
+
+		<div class="devutil-function-row">
+			<div class="devutil-function">
+				SQL( parameters var )<br />
+				l.parameters:query<br />
+				l.parameters:bind_parameters (array)
+			</div>
 		</div>
 
 	</MvIF>
@@ -136,13 +162,15 @@
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
-	<MvIF EXPR = "{ ( l.function_name EQ 'test' )					OR
-					( l.function_name EQ 'format_currency' ) 		OR
-					( l.function_name EQ 'upcharge' )				OR
-					( l.function_name EQ 'variant_array' )			OR
-					( l.function_name EQ 'date' )					OR
-					( l.function_name EQ 'load_product' )			OR
-					( l.function_name EQ 'product_load_imagetype' )
+	<MvIF EXPR = "{ ( l.function_name EQ 'test' )							OR
+					( l.function_name EQ 'format_currency' ) 				OR
+					( l.function_name EQ 'upcharge' )						OR
+					( l.function_name EQ 'variant_array' )					OR
+					( l.function_name EQ 'date' )							OR
+					( l.function_name EQ 'load_product' )					OR
+					( l.function_name EQ 'product_load_imagetype' )			OR
+					( l.function_name EQ 'productarray_load_imagetype' )	OR
+					( l.function_name EQ 'sql' )					
 				}">
 		<MvCOMMENT>
 		|
