@@ -114,7 +114,7 @@
 					( l.function_name EQ 'format_currency' ) 		OR
 					( l.function_name EQ 'upcharge' )				OR
 					( l.function_name EQ 'variant_array' )			OR
-					( l.function_name EQ 'Date' )					OR
+					( l.function_name EQ 'date' )					OR
 					( l.function_name EQ 'load_product' )
 				}">
 		<MvCOMMENT>

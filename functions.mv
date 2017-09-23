@@ -86,14 +86,16 @@
 	| Using some of PHP's Date Formatting
 	|
 	|	DAY
-	|		d, j, N, S, z
-	|		ADD: l, D
+	|		d, j, N, S, z, l, D
 	|
 	|	MONTH
 	|		m, n, F, M
 	|
 	|	YEAR
 	|		Y, y
+	|
+	|	TIME
+	|		a, A, g, G, h, H, i, s
 	|
 	|
 	|
@@ -107,10 +109,13 @@
 	<MvASSIGN NAME = "l.months_long" VALUE = "{ miva_array_deserialize( 'January,February,March,April,May,June,July,August,September,October,November,December' ) }">
 	<MvASSIGN NAME = "l.months_short" VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Augt,Sept,Oct,Nov,Dec' ) }">
 
+	<MvASSIGN NAME = "l.days_long" VALUE = "{ miva_array_deserialize( 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday' ) }">
+	<MvASSIGN NAME = "l.days_short" VALUE = "{ miva_array_deserialize( 'Sun,Mon,Tues,Wed,Thurs,Fri,Sat' ) }">
+
 	<MvFOR INDEX = "l.pos" COUNT = "{ len_var( l.format ) }">
 		<MvASSIGN NAME = "l.char" VALUE = "{ substring_var( l.format, l.pos, 1 ) }">
 
-		<MvIF EXPR = "{ NOT ( l.char CIN 'djNSzmnFMYyaAgGhH' ) }">
+		<MvIF EXPR = "{ NOT ( l.char CIN 'djNSzlDmnFMYyaAgGhHis' ) }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
 			<MvFORCONTINUE />
 		</MvIF>
@@ -143,6 +148,10 @@
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.S }">
 		<MvELSEIF EXPR = "{ l.char EQ 'z' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofyear( l.timestamp, l.time_zone ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'D' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ miva_variable_value( 'l.days_short[ ' $ time_t_dayofweek( l.timestamp, l.time_zone ) $ ' ]') }">
+		<MvELSEIF EXPR = "{ l.char EQ 'l' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ miva_variable_value( 'l.days_long[ ' $ time_t_dayofweek( l.timestamp, l.time_zone ) $ ' ]') }">
 		<MvELSEIF EXPR = "{ l.char EQ 'm' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_month( l.timestamp, l.time_zone ), 2, 0 ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'n' }">
@@ -187,6 +196,10 @@
 			</MvIF>
 		<MvELSEIF EXPR = "{ l.char EQ 'H' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_hour( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'i' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_min( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 's' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_sec( l.timestamp, l.time_zone ), 2, 0 ) }">
 		<MvELSE>
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
 		</MvIF>
