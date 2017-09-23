@@ -95,11 +95,13 @@
 	</MvWHILE>
 	<MvCLOSEVIEW NAME = "Merchant" VIEW = "ProductVariants">
 
+	<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Product_Load_ID( l.product_id, l.master_product ) }">
+
 	<MvFOREACH ITERATOR = "l.variant" ARRAY = "l.variants" INDEX = "l.vpos">
 		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:parts ) }">
 		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductVariantList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:attributes ) }">
 
-		<MvASSIGN NAME = "l.variant:overall_inventory:id" VALUE = "{ l.variant:product_id }">
+		<MvASSIGN NAME = "l.variant:overall_inventory" VALUE = "{ l.master_product }">
 		<MvDO FILE = "{ g.Module_Feature_INV_RT }" NAME = "l.success" VALUE = "{ Inventory_Load_Variant( l.variant:overall_inventory, l.variant:variant_id ) }">
 
 		<MvFOREACH ITERATOR = "l.attribute" ARRAY = "l.variant:attributes">
