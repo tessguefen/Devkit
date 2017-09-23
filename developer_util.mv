@@ -110,21 +110,31 @@
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
-	<MvIF EXPR = "{ ( l.function_name EQ 'test' ) }">
-		<MvIF EXPR = "{ l.parameter_count EQ 2 }">
-			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ', l.item_settings )' }">
-		<MvELSEIF EXPR = "{ l.parameter_count EQ 3 }">
-			<MvIF EXPR = "{ NOT Is_Variable( l.parameters[ 3 ] ) }">
-				<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'The third parameter must be a variable' ) }">
-			</MvIF>
-
-			<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
-		<MvELSE>
-			<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, '\'' $ l.function_name $ '\' takes 2 or 3 parameters' ) }">
-		</MvIF>
+	<MvIF EXPR = "{ ( l.function_name EQ 'test' )					OR
+					( l.function_name EQ 'format_currency' ) 		OR
+					( l.function_name EQ 'upcharge' )				OR
+					( l.function_name EQ 'variant_array' )			OR
+					( l.function_name EQ 'Date' )					OR
+					( l.function_name EQ 'load_product' )
+				}">
+		<MvCOMMENT>
+		|
+		|	We need to add checks for how many "Parameters" there are. - Tess
+		|
+		</MvCOMMENT>
+		<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
 	</MvIF>
-
+	
 	<MvCOMMENT>
+	|
+	|	tagerror
+	|	22, 3 = display
+	|	22, 0 = no display
+	|
+	|	FOR DEBUGGING, leave as 22, 3
+	|
+	</MvCOMMENT>
+
 	<MvASSEMBLY>
 		.string asm_0 "l.new_param"
 		.string asm_1 "g.Module_Root"
@@ -141,7 +151,7 @@
 			cat
 			pushc		asm_0
 			pushn
-			tagerror	22, 0
+			tagerror	22, 3
 			do_function
 			pop
 			tagerror	22, 3
@@ -150,56 +160,11 @@
 			jmp_eq		L_asm_success
 			retn
 		L_asm_success:
-    </MvASSEMBLY>
-    </MvCOMMENT>
+	</MvASSEMBLY>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	<MvASSIGN NAME = "l.param" VALUE = "{ glosub(l.param, 'l.settings', 'l.all_settings') }">
-
-	<MvIF EXPR = "{ NOT Parse_Function_Parameters( l.param, l.function_name, l.parameters, l.parameter_count ) }">
-		<MvFUNCTIONRETURN VALUE = 0>
-	</MvIF>
-
-	<MvFUNCTIONRETURN VALUE = "{ Developer_Utilities_Function( l.all_settings, l.param, l.function_name, l.parameters, l.parameter_count ) }" />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Test" PARAMETERS = "module var, param, test_the_first, test_the_second, destination var" STANDARDOUTPUTLEVEL = "">
-	<MvASSIGN NAME = "l.destination" VALUE = "Helllo world">
 </MvFUNCTION>
 
 <MvCOMMENT>
-|
-|	Custom Functions
-|		Developer_Utilities_Function( all_settings var, param, function_name, parameters, parameter_count )
 |
 |	Component Helpers
 |		Parse_Function_Parameters( string, function_name var, parameters var, parameter_count var )
@@ -208,28 +173,6 @@
 |
 </MvCOMMENT>
 
-<MvFUNCTION NAME = "Developer_Utilities_Function" PARAMETERS = "all_settings var, param var, function_name var, parameters var, parameter_count var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	This function is to call the Higher level functions that are called with the item.
-	|	function_name should be lowercase, but just in case let's tolower it.
-	|
-	</MvCOMMENT>
-	<MvASSIGN NAME = "l.function_name"	VALUE = "{ tolower( l.function_name ) }">
-
-	<MvIF EXPR = "{ l.function_name EQ 'format_currency' }">
-		<MvFUNCTIONRETURN VALUE = "{ Format_Currency( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
-	<MvELSEIF EXPR = "{ l.function_name EQ 'upcharge' }">
-		<MvFUNCTIONRETURN VALUE = "{ Upcharge( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
-	<MvELSEIF EXPR = "{ l.function_name EQ 'variant_array' }">
-		<MvFUNCTIONRETURN VALUE = "{ Variant_Array( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
-	<MvELSEIF EXPR = "{ l.function_name EQ 'date' }">
-		<MvFUNCTIONRETURN VALUE = "{ Date( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
-	<MvELSEIF EXPR = "{ l.function_name EQ 'load_product' }">
-		<MvFUNCTIONRETURN VALUE = "{ Load_Product( l.all_settings, l.param, l.parameters, l.parameter_count ) }">
-	</MvIF>
-
-</MvFUNCTION>
 
 <MvINCLUDE FILE = "functions.mv">
 
