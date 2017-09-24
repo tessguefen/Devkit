@@ -146,12 +146,13 @@
 	|		m, n, F, M
 	|
 	|	YEAR
-	|		Y, y
+	|		Y, y, L
 	|
 	|	TIME
 	|		a, A, g, G, h, H, i, s
 	|
-	|
+	|	FULL DATE/TIME
+	|		c
 	|
 	</MvCOMMENT>
 
@@ -169,7 +170,7 @@
 	<MvFOR INDEX = "l.pos" COUNT = "{ len_var( l.format ) }">
 		<MvASSIGN NAME = "l.char" VALUE = "{ substring_var( l.format, l.pos, 1 ) }">
 
-		<MvIF EXPR = "{ NOT ( l.char CIN 'djNSzlDmnFMYyaAgGhHis' ) }">
+		<MvIF EXPR = "{ NOT ( l.char CIN 'djNSzlDmnFMYyLaAgGhHisc' ) }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
 			<MvFORCONTINUE />
 		</MvIF>
@@ -218,6 +219,13 @@
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_year( l.timestamp, l.time_zone ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'y' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ substring_var( time_t_year( l.timestamp, l.time_zone ), 3, 2) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'L' }">
+			<MvASSIGN NAME = "l.year" VALUE = "{ time_t_year( l.timestamp, l.time_zone ) }">
+			<MvIF EXPR = "{ ( ( ( l.year MOD 400 ) EQ 0 ) OR ( ( l.year MOD 100 ) NE 0 ) ) AND ( ( l.year MOD 4 ) EQ 0 ) }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '1' }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '0' }">
+			</MvIF>
 		<MvELSEIF EXPR = "{ l.char EQ 'a' }">
 			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
 			<MvIF EXPR = "{ l.hour GT 11 }">
@@ -254,6 +262,16 @@
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_min( l.timestamp, l.time_zone ), 2, 0 ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 's' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_sec( l.timestamp, l.time_zone ), 2, 0 ) }">
+		<MvELSEIF EXPR = "{ l.char EQ 'c' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $
+								padl( time_t_year( l.timestamp, l.time_zone ), 4, '0' )			$
+								 padl( time_t_month( l.timestamp, l.time_zone ), 2, '0' ) 		$
+								 padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, '0' )	$
+								 'T' 															$
+								 padl( time_t_hour( l.timestamp, l.time_zone ), 2, '0' )		$
+								 padl( time_t_min( l.timestamp, l.time_zone ), 2, '0' )			$
+								 padl( time_t_sec( l.timestamp, l.time_zone ), 2, '0' )			$
+								 'Z' }">
 		<MvELSE>
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
 		</MvIF>
@@ -555,15 +573,31 @@
 	</MvIF>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Category_Product_Image" PARAMETERS = "module var, param, category_id, type_code, image_width, image_height, ouput var" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Category_Product_Image" PARAMETERS = "module var, param, category_id, type_code, image_width, image_height, output var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
 	|	Category_Product_Image( category_id, type_code, image_width, image_height, output var )
 	|	Retrieves an image from the first runtime product from the category.
 	|
-	|	Load runtime category products, 1 at a time. while loop until image is found. Cut off at 20??
-	|	
-	|	TODO: later.
-	|
 	</MvCOMMENT>
+	<MvASSIGN NAME = "l.output" VALUE = "">
+	<MvASSIGN NAME = "l.offset" VALUE = "0">
+
+	<MvWHILE EXPR = "{ ISNULL l.output }">
+		<MvASSIGN NAME = "l.products" VALUE = "">
+		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Runtime_ProductList_Load_Offset_Category( l.category_id, l.offset, 1, l.next_offset, l.products ) }">
+			<MvWHILESTOP />
+		</MvIF>
+		<MvIF EXPR = "{ l.offset EQ l.next_offset }">
+			<MvWHILESTOP />
+		</MvIF>
+		<MvIF EXPR = "{ miva_array_elements( l.products ) EQ 0 }">
+			<MvWHILESTOP />
+		</MvIF>
+		<MvASSIGN NAME = "l.offset"			VALUE = "{ l.next_offset }">
+		<MvASSIGN NAME = "l.next_offset"	VALUE = "">
+		<MvASSIGN NAME = "l.product" VALUE = "{ l.products[1] }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ Product_Load_Imagetype( l.module, l.param, l.product:id, l.type_code, l.image_width, l.image_height, l.output ) }">
+	</MvWHILE>
+
 </MvFUNCTION>

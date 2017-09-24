@@ -162,6 +162,12 @@
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
+	<MvCOMMENT>
+	|
+	|	Parameters & Function check
+	|
+	</MvCOMMENT>
+
 	<MvIF EXPR = "{ ( l.function_name EQ 'test' )							OR
 					( l.function_name EQ 'format_currency' ) 				OR
 					( l.function_name EQ 'upcharge' )						OR
@@ -170,7 +176,8 @@
 					( l.function_name EQ 'load_product' )					OR
 					( l.function_name EQ 'product_load_imagetype' )			OR
 					( l.function_name EQ 'productarray_load_imagetype' )	OR
-					( l.function_name EQ 'sql' )					
+					( l.function_name EQ 'sql' )							OR
+					( l.function_name EQ 'category_product_image')			
 				}">
 		<MvCOMMENT>
 		|
@@ -189,6 +196,10 @@
 	|	FOR DEBUGGING, leave as 22, 3
 	|
 	</MvCOMMENT>
+
+	<MvIF EXPR = "{ ISNULL l.new_param }">
+		<MvFUNCTIONRETURN VALUE = "" />
+	</MvIF>
 
 	<MvASSEMBLY>
 		.string asm_0 "l.new_param"
