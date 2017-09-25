@@ -601,3 +601,80 @@
 	</MvWHILE>
 
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "JSON_Output_Variable" PARAMETERS = "module var, param, value var, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	JSON_Output_Variable( value var, output var )
+	|	Catpures JSON_Output and saves to a variable.
+	|
+	</MvCOMMENT>
+	<MvCAPTURE VARIABLE = "l.output">
+		<MvDO FILE = "{ g.Module_JSON }" NAME = "l.success" VALUE = "{ JSON_Output( l.value ) }">
+	</MvCAPTURE>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "JSON_Output_Floats_Variable" PARAMETERS = "module var, param, value var, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	JSON_Output_Floats_Variable( value var, output var )
+	|	Catpures JSON_Output_With_Floats and saves to a variable.
+	|
+	</MvCOMMENT>
+	<MvCAPTURE VARIABLE = "l.output">
+		<MvEVAL EXPR = "{ JSON_Output_With_Floats( l.value ) }">
+	</MvCAPTURE>
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "JSON_Output_With_Floats" PARAMETERS = "value var" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
+	<MvCOMMENT>
+	|
+	|	This is a helper function for JSON_Output_Floats_Variable
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "l.member_count"	VALUE = "{ miva_struct_members( l.value, l.members ) }">
+	<MvIF EXPR = "{ l.member_count GT 0 }">
+		{
+			<MvFOREACH INDEX = "l.pos" ITERATOR = "l.member" ARRAY = "l.members" COUNT = "{ l.member_count }">
+				<MvIF EXPR = "{ l.pos GT 1 }">
+					,
+				</MvIF>
+
+				<MvREFERENCEARRAY NAME = "l.member_value" VARIABLE = "l.value">
+					<MvMEMBER NAME = "{ l.member }">
+				</MvREFERENCEARRAY>
+
+				"<MvEVAL EXPR = "{ encodejavascriptstring( l.member ) }">": <MvEVAL EXPR = "{ JSON_Output_With_Floats( l.member_value ) }">
+			</MvFOREACH>
+		}
+
+		<MvFUNCTIONRETURN>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.element_count"	VALUE = "{ miva_array_elements( l.value ) }">
+	<MvIF EXPR = "{ l.element_count GT 0 }">
+		[
+		<MvFOREACH INDEX = "l.pos" ITERATOR = "l.element" ARRAY = "l.value" COUNT = "{ l.element_count }">
+			<MvIF EXPR = "{ l.pos GT 1 }">
+				,
+			</MvIF>
+
+			<MvEVAL EXPR = "{ JSON_Output_With_Floats( l.element ) }">
+		</MvFOREACH>
+		]
+
+		<MvFUNCTIONRETURN>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.value_nodec" VALUE = "{ gettoken( l.value, '.', 1 ) }">
+	<MvASSIGN NAME = "l.value_negative" VALUE = "{ l.value_nodec * -1 }">
+
+	<MvIF EXPR = "{ ( isdigit( l.value ) OR isdigit( l.value_nodec ) OR isdigit( l.value_negative) ) AND
+					NOT ISNULL l.value	AND
+					NOT ( len_var( l.value ) GE 2 AND substring_var( l.value, 1, 1 ) EQ '0' ) }">
+		<MvEVAL EXPR = "{ l.value }">
+	<MvELSE>
+		"<MvEVAL EXPR = "{ encodejavascriptstring( l.value ) }">"
+	</MvIF>
+</MvFUNCTION>
