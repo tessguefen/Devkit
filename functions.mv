@@ -678,3 +678,19 @@
 		"<MvEVAL EXPR = "{ encodejavascriptstring( l.value ) }">"
 	</MvIF>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Next_Weekday" PARAMETERS = "module var, param, timestamp, dow, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Next_Weekday( timestamp, dow, output var )
+	|	timestamp = starting day in timestamp form
+	|	dow = Day Of Week. Sunday = 1, Monday = 2, Etc.
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "l.timezone" VALUE = "{ g.Merchant_Local_Timezone }">
+	<MvASSIGN NAME = "l.day" VALUE = "{ time_t_dayofweek( l.timestamp, l.timezone ) }">
+
+	<MvASSIGN NAME = "l.math" VALUE = "{ ( ( l.day - l.dow ) -7 ) * -1 }">
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.timestamp + ( l.math * 86400 ) }">
+</MvFUNCTION>
