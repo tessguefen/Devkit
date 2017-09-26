@@ -694,3 +694,63 @@
 
 	<MvASSIGN NAME = "l.output" VALUE = "{ l.timestamp + ( l.math * 86400 ) }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Page_Render_Variable" PARAMETERS = "module var, param, page_code, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Page_Render_Variable( page_code, output var)
+	|	Render a Page Template and save it to a variable.
+	|
+	</MvCOMMENT>
+	<MvIF EXPR = "{ NOT [ g.Module_Feature_TUI_DB ].Page_Load_Code( l.page_code, l.page) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvCAPTURE VARIABLE = "l.output">
+		<MvDO FILE = "{ g.Module_Feature_TUI_MGR }" NAME = "l.page_loaded" VALUE = "{ TemplateManager_Render_Page( l.page_code ) }">
+	</MvCAPTURE>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Recently_Viewed_Products" PARAMETERS = "module var, param, customfield_name, max, current_product_code, output var">
+	<MvCOMMENT>
+	|
+	|	Recently_Viewed_Products( 'recently_viewed', 5, l.settings:product:code, l.settings:recently_viewed:products )
+	|	Load in `customfield` module to retrieve `module` path
+	|
+	| --- Maybe we should store these as IDs, and have another function call this & create better data? like "Load_Product"
+	|
+	</MvCOMMENT>
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Module_Load_Code( 'customfields', l.customfields ) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Read_Basket( l.module, l.param, l.customfield_name, l.recently_viewed:product_codes ) }">
+
+	<MvASSIGN NAME = "l.recently_viewed:product_codes" VALUE = "{ miva_array_deserialize( l.recently_viewed:product_codes ) }">
+	
+	<MvASSIGN NAME = "l.recently_viewed:exsiting_index" VALUE = "{ miva_array_find( l.current_product_code, l.recently_viewed:product_codes, 0 ) }">
+
+	<MvIF EXPR = "{ l.recently_viewed:exsiting_index GT 0 }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_delete( l.recently_viewed:product_codes, l.recently_viewed:exsiting_index, 1 ) }">
+	</MvIF>
+
+	<MvCOMMENT>
+	|
+	|	Assign product code array to output var before assigning current product code to the array.
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.recently_viewed:product_codes }">
+
+	<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert_var( l.recently_viewed:product_codes, l.current_product_code, 1 ) }">
+
+	<MvASSIGN NAME = "l.recently_viewed:product_count" VALUE = "{ miva_array_elements( l.recently_viewed:product_codes ) }">
+
+	<MvASSIGN NAME = "l.recently_viewed:count_check" VALUE = "{ ( l.recently_viewed:product_count - l.max ) }">
+
+	<MvIF EXPR = "{ l.recently_viewed:count_check GT 0 }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_delete( l.recently_viewed:product_codes, l.max, l.recently_viewed:count_check ) }">
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Write_Basket( l.module, l.param, l.customfield_name, miva_array_serialize( l.recently_viewed:product_codes) ) }">
+</MvFUNCTION>

@@ -180,7 +180,9 @@
 					( l.function_name EQ 'category_product_image')			OR
 					( l.function_name EQ 'json_output_variable' )			OR
 					( l.function_name EQ 'json_output_floats_variable' )	OR
-					( l.function_name EQ 'next_weekday' )
+					( l.function_name EQ 'next_weekday' )					OR
+					( l.function_name EQ 'page_render_variable' )			OR
+					( l.function_name EQ 'recently_viewed_products' )
 				}">
 		<MvCOMMENT>
 		|
