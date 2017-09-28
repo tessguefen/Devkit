@@ -45,51 +45,106 @@
 		<hr />
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Format_Currency( price, formatted_price var )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Format_Currency', 'price, formatted_price var') }">
+			</div>
+			<div class="devkit-information">
+				This is more info on the function...blahblahblah. Style and fill this out later with examples.
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Upcharge( charge_name, charge_type, amount, tax_exempt )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Upcharge', 'charge_name, charge_type, amount, tax_exempt') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Variant_Array( product_id, variants var )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Variant_Array', 'product_id, variants var') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Date( format, timestamp, return var )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Date', 'format, timestamp, return var') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Load_Product( options var, product var )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Load_Product', 'options var, product var') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Load_Imagetype', 'product_id, type_code, image_width, image_height, output var') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				ProductArray_Load_Imagetype( product_array var, type_code, image_width, image_height, member )
+				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Load_Imagetype', 'product_array var, type_code, image_width, image_height, member') }">
 			</div>
 		</div>
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				SQL( parameters var )<br />
-				l.parameters:query<br />
-				l.parameters:bind_parameters (array)
+				<MvEVAL EXPR = "{ Pretty_Code( 'SQL', 'parameters var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Product_Image', 'category_id, type_code, image_width, image_height, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Variable', 'value var, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Floats_Variable', 'value var, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Next_Weekday', 'timestamp, dow, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Page_Render_Variable', 'page_code, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Recently_Viewed_Products', 'customfield_name, max, current_product_code, type_code, image_width, image_height, image_member, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'ShippingMethodList_ForItems', 'basket var, items var, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Tree_Image', 'category_id, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Title_Image', 'category_id, output var') }">
 			</div>
 		</div>
 
@@ -99,7 +154,16 @@
 
 <MvFUNCTION NAME = "Module_Utility_Head" PARAMETERS = "module var, tab" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
 	<MvIF EXPR = "{ l.tab EQ 'DEVKIT' }">
-		<!-- Styles! Maybe -->
+		<style>
+			.devkit-function-row {
+				padding-bottom: 1rem;
+				margin-bottom: 1rem;
+				border-bottom: 1px solid #ccc;
+			}
+			.devkit-information {
+				margin-top: 1rem;
+			}
+		</style>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -244,6 +308,7 @@
 |		Parse_Function_Parameters( string, function_name var, parameters var, parameter_count var )
 |		Parameter_Error( param, message )
 |		Is_Variable( variable var )
+|		Pretty_Code( function_name, paramaters )
 |
 |	functions.mv
 |		All Devkit functions
@@ -384,4 +449,10 @@
 	</MvIF>
 
 	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Pretty_Code" PARAMETERS = "function_name, parameters" STANDARDOUTPUTLEVEL = "html, text">
+<div style="background: #ffffff; overflow:auto;width:auto;padding:.2em 0;">
+<pre style="margin: 0; line-height: 125%; font-weight: bold; font-size: 11px;"><span style="color: #446fbd">&lt;mvt:item</span> <span style="color: #6d8600">name=</span><span style="color: #535353">&quot;devkit&quot;</span> <span style="color: #6d8600">param=</span><span style="color: #535353">&quot;<span style="color: #446fbd"><MvEVAL EXPR = "{ l.function_name }"></span>( <MvEVAL EXPR = "{ l.parameters }"> )&quot;</span> <span style="color: #446fbd">/&gt;</span></pre>
+</div>
 </MvFUNCTION>
