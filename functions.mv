@@ -711,13 +711,10 @@
 	</MvCAPTURE>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Recently_Viewed_Products" PARAMETERS = "module var, param, customfield_name, max, current_product_code, output var">
+<MvFUNCTION NAME = "Recently_Viewed_Products_LowLevel" PARAMETERS = "module var, param, customfield_name, max, current_product_code, output var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Recently_Viewed_Products( 'recently_viewed', 5, l.settings:product:code, l.settings:recently_viewed:products )
-	|	Load in `customfield` module to retrieve `module` path
-	|
-	| --- Maybe we should store these as IDs, and have another function call this & create better data? like "Load_Product"
+	|	Recently_Viewed_Products_LowLevel( 'recently_viewed', 5, l.settings:product:code, l.settings:recently_viewed:products )
 	|
 	</MvCOMMENT>
 	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Module_Load_Code( 'customfields', l.customfields ) }">
@@ -753,4 +750,99 @@
 	</MvIF>
 
 	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Write_Basket( l.module, l.param, l.customfield_name, miva_array_serialize( l.recently_viewed:product_codes) ) }">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Recently_Viewed_Products" PARAMETERS = "module var, param, customfield_name, max, current_product_code, type_code, image_width, image_height, image_member, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Recently_Viewed_Products( 'recently_viewed', 5, l.settings:product:code, 'main', 150, 150, 'main_image', l.settings:recently_viewed )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT Recently_Viewed_Products_LowLevel( l.module, l.param, l.customfield_name, l.max, l.current_product_code, l.products ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ miva_array_elements( l.products ) EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvFOREACH ITERATOR = "l.product" ARRAY = "l.products">
+		<MvASSIGN NAME = "l.options:code" VALUE = "{ l.product }">
+		<MvASSIGN NAME = "l.options:include" VALUE = "runtime,currency,url">
+		<MvASSIGN NAME = "l.product" VALUE = "{ _Load_Product( l.options ) }">
+	</MvFOREACH>
+
+	<MvASSIGN NAME = "l.success" VALUE = "{ ProductArray_Load_Imagetype( l.module, l.param, l.products, l.type_code, l.image_width, l.image_height, l.image_member ) }">
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.products }">
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "ShippingMethodList_ForItems" PARAMETERS = "module var, param, basket var, items var, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	ShippingMethodList_ForItems( g.Basket, l.settings:my_items, l.settings:shipping_methods )
+	|
+	|	basket var = g.Basket
+	|	items var (basically l.settings:basket:items)
+	|		Example Structure for each Item:
+	|			l.basketitem:product_id
+	|			l.basketitem:variant_id	(optional)
+	|			l.basketitem:wish_id	(optional)
+	|			l.basketitem:subterm_id	(optional)
+	|			l.basketitem:code
+	|			l.basketitem:name
+	|			l.basketitem:retail		(optional)
+	|			l.basketitem:base_price	(optional)
+	|			l.basketitem:price
+	|			l.basketitem:weight
+	|			l.basketitem:taxable
+	|			l.basketitem:upsold
+	|			l.basketitem:quantity
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.temp_basket:cust_id"    VALUE = "{ l.basket:cust_id }" >
+	<MvASSIGN NAME = "l.temp_basket:order_id"   VALUE = "0" >
+	<MvASSIGN NAME = "l.temp_basket:order_proc" VALUE = "0" >
+	<MvASSIGN NAME = "l.temp_basket:ship_id"    VALUE = "0" >
+	<MvASSIGN NAME = "l.temp_basket:session_id" VALUE = "{ MakeSessionID() }" >
+	<MvASSIGN NAME = "l.temp_basket:lastupdate" VALUE = "{ s.dyn_time_t }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_fname" VALUE = "{ l.basket:ship_fname }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_lname" VALUE = "{ l.basket:ship_lname }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_email" VALUE = "{ l.basket:ship_email }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_comp"  VALUE = "{ l.basket:ship_comp }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_phone" VALUE = "{ l.basket:ship_phone }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_fax"   VALUE = "{ l.basket:ship_fax }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_addr1" VALUE = "{ l.basket:ship_addr1 }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_addr2" VALUE = "{ l.basket:ship_addr2 }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_city"  VALUE = "{ l.basket:ship_city }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_state" VALUE = "{ l.basket:ship_state }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_zip"   VALUE = "{ l.basket:ship_zip }" >
+	<MvASSIGN NAME = "l.temp_basket:ship_cntry" VALUE = "{ l.basket:ship_cntry }" >
+	<MvIF EXPR = "{ ISNULL l.temp_basket:ship_state }">
+		<MvASSIGN NAME = "l.temp_basket:ship_state" VALUE = "{ l.basket:ship_state_select }">
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.basket_insert_success" VALUE = "{ Basket_Insert( l.temp_basket ) }">
+
+	<MvIF EXPR = "{ NOT l.basket_insert_success }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	<MvELSE>
+		<MvFOREACH ITERATOR = "l.item" ARRAY = "l.items">
+			<MvASSIGN NAME = "l.item:basket_id" VALUE = "{ l.temp_basket:basket_id }">
+			<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ BasketItem_Insert( l.item ) }">
+		</MvFOREACH>
+
+		<MvASSIGN NAME = "l.original_basket" VALUE = "{ g.Basket }">
+		<MvASSIGN NAME = "g.Basket" VALUE = "{ l.temp_basket }">
+
+		<MvDO FILE = "{ g.Module_Feature_SHP_UT }" NAME = "l.success" VALUE = "{ ShippingMethodList_Load_Basket( l.output ) }">
+
+		<MvASSIGN NAME = "g.Basket" VALUE = "{ l.original_basket }">
+		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Basket_Reset( l.temp_basket ) }">
+	</MvIF>
+
+</MvFUNCTION>
+

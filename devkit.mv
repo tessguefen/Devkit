@@ -182,7 +182,8 @@
 					( l.function_name EQ 'json_output_floats_variable' )	OR
 					( l.function_name EQ 'next_weekday' )					OR
 					( l.function_name EQ 'page_render_variable' )			OR
-					( l.function_name EQ 'recently_viewed_products' )
+					( l.function_name EQ 'recently_viewed_products' )		OR
+					( l.function_name EQ 'shippingmethodlist_foritems' )
 				}">
 		<MvCOMMENT>
 		|
