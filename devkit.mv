@@ -148,6 +148,24 @@
 			</div>
 		</div>
 
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Scheduled_Promo_PriceGroup', 'pricegroup_name, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv_Variable', 'code, all_settings var, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv', 'code, all_settings var') }">
+			</div>
+		</div>
+
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -238,24 +256,27 @@
 	|
 	</MvCOMMENT>
 
-	<MvIF EXPR = "{ ( l.function_name EQ 'test' )							OR
-					( l.function_name EQ 'format_currency' ) 				OR
-					( l.function_name EQ 'upcharge' )						OR
-					( l.function_name EQ 'variant_array' )					OR
-					( l.function_name EQ 'date' )							OR
-					( l.function_name EQ 'load_product' )					OR
-					( l.function_name EQ 'product_load_imagetype' )			OR
-					( l.function_name EQ 'productarray_load_imagetype' )	OR
-					( l.function_name EQ 'sql' )							OR
-					( l.function_name EQ 'category_product_image')			OR
-					( l.function_name EQ 'json_output_variable' )			OR
-					( l.function_name EQ 'json_output_floats_variable' )	OR
-					( l.function_name EQ 'next_weekday' )					OR
-					( l.function_name EQ 'page_render_variable' )			OR
-					( l.function_name EQ 'recently_viewed_products' )		OR
-					( l.function_name EQ 'shippingmethodlist_foritems' )	OR
-					( l.function_name EQ 'category_tree_image' )			OR
-					( l.function_name EQ 'category_title_image' )
+	<MvIF EXPR = "{ ( l.function_name EQ 'test' )											OR
+					( l.function_name EQ 'format_currency' ) 								OR
+					( l.function_name EQ 'upcharge' )										OR
+					( l.function_name EQ 'variant_array' )									OR
+					( l.function_name EQ 'date' )											OR
+					( l.function_name EQ 'load_product' )									OR
+					( l.function_name EQ 'product_load_imagetype' )							OR
+					( l.function_name EQ 'productarray_load_imagetype' )					OR
+					( l.function_name EQ 'sql' )											OR
+					( l.function_name EQ 'category_product_image')							OR
+					( l.function_name EQ 'json_output_variable' )							OR
+					( l.function_name EQ 'json_output_floats_variable' )					OR
+					( l.function_name EQ 'next_weekday' )									OR
+					( l.function_name EQ 'page_render_variable' )							OR
+					( l.function_name EQ 'recently_viewed_products' )						OR
+					( l.function_name EQ 'shippingmethodlist_foritems' )					OR
+					( l.function_name EQ 'category_tree_image' )							OR
+					( l.function_name EQ 'category_title_image' )							OR
+					( l.function_name EQ 'scheduled_promo_pricegroup' )						OR
+					( l.function_name EQ 'readytheme_load_contentsection_nodiv_variable' )	OR
+					( l.function_name EQ 'readytheme_load_contentsection_nodiv' )
 				}">
 		<MvCOMMENT>
 		|

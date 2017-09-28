@@ -874,3 +874,67 @@
 	<MvDO FILE = "{ g.Module_Root $ l.cattitle:module }" NAME = "l.success" VALUE = "{ CSSUI_CatTitle_Load( l.category_id, l.temp_output ) }">
 	<MvASSIGN NAME = "l.output" VALUE = "{ l.temp_output:image }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Scheduled_Promo_PriceGroup" PARAMETERS = "module var, param, pricegroup_name, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Scheduled_Promo_PriceGroup( pricegroup_name, output var )
+	|	output var returns 1 or 0. This will determine if you should display the content.
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Feature_PGR_DB ].PriceGroup_Load_Name( l.pricegroup_name, l.pricegroup) }">
+		<MvASSIGN NAME = "l.output" VALUE = "0">
+		<MvFUNCTIONRETURN VALUE = "0" />
+	</MvIF>
+
+	<MvIF EXPR = "{ ( ( l.pricegroup:dt_start EQ 0 ) OR ( s.dyn_time_t GT l.pricegroup:dt_start) ) AND ( ( l.pricegroup:dt_start EQ 0 ) OR ( s.dyn_time_t LT l.pricegroup:dt_end ) ) }">
+		<MvASSIGN NAME = "l.output" VALUE = "1">
+		<MvFUNCTIONRETURN VALUE = "1" />
+	<MvELSE>
+		<MvASSIGN NAME = "l.output" VALUE = "0">
+		<MvFUNCTIONRETURN VALUE = "0" />
+	</MvIf>	
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv_Variable" PARAMETERS = "module var, param, code, all_settings var, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )
+	|	output var returns 1 or 0. This will determine if you should display the content.
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Module_Load_Code( 'readytheme', l.readytheme ) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvIF EXPR = "{ l.readytheme:active EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ l.readytheme:module }" NAME = "l.load_content_section" VALUE = "{ ReadyTheme_ContentSection_Load_Code( l.code, l.loaded_content_section ) }">
+
+	<MvIF EXPR = "{ ( NOT l.loaded_content_section ) OR ( l.loaded_content_section:active EQ 0 ) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvIF EXPR = "{ [ g.Module_Feature_TUI_DB ].ManagedTemplate_Load_ID( l.loaded_content_section:templ_id, l.content_section ) }">
+		<MvCAPTURE VARIABLE = "l.output">
+			<MvEVAL EXPR = "{ [ g.Store_Template_Path $ l.content_section:filename ].Template_Render( l.null, l.all_settings ) }">
+		</MvCAPTURE>
+	</MvIF>
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv" PARAMETERS = "module var, param, code, all_settings var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )
+	|	output var returns 1 or 0. This will determine if you should display the content.
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Readytheme_Load_ContentSection_NoDiv_Variable( l.module, l.param, l.code, l.all_settings, l.output ) }">
+		<MvEVAL EXPR = "{ l.output }">
+	</MvIF>
+</MvFUNCTION>
