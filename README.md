@@ -19,6 +19,9 @@
 <mvt:item name="devkit" param="ShippingMethodList_ForItems( basket var, items var, output var )" />
 <mvt:item name="devkit" param="Category_Tree_Image( category_id, output var )" />
 <mvt:item name="devkit" param="Category_Title_Image( category_id, output var )" />
+<mvt:item name="devkit" param="Scheduled_Promo_PriceGroup( pricegroup_name, output var )" />
+<mvt:item name="devkit" param="Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )" />
+<mvt:item name="devkit" param="Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )" />
 ```
 
 ## Load_Product
