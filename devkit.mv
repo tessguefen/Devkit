@@ -183,7 +183,9 @@
 					( l.function_name EQ 'next_weekday' )					OR
 					( l.function_name EQ 'page_render_variable' )			OR
 					( l.function_name EQ 'recently_viewed_products' )		OR
-					( l.function_name EQ 'shippingmethodlist_foritems' )
+					( l.function_name EQ 'shippingmethodlist_foritems' )	OR
+					( l.function_name EQ 'category_tree_image' )			OR
+					( l.function_name EQ 'category_title_image' )
 				}">
 		<MvCOMMENT>
 		|

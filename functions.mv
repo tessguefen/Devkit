@@ -380,22 +380,9 @@
 	<MvFUNCTIONRETURN VALUE = "{ l.product }" />
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Product_Load_Imagetype" PARAMETERS = "module var, param, product_id, type_code, image_width, image_height, output var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
-	|
-	</MvCOMMENT>
+<MvFUNCTION NAME = "Product_Load_Imagetype_LowLevel" PARAMETERS = "module var, param, product_id, type_id, image_width, image_height" STANDARDOUTPUTLEVEL = "">
 
-	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
-		<MvFUNCTIONRETURN VALUE = 0>
-	</MvIF>
-
-	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
-		<MvFUNCTIONRETURN VALUE = 0>
-	</MvIF>
-
-	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product_id, l.imagetype:id, l.product_imagetype ) }">
+	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product_id, l.type_id, l.product_imagetype ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
@@ -412,8 +399,25 @@
 			<MvFUNCTIONRETURN VALUE = 0>
 		</MvIF>
 	</MvIF>
+	<MvFUNCTIONRETURN VALUE = "{ l.cropped_image:image }">
+</MvFUNCTION>
 
-	<MvASSIGN NAME = "l.output" VALUE = "{ l.cropped_image:image }">
+<MvFUNCTION NAME = "Product_Load_Imagetype" PARAMETERS = "module var, param, product_id, type_code, image_width, image_height, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Product_Load_Imagetype_LowLevel( l.module, l.param, l.product_id, l.imagetype:id, l.image_width, l.image_height ) }">
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "ProductArray_Load_Imagetype" PARAMETERS = "module var, param, product_array var, type_code, image_width, image_height, member" STANDARDOUTPUTLEVEL = "">
@@ -437,25 +441,7 @@
 			<MvFOREACHCONTINUE />
 		</MvIF>
 
-		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product:id, l.imagetype:id, l.product_imagetype ) }">
-			<MvFOREACHCONTINUE />
-		</MvIF>
-
-		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_Load_Dimensions( l.product_imagetype:image_id, l.image_width, l.image_height, l.cropped_image ) }">
-			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_ID( l.product_imagetype:image_id, l.imagedata ) }">
-				<MvFOREACHCONTINUE />
-			</MvIF>
-
-			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_File( l.imagedata:image, l.product_image ) }">
-				<MvFOREACHCONTINUE />
-			</MvIF>
-
-			<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_FindOrInsert_Image_Dimensions( l.product_image, l.image_width, l.image_height, l.cropped_image ) }">
-				<MvFOREACHCONTINUE />
-			</MvIF>
-		</MvIF>
-
-		<MvASSIGN NAME = "l.product" MEMBER = "{ l.member }" VALUE = "{ l.cropped_image:image }">
+		<MvASSIGN NAME = "l.product" MEMBER = "{ l.member }" VALUE = "{ Product_Load_Imagetype_LowLevel( l.module, l.param, l.product:id, l.imagetype:id, l.image_width, l.image_height ) }">
 	</MvFOREACH>
 </MvFUNCTION>
 
@@ -721,6 +707,10 @@
 		<MvFUNCTIONRETURN VALUE = 0 >
 	</MvIF>
 
+	<MvIF EXPR = "{ l.customfields:active EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
 	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Read_Basket( l.module, l.param, l.customfield_name, l.recently_viewed:product_codes ) }">
 
 	<MvASSIGN NAME = "l.recently_viewed:product_codes" VALUE = "{ miva_array_deserialize( l.recently_viewed:product_codes ) }">
@@ -846,3 +836,41 @@
 
 </MvFUNCTION>
 
+
+<MvFUNCTION NAME = "Category_Tree_Image" PARAMETERS = "module var, param, category_id, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Category_Tree_Image( l.settings:category:id, l.settings:category:tree_image )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Module_Load_Code( 'cmp-cssui-cattree', l.cattree ) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvIF EXPR = "{ l.cattree:active EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ l.cattree:module }" NAME = "l.success" VALUE = "{ CSSUI_CatTree_Load( l.category_id, l.temp_output ) }">
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.temp_output:image }">
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Category_Title_Image" PARAMETERS = "module var, param, category_id, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Category_Title_Image( l.settings:category:id, l.settings:category:tree_image )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Module_Load_Code( 'cmp-cssui-cattitle', l.cattitle ) }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvIF EXPR = "{ l.cattitle:active EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0 >
+	</MvIF>
+
+	<MvDO FILE = "{ g.Module_Root $ l.cattitle:module }" NAME = "l.success" VALUE = "{ CSSUI_CatTitle_Load( l.category_id, l.temp_output ) }">
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.temp_output:image }">
+</MvFUNCTION>
