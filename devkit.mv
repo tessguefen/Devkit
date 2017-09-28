@@ -163,6 +163,12 @@
 			.devkit-information {
 				margin-top: 1rem;
 			}
+			.devkit-function pre {
+				font-size: 13.6px;
+			    background-color: #f6f8fa;
+			    padding: 16px;
+				font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+			}
 		</style>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
@@ -453,6 +459,6 @@
 
 <MvFUNCTION NAME = "Pretty_Code" PARAMETERS = "function_name, parameters" STANDARDOUTPUTLEVEL = "html, text">
 <div style="background: #ffffff; overflow:auto;width:auto;padding:.2em 0;">
-<pre style="margin: 0; line-height: 125%; font-weight: bold; font-size: 11px;"><span style="color: #446fbd">&lt;mvt:item</span> <span style="color: #6d8600">name=</span><span style="color: #535353">&quot;devkit&quot;</span> <span style="color: #6d8600">param=</span><span style="color: #535353">&quot;<span style="color: #446fbd"><MvEVAL EXPR = "{ l.function_name }"></span>( <MvEVAL EXPR = "{ l.parameters }"> )&quot;</span> <span style="color: #446fbd">/&gt;</span></pre>
+<pre style="margin: 0; line-height: 125%;"><span style="color: #446fbd">&lt;mvt:item</span> <span style="color: #6d8600">name=</span><span style="color: #535353">&quot;devkit&quot;</span> <span style="color: #6d8600">param=</span><span style="color: #535353">&quot;<span style="color: #446fbd"><MvEVAL EXPR = "{ l.function_name }"></span>( <MvEVAL EXPR = "{ l.parameters }"> )&quot;</span> <span style="color: #446fbd">/&gt;</span></pre>
 </div>
 </MvFUNCTION>
