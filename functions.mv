@@ -900,7 +900,7 @@
 <MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv_Variable" PARAMETERS = "module var, param, code, all_settings var, output var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )
+	|	Readytheme_Load_ContentSection_NoDiv_Variable( code, all_settings var, output var )
 	|	output var returns 1 or 0. This will determine if you should display the content.
 	|
 	</MvCOMMENT>
@@ -929,7 +929,7 @@
 <MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv" PARAMETERS = "module var, param, code, all_settings var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Readytheme_Load_ContentSection_WithoutDiv( code, all_settings var, output var )
+	|	Readytheme_Load_ContentSection_NoDiv( code, all_settings var )
 	|	output var returns 1 or 0. This will determine if you should display the content.
 	|
 	</MvCOMMENT>
@@ -938,3 +938,28 @@
 		<MvEVAL EXPR = "{ l.output }">
 	</MvIF>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Free_Shipping_Qualifying" PARAMETERS = "module var, param, threshold, basket_total, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Free_Shipping_Qualifying( threshold, basket_total, output var )
+	|	output var returns:
+	|		qualifies = 1 | 0
+	|		remaining = 0.00
+	|		formatted_remaining = $0.00
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.determine" VALUE = "{ l.threshold - l.basket_total }">
+
+	<MvIF EXPR = "{ l.determine LE 0 }">
+		<MvASSIGN NAME = "l.output" MEMBER = "qualifies" VALUE = "1">
+		<MvFUNCTIONRETURN VALUE = 1>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.output" MEMBER = "qualifies" VALUE = "0">
+	<MvASSIGN NAME = "l.output" MEMBER = "remaining" VALUE = "{ l.determine }">
+	<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.output:formatted_remaining" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.output:remaining ) }" />
+	<MvFUNCTIONRETURN VALUE = 0>
+</MvFUNCTION>
+

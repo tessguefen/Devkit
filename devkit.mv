@@ -166,6 +166,12 @@
 			</div>
 		</div>
 
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Free_Shipping_Qualifying', 'threshold, basket_total, output var') }">
+			</div>
+		</div>
+
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -276,7 +282,8 @@
 					( l.function_name EQ 'category_title_image' )							OR
 					( l.function_name EQ 'scheduled_promo_pricegroup' )						OR
 					( l.function_name EQ 'readytheme_load_contentsection_nodiv_variable' )	OR
-					( l.function_name EQ 'readytheme_load_contentsection_nodiv' )
+					( l.function_name EQ 'readytheme_load_contentsection_nodiv' )			OR
+					( l.function_name EQ 'free_shipping_qualifying' )
 				}">
 		<MvCOMMENT>
 		|
