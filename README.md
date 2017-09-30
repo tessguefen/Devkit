@@ -8,7 +8,7 @@
 <mvt:item name="devkit" param="Date( format, timestamp, return var )" />
 <mvt:item name="devkit" param="Load_Product( options var, product var )" />
 <mvt:item name="devkit" param="Product_Load_Imagetype( product_id, type_code, image_width, image_height, output var )" />
-<mvt:item name="devkit" param="Product_Load_Imagetype( product_array var, type_code, image_width, image_height, member )" />
+<mvt:item name="devkit" param="ProductArray_Load_Imagetype( product_array var, type_code, image_width, image_height, member )" />
 <mvt:item name="devkit" param="SQL( parameters var )" />
 <mvt:item name="devkit" param="Category_Product_Image( category_id, type_code, image_width, image_height, output var )" />
 <mvt:item name="devkit" param="JSON_Output_Variable( value var, output var )" />
