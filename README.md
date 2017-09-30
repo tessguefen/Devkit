@@ -22,6 +22,9 @@
 <mvt:item name="devkit" param="Scheduled_Promo_PriceGroup( pricegroup_name, output var )" />
 <mvt:item name="devkit" param="Readytheme_Load_ContentSection_NoDiv_Variable( code, all_settings var, output var )" />
 <mvt:item name="devkit" param="Readytheme_Load_ContentSection_NoDiv( code, all_settings var )" />
+<mvt:item name="devkit" param="Free_Shipping_Qualifying( threshold, basket_total, output var )" />
+<mvt:item name="devkit" param="Group_By_Member( array var, member, results var )" />
+<mvt:item name="devkit" param="Hidden_Fields( fields )" />
 ```
 
 ## Load_Product
