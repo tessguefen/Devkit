@@ -25,6 +25,7 @@
 <mvt:item name="devkit" param="Free_Shipping_Qualifying( threshold, basket_total, output var )" />
 <mvt:item name="devkit" param="Group_By_Member( array var, member, results var )" />
 <mvt:item name="devkit" param="Hidden_Fields( fields )" />
+<mvt:item name="devkit" param="Send_Email_Attachment_Custom( from, to, cc, subject, body_message, file_name, file_dir, file_location, result var )" />
 ```
 
 ## Load_Product
