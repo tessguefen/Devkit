@@ -189,6 +189,12 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'Send_Email_Attachment_Custom', 'from, to, cc, subject, body_message, file_name, file_dir, file_location, result var') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Products_Also_Purchased_Query', 'product_id, max, type_code, image_width, image_height, image_member, output var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -303,7 +309,8 @@
 					( l.function_name EQ 'free_shipping_qualifying' )						OR
 					( l.function_name EQ 'group_by_member' )								OR
 					( l.function_name EQ 'hidden_fields' )									OR
-					( l.function_name EQ 'send_email_attachment_custom' )
+					( l.function_name EQ 'send_email_attachment_custom' )					OR
+					( l.function_name EQ 'products_also_purchased_query' )
 				}">
 		<MvCOMMENT>
 		|

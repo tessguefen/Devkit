@@ -997,6 +997,7 @@
 	|	fields = comma seperated global variables
 	|		Example:
 	|			'g.Super_Awesome,g.Chosen_One,g.Cats_Equal_Love'
+	|			'g.Basket' (this would output all the members)
 	|
 	</MvCOMMENT>
 	<MvHIDE FIELDS = "{ l.fields }">
@@ -1086,4 +1087,60 @@
 	</MvIF>
 	<MvASSIGN NAME = "l.result:success" VALUE = "1">
 	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "Products_Also_Purchased_Query" PARAMETERS = "module var, param, product_id, max, type_code, image_width, image_height, image_member, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Products_Also_Purchased_Query( product_id, max, type_code, image_width, image_height, image_member, output var )
+	|	This is used to pull Directly from sXX_Orders/ sXX_OrderItems.
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvOPENVIEW NAME	= "Merchant"
+				VIEW	= "Also_Purchased"
+				QUERY	= "{ '	SELECT
+									product_id
+								FROM
+									' $ g.Store_Table_Prefix $ 'OrderItems
+								WHERE
+									order_id IN (SELECT order_id FROM ' $ g.Store_Table_Prefix $ 'OrderItems WHERE product_id = ?  ORDER BY order_id DESC)
+								AND
+									product_id <> ?
+								GROUP BY
+									product_id
+								LIMIT ?' }"
+				FIELDS	= "l.product_id, l.product_id, l.max">
+	<MvIF EXPR = "{ g.MvOPENVIEW_Error }">
+		<MvFUNCTIONRETURN VALUE = "{ [ g.Library_Filename_Utilities ].Error( 'MER-DBE-ATT-00009', g.MvOPENVIEW_Error ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.output:count" VALUE = 0>
+	<MvWHILE EXPR = "{ NOT Also_Purchased.d.EOF }">
+		<MvASSIGN NAME = "l.output:count"												VALUE = "{ l.output:count + 1 }">
+		
+		<MvASSIGN NAME = "l.output:products" INDEX = "{ l.output:count }" MEMBER = "id"	VALUE = "{ Also_Purchased.d.product_id }">
+
+		<MvSKIP NAME = "Merchant" VIEW = "Also_Purchased" ROWS = 1>
+	</MvWHILE>
+	<MvCLOSEVIEW NAME = "Merchant" VIEW = "Also_Purchased">
+
+	<MvIF EXPR = "{ miva_array_elements( l.output:products ) EQ 0 }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvFOREACH ITERATOR = "l.product" ARRAY = "l.output:products">
+		<MvASSIGN NAME = "l.options:id" VALUE = "{ l.product:id }">
+		<MvASSIGN NAME = "l.options:include" VALUE = "runtime,currency,url">
+		<MvASSIGN NAME = "l.product" VALUE = "{ _Load_Product( l.options ) }">
+	</MvFOREACH>
+
+	<MvASSIGN NAME = "l.success" VALUE = "{ ProductArray_Load_Imagetype( l.module, l.param, l.output:products, l.type_code, l.image_width, l.image_height, l.image_member ) }">
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ l.output:products }">
 </MvFUNCTION>
