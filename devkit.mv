@@ -84,7 +84,7 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Load_Imagetype', 'product_array var, type_code, image_width, image_height, member') }">
+				<MvEVAL EXPR = "{ Pretty_Code( 'ProductArray_Load_Imagetype', 'product_array var, type_code, image_width, image_height, member') }">
 			</div>
 		</div>
 
