@@ -1,6 +1,6 @@
 # Devkit
 
-## All Functions (09/27/2017)
+## All Functions
 ```xml
 <mvt:item name="devkit" param="Format_Currency( price, formatted_price var )" />
 <mvt:item name="devkit" param="Upcharge( charge_name, charge_type, amount, tax_exempt )" />
