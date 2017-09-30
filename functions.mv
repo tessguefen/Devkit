@@ -979,3 +979,25 @@
 		</MvIF>
 	</MvFOREACH>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Group_By_Structure" PARAMETERS = "module var, param, array var, structure, member, results var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Group_By_Structure( array var, structure, member, results var )
+	|
+	</MvCOMMENT>
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Hidden_Fields" PARAMETERS = "module var, param, fields" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Hidden_Fields( fields )
+	|	This will output hidden fields to the page.
+	|	fields = comma seperated global variables
+	|		Example:
+	|			'g.Super_Awesome,g.Chosen_One,g.Cats_Equal_Love'
+	|
+	</MvCOMMENT>
+	<MvHIDE FIELDS = "{ l.fields }">
+</MvFUNCTION>
