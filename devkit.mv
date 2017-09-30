@@ -172,6 +172,12 @@
 			</div>
 		</div>
 
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Group_By_Member', 'array var, member, results var') }">
+			</div>
+		</div>
+
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -283,7 +289,8 @@
 					( l.function_name EQ 'scheduled_promo_pricegroup' )						OR
 					( l.function_name EQ 'readytheme_load_contentsection_nodiv_variable' )	OR
 					( l.function_name EQ 'readytheme_load_contentsection_nodiv' )			OR
-					( l.function_name EQ 'free_shipping_qualifying' )
+					( l.function_name EQ 'free_shipping_qualifying' )						OR
+					( l.function_name EQ 'group_by_member' )
 				}">
 		<MvCOMMENT>
 		|

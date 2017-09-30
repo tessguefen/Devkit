@@ -963,3 +963,19 @@
 	<MvFUNCTIONRETURN VALUE = 0>
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Group_By_Member" PARAMETERS = "module var, param, array var, member, results var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Group_By_Member( array var, member, results var )
+	|
+	</MvCOMMENT>
+	<MvFOREACH ITERATOR = "l.item" ARRAY  = "l.array">
+		<MvIF EXPR = "{ miva_array_search( l.results, 0, l.result_item, 'l.result_item:member EQ miva_variable_value( \'l.item:\' $ l.member ) ' ) }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.result_item:groups, l.item, -1 ) }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.temp:member" VALUE = "{ miva_variable_value( 'l.item:' $ l.member ) }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.temp:groups, l.item, -1) }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.results, l.temp, -1) }">
+		</MvIF>
+	</MvFOREACH>
+</MvFUNCTION>
