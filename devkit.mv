@@ -184,6 +184,11 @@
 			</div>
 		</div>
 
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Send_Email_Attachment_Custom', 'from, to, cc, subject, body_message, file_name, file_dir, file_location, result var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -297,7 +302,8 @@
 					( l.function_name EQ 'readytheme_load_contentsection_nodiv' )			OR
 					( l.function_name EQ 'free_shipping_qualifying' )						OR
 					( l.function_name EQ 'group_by_member' )								OR
-					( l.function_name EQ 'hidden_fields' )
+					( l.function_name EQ 'hidden_fields' )									OR
+					( l.function_name EQ 'send_email_attachment_custom' )
 				}">
 		<MvCOMMENT>
 		|

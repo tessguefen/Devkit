@@ -1001,3 +1001,89 @@
 	</MvCOMMENT>
 	<MvHIDE FIELDS = "{ l.fields }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Send_Email_Attachment_Custom" PARAMETERS = "module var, param, from, to, cc, subject, body_message, file_name, file_dir, file_location, result var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Send_Email_Attachment_Custom( from, to, cc, subject, body_message, file_name, file_dir, file_location, result var )
+	|	This works like Send_Email_Attachment, but the body_message is passed.
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "l.crlf"	VALUE = "{ asciichar( 13 ) $ asciichar( 10 ) }">
+
+	<MvASSIGN NAME = "l.mix_boundary"	VALUE = "{ 'miva-mixed_' $ [ g.Module_Library_Utilities ].GenerateBoundary() }">
+	<MvASSIGN NAME = "l.alt_boundary"	VALUE = "{ 'miva-alt_' $ [ g.Module_Library_Utilities ].GenerateBoundary() }">
+
+	<MvASSIGN NAME = "l.mailhost"		VALUE = "{ g.Domain:mailhost }">
+
+	<MvIF EXPR = "{ len( g.Domain:mailmeth ) }">
+		<MvIF EXPR = "{ g.Domain:mail_angl }">
+			<MvASSIGN NAME = "l.from" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.from ) }">
+			<MvASSIGN NAME = "l.to" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.to ) }">
+			<MvASSIGN NAME = "l.cc" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.cc ) }">
+		</MvIF>
+
+		<MvIF EXPR = "{ ISNULL trim( l.body_message ) }">
+			<MvASSIGN NAME = "l.body_message"	VALUE = "{ 'By your request, Miva Merchant has emailed your exported file \'' $ l.file_name $ '\' from your \'' $ g.Store:name $ '\' store.' }">
+		</MvIF>
+
+		<MvCAPTURE VARIABLE = "l.headers"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailHeaders( l.mix_boundary, l.alt_boundary, l.body_message, l.crlf  ) }"></MvCAPTURE>
+		<MvCAPTURE VARIABLE = "l.message"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailMessage( l.mix_boundary, l.file_name, l.file_dir, l.file_location, l.crlf ) }"></MvCAPTURE>
+	
+		<MIVA MvCOMMERCE_ERROR = "nonfatal, nodisplay">
+		<MvCOMMERCE METHOD = "{ g.Domain:mailmeth }" FIELDS = "to,from,cc,subject,headers,message,mailhost">
+		</MvCOMMERCE>
+
+		<MvIF EXPR = "{ g.MvCOMMERCE_ERROR }">
+			<MvASSIGN NAME = "l.result:error" VALUE = "1">
+			<MvASSIGN NAME = "l.result:message" VALUE = "{ g.MvCOMMERCE_ERROR }">
+			<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'MER-UTL-PUB-00017', g.MvCOMMERCE_ERROR ) }">
+		</MvIF>
+	<MvELSE>
+		<MIVA MvSMTP_Error = "nonfatal, nodisplay">
+
+		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Format( l.from, l.from_header, l.from_address ) }">
+		<MvASSIGN NAME = "l.null" 				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.to, l.to_headers, l.to_addresses ) }">
+		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.cc, l.cc_headers, l.cc_addresses ) }">
+		
+		<MvIF EXPR = "{ g.Domain:mail_angl }">
+			<MvASSIGN NAME = "l.from_address" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.from_address ) }">
+			<MvASSIGN NAME = "l.to_addresses" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.to_addresses ) }">
+			<MvASSIGN NAME = "l.cc_addresses" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.cc_addresses ) }">
+		</MvIF>
+
+		<MvASSIGN NAME = "l.miva_headers" 		VALUE = "{ [ g.Module_Library_Utilities].Create_Miva_Email_Headers( l.from_header, l.to_headers, l.cc_headers, l.subject ) }">
+		<MvASSIGN NAME = "l.port" 				VALUE = "{ g.Domain:mailport }">
+		<MvASSIGN NAME = "l.username" 			VALUE = "{ g.Domain:mailuser }">
+		<MvASSIGN NAME = "l.password" 			VALUE = "{ [ g.Module_Library_Crypto ].Decrypt_Payment_Password( g.Domain:mailpass ) }">
+		
+		<MvIF EXPR = "{ NOT ISNULL g.Domain:mailflags }">
+			<MvASSIGN NAME = "l.flags" 			VALUE = "{ g.Domain:mailflags $ ', noheaders' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.flags" 			VALUE = "noheaders">
+		</MvIF>
+
+		<MvSMTP FROM 	 = "{ l.from_address }" 
+				TO 		 = "{ l.to_addresses }" 
+				CC 		 = "{ l.cc_addresses }" 
+				SUBJECT  = "{ l.subject }" 
+				MAILHOST = "{ l.mailhost }"
+				FLAGS 	 = "{ l.flags }"
+				PORT 	 = "{ l.port }"
+				USERNAME = "{ l.username }"
+				PASSWORD = "{ l.password }">
+			<MvEVAL EXPR = "{ l.miva_headers }">
+
+			<MvASSIGN NAME = "l.ok" 			VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailHeaders( l.mix_boundary, l.alt_boundary, l.body_message, l.crlf ) }">
+			<MvASSIGN NAME = "l.ok" 			VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailMessage( l.mix_boundary, l.file_name, l.file_dir, l.file_location, l.crlf ) }">
+		</MvSMTP>
+
+		<MvIF EXPR = "{ g.MvSMTP_Error }">
+			<MvASSIGN NAME = "l.result:error" VALUE = "1">
+			<MvASSIGN NAME = "l.result:message" VALUE = "{ g.MvSMTP_Error }">
+			<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'MER-UTL-PUB-00018', g.MvSMTP_Error ) }">
+		</MvIF>
+	</MvIF>
+	<MvASSIGN NAME = "l.result:success" VALUE = "1">
+	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
