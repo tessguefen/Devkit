@@ -5,7 +5,85 @@
 	<MvASSIGN NAME = "l.module:version"		VALUE = "1.000">
 	<MvASSIGN NAME = "l.module:api_ver"		VALUE = "9.00">
 	<MvASSIGN NAME = "l.module:description"	VALUE = "Super Fantastic Awesome Magic Fireworks developer toolkit.">
-	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component">
+	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component, system">
+</MvFUNCTION>
+
+<MvCOMMENT>
+| ========================================================================================================================
+|	SYSTEM 
+| ========================================================================================================================
+</MvCOMMENT>
+
+<MvFUNCTION NAME = "SystemModule_Action" PARAMETERS = "module var, action" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Check for `g.DKIG_Code` & `g.DKIG_Value`
+	|		Check for `ADPR` & `ADPM`
+	|
+	</MvCOMMENT>
+	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">	
+		<MvASSIGN NAME = "g.DKIG" VALUE = "">
+
+		<MvIF EXPR = "{ 'ADPR' CIN l.action }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Determine_Same( g.Product_Code, g.Quantity, g.Attributes, g.Product_Attributes, g.DKIG_Code, g.DKIG_Value, g.DKIG:Updates, g.DKIG:New ) }">
+		</MvIF>
+
+		<MvIF EXPR = "{ ( 'ADPM' CIN l.action ) AND g.Products }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_collapse( g.Products ) }">
+			<MvFOREACH ITERATOR = "l.product" ARRAY = "g.Products">
+				<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Determine_Same( l.product:code, l.product:quantity, g.Attributes, l.product:attributes, g.DKIG_Code, g.DKIG_Value, g.DKIG:Updates, g.DKIG:New ) }">
+			</MvFOREACH>
+		</MvIF>
+	</MvIF>
+	<MvCOMMENT>
+	|
+	| Check for `g.DKIG_Update`
+	|	Check for `QTYG` & `RGRP`
+	|
+	</MvCOMMENT>
+	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Update ) }">
+		<MvIF EXPR = "{ 'QTYG' CIN l.action }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Quantity_Updates ) }">
+		</MvIF>
+		<MvIF EXPR = "{ 'RGRP' CIN l.action }">
+			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Remove_Updates ) }">
+		</MvIF>
+	</MvIF>
+	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "SystemModule_Screen" PARAMETERS = "module var, screen" STANDARDOUTPUTLEVEL = "">
+	<MvIF EXPR = "{ g.DKIG:Updates }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Seperate_Products_Out( g.DKIG:Updates, g.DKIG_Code, g.DKIG_Value ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ g.DKIG:New }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Update_New_Products( g.DKIG:New ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ g.DKIG:Updates OR g.DKIG:New }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ [ g.Module_Feature_PGR_RT ].Runtime_Discount_Basket( g.Basket ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ g.DKIG:Quantity_Updates }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Update_Grouped_Items( g.DKIG:Quantity_Updates, g.Quantity ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ g.DKIG:Remove_Updates }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Remove_Grouped_Items( g.DKIG:Remove_Updates ) }">
+	</MvIF>
+
+	<MvCOMMENT>
+		Uncomment when complete. This is for debugging.
+		<MvASSIGN NAME = "g.DKIG" VALUE = "">
+	</MvCOMMENT>
+	<MvFUNCTIONRETURN VALUE = 1>
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "SystemModule_UIException" PARAMETERS = "module var, exception" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 
@@ -195,6 +273,50 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'Products_Also_Purchased_Query', 'product_id, max, type_code, image_width, image_height, image_member, output var') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<strong>Item Groups</strong>
+			</div>
+			<div class="devkit-function__docs">
+				<p><strong>DKIG</strong> = Devkit Item Groups</p>
+
+				<p>To use Item Groups, you must include a few hidden inputs. The only actions this will trigger on is <strong>ADPR</strong> and <strong>ADPM</strong>.</p>
+
+				<p><strong>DKIG_Code</strong>: The value of this input will be the attribute code that will be used. <strong>Please Note</strong>: There is no validation on the text you send over (i.e. you could pass through text with spaces).</p>
+
+				<p><strong>DKIG_Value</strong>: The value of the attribute. This will be stored in the <strong>data</strong> member.</p>
+
+				<p>Example:<br />
+					<pre>
+						&lt;input type="hidden" name="DKIM_Code" value="My_Custom_Attribute_Code" /&gt;
+						&lt;input type="hidden" name="DKIM_Value" value="My Custom Value" /&gt;
+					</pre>
+				</p>
+
+				<p>If you want to tie the groups together when they are updated (this includes removal), you will need to include a hidden field in the form. <strong>Please Note</strong>: If you use this for the update function, it will also remove items if the update quantity is set to 0.</p>
+
+				<p><strong>DKIM_Update</strong>: The value of this must be the custom attribute code that you want to use. It will find all basket items with the same <strong>attr_code</strong>, and <strong>data</strong> from the Item that was updated (g.Basket_Group). This only triggers on the following actions: <strong>QTYG</strong> and <strong>RGRP</strong>.</p>
+
+				<p>Example:<br />
+					<pre>
+						&lt;input type="hidden" name="DKIM_Update" value="My_Custom_Attribute_Code" /&gt;
+					</pre>
+				</p>
+
+				<p>You can seperate out basket groups into 2 arrays by using the function <strong>ItemGroup_Group_Items</strong>. This will output 2 arrays: <strong>Regular/ Non-Grouped Items</strong> and <strong>Grouped Items</strong>.</p>
+
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'ItemGroup_Group_Items', 'items var, custom_attribute, regular_items var, grouped_items var') }">
+			</div>
+			<div class="devkit-function__docs">
+				This function is used to seperate out `grouped` items. This would need to be used in conjunction with `Item Groups`.
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -310,7 +432,8 @@
 					( l.function_name EQ 'group_by_member' )								OR
 					( l.function_name EQ 'hidden_fields' )									OR
 					( l.function_name EQ 'send_email_attachment_custom' )					OR
-					( l.function_name EQ 'products_also_purchased_query' )
+					( l.function_name EQ 'products_also_purchased_query' )					OR
+					( l.function_name EQ 'itemgroup_group_items' )
 				}">
 		<MvCOMMENT>
 		|
@@ -374,10 +497,14 @@
 |	functions.mv
 |		All Devkit functions
 |
+|	item_groups.mv
+|		Helper functions for `Item Groups`
+|
 </MvCOMMENT>
 
 
 <MvINCLUDE FILE = "functions.mv">
+<MvINCLUDE FILE = "item_groups.mv">
 
 
 <MvFUNCTION NAME = "Parse_Function_Parameters" PARAMETERS = "string, function_name var, parameters var, parameter_count var" STANDARDOUTPUTLEVEL = "">
