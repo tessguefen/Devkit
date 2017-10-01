@@ -27,6 +27,7 @@
 <mvt:item name="devkit" param="Hidden_Fields( fields )" />
 <mvt:item name="devkit" param="Send_Email_Attachment_Custom( from, to, cc, subject, body_message, file_name, file_dir, file_location, result var )" />
 <mvt:item name="devkit" param="Products_Also_Purchased_Query( product_id, max, type_code, image_width, image_height, image_member, output var )" />
+<mvt:item name="devkit" param="ItemGroup_Group_Items( items var, custom_attribute, regular_items var, grouped_items var )" />
 ```
 
 ## Load_Product
