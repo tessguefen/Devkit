@@ -344,6 +344,21 @@
 				This will not work with items using Variant Basket Replace (module).
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Replace_Special_Characters', 'input_string, outputstring var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Images_Srcset', 'product_id, type_code, image_width, image_height, output var') }">
+			</div>
+			<div class="devkit-function__docs">
+				This will output to :src and :srcset in the output var.
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -462,7 +477,9 @@
 					( l.function_name EQ 'products_also_purchased_query' )					OR
 					( l.function_name EQ 'itemgroup_group_items' )							OR
 					( l.function_name EQ 'create_customer_email_password' )					OR
-					( l.function_name EQ 'reorder_order_form' )
+					( l.function_name EQ 'reorder_order_form' )								OR
+					( l.function_name EQ 'replace_special_characters' )						OR
+					( l.function_name EQ 'product_images_srcset' )
 				}">
 		<MvCOMMENT>
 		|

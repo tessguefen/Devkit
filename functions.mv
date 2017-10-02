@@ -1272,3 +1272,66 @@
 		<MvASSIGN NAME = "l.item" MEMBER = "{ l.member }" VALUE = "{ l.output }">
 	</MvFOREACH>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Replace_Special_Characters" PARAMETERS = "module var, param, input_string, output_string var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Replace_Special_Characters( input_string, outputstring var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.special_characters" VALUE = "{ miva_array_deserialize('Á,á,À,Â,à,Â,â,Ä,ä,Ã,ã,Å,å,Æ,æ,Ç,ç,Ð,ð,É,é,È,è,Ê,ê,Ë,ë,Í,í,Ì,ì,Î,î,Ï,ï,Ñ,ñ,Ó,ó,Ò,ò,Ô,ô,Ö,ö,Õ,õ,Ø,ø,ß,Þ,þ,Ú,ú,Ù,ù,Û,û,Ü,ü,Ý,ý,ÿ') }">
+	<MvASSIGN NAME = "l.replace_characters" VALUE = "{ miva_array_deserialize('A,a,A,A,a,A,a,A,a,A,a,A,a,AE,ae,C,c,D,d,E,e,E,e,E,e,E,e,I,i,I,i,I,i,I,i,N,n,O,o,O,o,O,o,O,o,O,o,O,o,s,T,t,U,u,U,u,U,u,U,u,Y,y,y') }">
+	<MvASSIGN NAME = "l.output_string" VALUE = "{ glosub_array( l.input_string, l.special_characters, l.replace_characters ) }">
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Product_Images_Srcset" PARAMETERS = "module var, param, product_id, type_code, image_width, image_height, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Product_Images_Srcset( product_id, type_code, image_width, image_height, output var )
+	|	-> Create srcsets from the width x height
+	| 	-> size entered will be smallest (1x)
+	|	-> x2, x3, x4.
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ImageType_Load_Code( l.type_code, l.imagetype ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
+	</MvIF>
+
+	<MvASSIGN NAME = "l.output" VALUE = "">
+
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "scale" INDEX = "1" VALUE = "1x">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "scale" INDEX = "2" VALUE = "2x">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "scale" INDEX = "3" VALUE = "3x">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "scale" INDEX = "4" VALUE = "4x">
+
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "width" INDEX = "1" VALUE = "{ l.image_width }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "width" INDEX = "2" VALUE = "{ l.image_width * 2 }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "width" INDEX = "3" VALUE = "{ l.image_width * 3 }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "width" INDEX = "4" VALUE = "{ l.image_width * 4 }">
+
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "height" INDEX = "1" VALUE = "{ l.image_height }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "height" INDEX = "2" VALUE = "{ l.image_height * 2 }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "height" INDEX = "3" VALUE = "{ l.image_height * 3 }">
+	<MvASSIGN NAME = "l.dimensions" MEMBER = "height" INDEX = "4" VALUE = "{ l.image_height * 4 }">
+
+	<MvFOREACH ITERATOR = "l.dimension" ARRAY="l.dimensions">
+		<MvASSIGN NAME = "l.dimension" MEMBER = "image" VALUE = "{ Product_Load_Imagetype_LowLevel( l.module, l.param, l.product_id, l.imagetype:id, l.dimension:width, l.dimension:height ) }">
+		<MvIF EXPR = "{ l.dimension:image }">
+			<MvIF EXPR = "{ ISNULL l.output:src }">
+				<MvASSIGN NAME = "l.output:src" VALUE = "{ l.dimension:image }">
+			</MvIF>
+			<MvIF EXPR = "{ l.output:srcset }">
+				<MvASSIGN NAME = "l.output:srcset" VALUE = "{ l.output:srcset $ ', ' }">
+			</MvIF>
+			<MvASSIGN NAME = "l.output:srcset" VALUE = "{ l.output:srcset $ l.dimension:image $ ' ' $ l.dimension:scale }">
+		</MvIF>
+	</MvFOREACH>
+
+</MvFUNCTION>
