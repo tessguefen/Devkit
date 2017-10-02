@@ -479,7 +479,8 @@
 					( l.function_name EQ 'create_customer_email_password' )					OR
 					( l.function_name EQ 'reorder_order_form' )								OR
 					( l.function_name EQ 'replace_special_characters' )						OR
-					( l.function_name EQ 'product_images_srcset' )
+					( l.function_name EQ 'product_images_srcset' )							OR
+					( l.function_name EQ 'harlemshake' )
 				}">
 		<MvCOMMENT>
 		|
