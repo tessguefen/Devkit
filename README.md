@@ -30,6 +30,8 @@
 <mvt:item name="devkit" param="ItemGroup_Group_Items( items var, custom_attribute, regular_items var, grouped_items var )" />
 <mvt:item name="devkit" param="Create_Customer_Email_Password( email, password, password_confirm, messages var, redirect_to )" />
 <mvt:item name="devkit" param="ReOrder_Order_Form( orderitems var, show_quantity_inputs, member )" />
+<mvt:item name="devkit" param="Replace_Special_Characters( input_string, outputstring var )" />
+<mvt:item name="devkit" param="Product_Images_Srcset( product_id, type_code, image_width, image_height, output var )" />
 ```
 
 ## Load_Product
