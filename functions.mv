@@ -1144,3 +1144,131 @@
 
 	<MvASSIGN NAME = "l.output" VALUE = "{ l.output:products }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Create_Customer_Email_Password" PARAMETERS = "module var, param, email, password, password_confirm, messages var, redirect_to" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Create_Customer_Email_Password( email, password, password_confirm, messages var, redirect_to )
+	|		-> Need a better name for this function.
+	|		-> Redirect_to = URL ( e.g. l.settings:urls:ACLN:secure ). If blank, no redirection.
+	|		-> messages var returns `error_messages` and `information_messages`
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.email"				VALUE = "{ trim( l.email ) }">
+	<MvASSIGN NAME = "l.password"			VALUE = "{ trim( l.password ) }">
+	<MvASSIGN NAME = "l.password_confirm"	VALUE = "{ trim( l.password_confirm ) }">
+	<MvASSIGN NAME = "l.redirect_to"		VALUE = "{ trim( l.redirect_to ) }">
+
+
+	<MvIF EXPR = "{ ( ISNULL l.email ) OR ( ISNULL l.password ) OR ( ISNULL l.password_confirm ) }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'Please fill in all required fields for creating a new account.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Admin ].Validate_Email( l.email ) }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'Please make sure that your email address is a valid email.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvIF EXPR = "{ l.password NE l.password_confirm }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'The passwords do not match.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvIF EXPR = "{ [ g.Module_Feature_CUS_DB ].Customer_Load_Email( l.email, l.customer_exsists ) }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'The email address you entered is already in use.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.new_customer" MEMBER = "login"			VALUE = "{ l.email }">
+	<MvASSIGN NAME = "l.new_customer" MEMBER = "pw_email"		VALUE = "{ l.email }">
+	<MvASSIGN NAME = "l.new_customer" MEMBER = "password"		VALUE = "{ l.password }">
+	<MvASSIGN NAME = "l.new_customer" MEMBER = "pgrpcount"		VALUE = "0">
+
+	<MvIF EXPR = "{ NOT [ g.Module_Feature_CUS_UT ].CustomerLogin_Generate_Email( l.new_customer:pw_email, l.new_customer:login ) }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'An error has occured.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [ g.Module_Feature_CUS_DB ].Customer_Insert( l.new_customer ) }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'An error has occured.', -1 ) }">
+		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "g.Customer_LoginEmail"	VALUE = "{ l.new_customer:pw_email }">
+	<MvASSIGN NAME = "g.Customer_Password"		VALUE = "{ l.new_customer:password }">
+
+	<MvDO FILE = "{ g.Module_Feature_CUS_RT }" NAME = "l.success" VALUE = "{ Action_Customer_Login() }">
+
+	<MvIF EXPR = "{ NOT ISNULL l.redirect_to }">
+		<MvASSIGN NAME = "l.status" VALUE = "{ miva_output_header( 'Location', l.redirect_to ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:information_messages, 'You have successfully created an account!', -1 ) }">
+	<MvASSIGN NAME = "l.messages:information_message_count" VALUE = "{ l.messages:information_message_count + 1 }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "ReOrder_Order_Form" PARAMETERS = "module var, param, orderitems var, show_quantity_inputs, member" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	ReOrder_Order_Form( orderitems var, show_quantity_inputs, member )
+	|	This function will assign all the hidden inputs needed to re-order the order to a specific member.
+	|	This will basically create an ADPM form, without the `<form>` tags wrapping it.
+	|
+	|	This will not work with Variant Basket Replace (module).
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.counter" VALUE = "0" />
+
+	<MvFOREACH ITERATOR = "l.item" ARRAY = "l.orderitems">
+		<MvIF EXPR = "{ l.item:reorder NE 1 }">
+			<MvFOREACHCONTINUE />
+		</MvIF>
+
+		<MvASSIGN NAME = "l.counter" VALUE = "{ l.counter + 1 }">
+		<MvASSIGN NAME = "l.option_counter" VALUE = "0">
+
+		<MvASSIGN NAME = "l.output" VALUE = "{ '<input type="hidden" name="Products[' $ l.counter $ ']:code" value="' $ l.item:code $ '" />' }">
+
+		<MvFOREACH ITERATOR = "l.option" ARRAY = "l.item:options">
+			<MvASSIGN NAME = "l.option_counter" VALUE = "{ l.option_counter + 1 }">
+			<MvIF EXPR = "{ l.option:option_id GT 0 }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ 	l.output $ '
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:code" value="' $ l.option:attr_code $ '" />
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:value" value="' $ l.option:opt_code $ '" />' }">
+			<MvELSEIF EXPR = "{ NOT ISNULL l.option:data }">
+				<MvIF EXPR = "{ ( l.option:attr_code EQ 'digitaldownload' ) AND ( NOT ISNULL l.option:digital_download_url ) }">
+					<MvASSIGN NAME = "l.output" VALUE = "{ 	l.output $ '
+															<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:code" value="' $ l.option:attr_code $ '" />
+															<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:value" value="' $ l.option:data $ '" />' }">
+				</MvIF>
+			<MvELSEIF EXPR = "{ NOT ISNULL l.option:data_long }">
+				<MvASSIGN NAME = "l.output" VALUE = "{ 	l.output $ '
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:code" value="' $ l.option:attr_code $ '" />
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:value" value="' $ l.option:data_long $ '" />' }">
+			<MvELSE>
+				<MvASSIGN NAME = "l.output" VALUE = "{ 	l.output $ '
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:code" value="' $ l.option:attr_code $ '" />
+														<input type="hidden" name="Products[' $ l.counter $ ']:attributes[' $ l.option_counter $ ']:value" value="1" />' }">
+			</MvIF>
+		</MvFOREACH>
+
+		<MvIF EXPR = "{ l.show_quantity_inputs EQ 1 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '<input type="text" name="Products[' $ l.counter $ ']:quantity" value="' $ l.item:quantity $ '" />' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '<input type="hidden" name="Products[' $ l.counter $ ']:quantity" value="' $ l.item:quantity $ '" />' }">
+		</MvIF>
+
+		<MvASSIGN NAME = "l.item" MEMBER = "{ l.member }" VALUE = "{ l.output }">
+	</MvFOREACH>
+</MvFUNCTION>

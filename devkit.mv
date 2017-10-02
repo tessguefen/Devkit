@@ -54,6 +54,13 @@
 
 
 <MvFUNCTION NAME = "SystemModule_Screen" PARAMETERS = "module var, screen" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Assign g.Module_Devkit, for use with mvt:dos.
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'util/devkit.mvc' }">
+
 	<MvIF EXPR = "{ g.DKIG:Updates }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Seperate_Products_Out( g.DKIG:Updates, g.DKIG_Code, g.DKIG_Value ) }">
 	</MvIF>
@@ -317,6 +324,26 @@
 				This function is used to seperate out `grouped` items. This would need to be used in conjunction with `Item Groups`.
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Create_Customer_Email_Password', 'email, password, password_confirm, messages var, redirect_to') }">
+			</div>
+			<div class="devkit-function__docs">
+				Create a customer account with an email address, and password. There is validation on the email, password, and password confirmation. You can choose to redirect a customer after they have been successfully logged into their new account. If `redirect_to` is left blank (i.e. empty string), it will not redirect.
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'ReOrder_Order_Form', 'orderitems var, show_quantity_inputs, member') }">
+			</div>
+			<div class="devkit-function__docs">
+				This function will assign all the hidden inputs needed to re-order the order to a specific member.<br />
+				This will basically create an ADPM form, without the `&lt;form&gt;` tags wrapping it.<br />
+				This will not work with items using Variant Basket Replace (module).
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -433,7 +460,9 @@
 					( l.function_name EQ 'hidden_fields' )									OR
 					( l.function_name EQ 'send_email_attachment_custom' )					OR
 					( l.function_name EQ 'products_also_purchased_query' )					OR
-					( l.function_name EQ 'itemgroup_group_items' )
+					( l.function_name EQ 'itemgroup_group_items' )							OR
+					( l.function_name EQ 'create_customer_email_password' )					OR
+					( l.function_name EQ 'reorder_order_form' )
 				}">
 		<MvCOMMENT>
 		|
