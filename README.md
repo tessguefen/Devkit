@@ -28,6 +28,8 @@
 <mvt:item name="devkit" param="Send_Email_Attachment_Custom( from, to, cc, subject, body_message, file_name, file_dir, file_location, result var )" />
 <mvt:item name="devkit" param="Products_Also_Purchased_Query( product_id, max, type_code, image_width, image_height, image_member, output var )" />
 <mvt:item name="devkit" param="ItemGroup_Group_Items( items var, custom_attribute, regular_items var, grouped_items var )" />
+<mvt:item name="devkit" param="Create_Customer_Email_Password( email, password, password_confirm, messages var, redirect_to )" />
+<mvt:item name="devkit" param="ReOrder_Order_Form( orderitems var, show_quantity_inputs, member )" />
 ```
 
 ## Load_Product
