@@ -371,6 +371,18 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Index', 'array var, index, value') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_QueryStrings_To_Structure', 'uri, array, return var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_QueryString', 'uri, query_string, value, return var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>

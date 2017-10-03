@@ -1409,7 +1409,7 @@
 <MvFUNCTION NAME = "URI_Add_Replace_QueryString" PARAMETERS = "module var, param, uri, query_string, value, return var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	URI_Replace_QueryString( uri, query_string, value, return var )
+	|	URI_Add_Replace_QueryString( uri, query_string, value, return var )
 	|
 	</MvCOMMENT>
 	<MvIF EXPR = "{ NOT URI_QueryStrings_To_Structure( l.module, l.param, l.uri, 1, l.output ) }">
@@ -1424,6 +1424,8 @@
 		<MvASSIGN NAME = "l.uri_qm_index" VALUE = "{ indexof( '?', l.uri, 1 ) }">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.uri, 0, l.uri_qm_index ) }">
 	</MvIF>
+
+	<MvASSIGN NAME = "l.value" VALUE = "{ glosub( l.value, ' ', '%20' ) }">
 
 	<MvIF EXPR = "{ miva_array_search( l.output, 0, l.q, 'miva_member_exists( l.q, l.query_string )' ) }">
 		<MvASSIGN NAME = "l.q" MEMBER = "{ l.query_string }" VALUE = "{ l.value }">
@@ -1441,7 +1443,7 @@
 		</MvIF>
 
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_struct_members( l.query, l.query_members ) }">
-		<MvASSIGN NAME = "l.return" VALUE = "{ l.return $ l.query_members[1] $ '=' $ miva_variable_value( 'l.query:' $ l.query_members[1] ) }">
+		<MvASSIGN NAME = "l.return" VALUE = "{ l.return $ l.query_members[1] $ '=' $  miva_variable_value( 'l.query:' $ l.query_members[1] ) }">
 	</MvFOREACH>
 
 	<MvASSIGN NAME = "l.return" VALUE = "{ l.original_uri $ l.return }">
