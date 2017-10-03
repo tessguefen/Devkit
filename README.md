@@ -42,6 +42,7 @@
 <mvt:item name="devkit" param="URI_Add_Replace_UserPass( uri, user, pass, output var )" />
 <mvt:item name="devkit" param="URI_Add_Replace_Scheme( uri, new_scheme, output var )" />
 <mvt:item name="devkit" param="URI_Replace_TLD( uri, new_tld, output var )" />
+<mvt:item name="devkit" param="URI_Replace_Hash( uri, new_hash, output var )" />
 ```
 
 ## Load_Product
