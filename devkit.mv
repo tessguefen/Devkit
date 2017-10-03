@@ -10,7 +10,7 @@
 
 <MvCOMMENT>
 | ========================================================================================================================
-|	SYSTEM 
+|	SYSTEM
 | ========================================================================================================================
 </MvCOMMENT>
 
@@ -21,7 +21,7 @@
 	|		Check for `ADPR` & `ADPM`
 	|
 	</MvCOMMENT>
-	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">	
+	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">
 		<MvASSIGN NAME = "g.DKIG" VALUE = "">
 
 		<MvIF EXPR = "{ 'ADPR' CIN l.action }">
@@ -60,6 +60,37 @@
 	|
 	</MvCOMMENT>
 	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'util/devkit.mvc' }">
+
+	<MvCOMMENT>
+	|
+	|	Assign Timespan Helpers
+	|
+	| 	Constants for expressing human-readable intervals in their respective number of seconds.
+	|	Please note that these values are approximate and are provided for convenience.
+	|	For example, MONTH_IN_SECONDS wrongly assumes every month has 30 days and
+	|	YEAR_IN_SECONDS does not take leap years into account.
+	| 	-- thanks WordPress :-)
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "g.DK_MINUTE_IN_SECONDS" VALUE = "60" />
+	<MvASSIGN NAME = "g.DK_HOUR_IN_SECONDS" VALUE = "{ 60 * g.DK_MINUTE_IN_SECONDS }" />
+	<MvASSIGN NAME = "g.DK_DAY_IN_SECONDS" VALUE = "{ 24 * g.DK_HOUR_IN_SECONDS }" />
+	<MvASSIGN NAME = "g.DK_WEEK_IN_SECONDS" VALUE = "{ 7 * g.DK_DAY_IN_SECONDS }" />
+	<MvASSIGN NAME = "g.DK_MONTH_IN_SECONDS" VALUE = "{ 30 * g.DK_WEEK_IN_SECONDS }" />
+	<MvASSIGN NAME = "g.DK_YEAR_IN_SECONDS" VALUE = "{ 365 * g.DK_YEAR_IN_SECONDS }" />
+
+	<MvCOMMENT>
+	|
+	|	Assign Filesize Helpers
+	|	Constants for expressing human-readable data sizes in their respective number of bytes
+	| 	-- thanks again WordPress :-)
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "g.DK_KB_IN_BYTES" VALUE = "1024" />
+	<MvASSIGN NAME = "g.DK_MB_IN_BYTES" VALUE = "{ 1024 * g.DK_KB_IN_BYTES }" />
+	<MvASSIGN NAME = "g.DK_GB_IN_BYTES" VALUE = "{ 1024 * g.DK_MB_IN_BYTES }" />
+	<MvASSIGN NAME = "g.DK_TB_IN_BYTES" VALUE = "{ 1024 * g.DK_GB_IN_BYTES }" />
+
 
 	<MvIF EXPR = "{ g.DKIG:Updates }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Seperate_Products_Out( g.DKIG:Updates, g.DKIG_Code, g.DKIG_Value ) }">
@@ -574,7 +605,7 @@
 		</MvCOMMENT>
 		<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
 	</MvIF>
-	
+
 	<MvCOMMENT>
 	|
 	|	tagerror
