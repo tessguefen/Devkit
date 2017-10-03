@@ -37,6 +37,7 @@
 <mvt:item name="devkit" param="Parse_URI( uri, return var )" />
 <mvt:item name="devkit" param="URI_QueryStrings_To_Structure( uri, array, return var )" />
 <mvt:item name="devkit" param="URI_Add_Replace_QueryString( uri, query_string, value, return var )" />
+<mvt:item name="devkit" param="URI_Build_URI( uri var, output var )" />
 ```
 
 ## Load_Product
