@@ -480,7 +480,9 @@
 					( l.function_name EQ 'reorder_order_form' )								OR
 					( l.function_name EQ 'replace_special_characters' )						OR
 					( l.function_name EQ 'product_images_srcset' )							OR
-					( l.function_name EQ 'harlemshake' )
+					( l.function_name EQ 'harlemshake' )									OR
+					( l.function_name EQ 'assign_member')									OR
+					( l.function_name EQ 'assign_index' )
 				}">
 		<MvCOMMENT>
 		|
