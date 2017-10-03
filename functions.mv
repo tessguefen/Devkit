@@ -1370,7 +1370,7 @@
 	<MvCOMMENT>
 	|
 	|	Parse_URI( uri, return var )
-	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
+	|	scheme, host, user, pass, path, query, fragment, subdomain, domain, tld
 	|	=> https://www.freeformatter.com/url-parser-query-string-splitter.html
 	|
 	</MvCOMMENT>
@@ -1427,8 +1427,6 @@
 	</MvIF>
 
 	<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ substring_var( l.original_uri, 1, ( l.slash_start - 1 ) ) }">
-	<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.original_uri, len_var( l.original_uri ) ) }">
-	<MvASSIGN NAME = "l.return" MEMBER = "tld" VALUE = "{ substring_var( l.return:host, l.period_last + 1, ( len_var( l.return:host ) - l.period_last ) ) }">
 
 	<MvCOMMENT>
 	|
@@ -1445,6 +1443,9 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
 	</MvIF>
+	
+	<MvASSIGN NAME = "l.period_first" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
+	<MvASSIGN NAME = "l.return" MEMBER = "tld" VALUE = "{ substring_var( l.return:host, l.period_last + 1, ( len_var( l.return:host ) - l.period_last ) ) }">
 
 	<MvASSIGN NAME = "l.host_length" VALUE = "{ len_var( l.return:host ) }">
 
@@ -1633,6 +1634,36 @@
 	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
 		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "user" VALUE = "{ l.user }" />
 		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "pass" VALUE = "{ l.pass }" />
+		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Add_Replace_Scheme" PARAMETERS = "module var, param, uri, new_scheme, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Add_Replace_Scheme( uri, new_scheme, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "scheme" VALUE = "{ l.new_scheme }" />
+		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Replace_TLD" PARAMETERS = "module var, param, uri, new_tld, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Replace_TLD( uri, new_tld, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "domain" VALUE = "{ glosub( l.parsed_uri:domain, '.' $ l.parsed_uri:tld, '.' $ l.new_tld) }" />
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 

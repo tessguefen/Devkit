@@ -415,6 +415,18 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_UserPass', 'uri, user, pass, output var') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Scheme', 'uri, new_scheme, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_TLD', 'uri, new_tld, output var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -544,7 +556,9 @@
 					( l.function_name EQ 'parse_uri' )										OR
 					( l.function_name EQ 'uri_build_uri' )									OR
 					( l.function_name EQ 'uri_add_replace_subdomain' )						OR
-					( l.function_name EQ 'uri_add_replace_userpass' )
+					( l.function_name EQ 'uri_add_replace_userpass' )						OR
+					( l.function_name EQ 'uri_add_replace_scheme' )							OR
+					( l.function_name EQ 'uri_replace_tld' )
 				}">
 		<MvCOMMENT>
 		|
