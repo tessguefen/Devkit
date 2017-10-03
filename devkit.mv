@@ -403,6 +403,18 @@
 				scheme, user, pass, subdomain, domain, path, query, fragment
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Subdomain', 'uri, new_subdomain, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_UserPass', 'uri, user, pass, output var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -530,7 +542,9 @@
 					( l.function_name EQ 'uri_querystrings_to_structure' )					OR
 					( l.function_name EQ 'uri_add_replace_querystring' )					OR
 					( l.function_name EQ 'parse_uri' )										OR
-					( l.function_name EQ 'uri_build_uri' )
+					( l.function_name EQ 'uri_build_uri' )									OR
+					( l.function_name EQ 'uri_add_replace_subdomain' )						OR
+					( l.function_name EQ 'uri_add_replace_userpass' )
 				}">
 		<MvCOMMENT>
 		|

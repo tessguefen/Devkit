@@ -1577,10 +1577,10 @@
 	<MvCOMMENT>
 	|
 	|	URI_Build_URI( uri var, output var )
-	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
+	|	scheme, user, pass, subdomain, domain, path, query, fragment
 	|
 	</MvCOMMENT>
-	
+
 	<MvASSIGN NAME = "l.output" VALUE = "">
 
 	<MvIF EXPR = "{ NOT ISNULL l.uri:scheme }">
@@ -1613,5 +1613,36 @@
 	<MvIF EXPR = "{ NOT ISNULL l.uri:fragment }">
 		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '#' $ l.uri:fragment }">
 	</MvIF>
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Add_Replace_Subdomain" PARAMETERS = "module var, param, uri, new_subdomain, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Add_Replace_Subdomain( uri, new_subdomain, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "subdomain" VALUE = "{ l.new_subdomain }" />
+		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Add_Replace_UserPass" PARAMETERS = "module var, param, uri, user, pass, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Add_Replace_UserPass( uri, user, pass, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "user" VALUE = "{ l.user }" />
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "pass" VALUE = "{ l.pass }" />
+		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
+	</MvIF>
+
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
