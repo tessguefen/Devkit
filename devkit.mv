@@ -359,6 +359,18 @@
 				This will output to :src and :srcset in the output var.
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Member', 'variable var, member, value') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Index', 'array var, index, value') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -482,7 +494,9 @@
 					( l.function_name EQ 'product_images_srcset' )							OR
 					( l.function_name EQ 'harlemshake' )									OR
 					( l.function_name EQ 'assign_member')									OR
-					( l.function_name EQ 'assign_index' )
+					( l.function_name EQ 'assign_index' )									OR
+					( l.function_name EQ 'uri_querystrings_to_structure' )					OR
+					( l.function_name EQ 'uri_add_replace_querystring' )
 				}">
 		<MvCOMMENT>
 		|

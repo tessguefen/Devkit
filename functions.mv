@@ -1365,3 +1365,84 @@
 	</MvCOMMENT>
 	<MvASSIGN NAME = "l.array" INDEX = "{ l.index }" VALUE = "{ l.value }">
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_QueryStrings_To_Structure" PARAMETERS = "module var, param, uri, array, return var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_QueryStrings_To_Structure( uri, array, return var )
+	|		If Query string is empty, it will return with a space... need to find a better way for this.
+	|	array = 1 | 0
+	|	array = 1 will keep the order of the query strings.
+	|
+	</MvCOMMENT>
+	<MvASSIGN NAME = "l.uri_qm_index" VALUE = "{ indexof( '?', l.uri, 1 ) }">
+
+	<MvIF EXPR = "{ NOT l.uri_qm_index }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.uri_length" VALUE = "{ len_var( l.uri ) }">
+	<MvASSIGN NAME = "l.query_strings" VALUE = "{ substring_var( l.uri, l.uri_qm_index + 1, ( l.uri_length - l.uri_qm_index ) + 1 ) }">
+
+	<MvFOREACH ITERATOR = "l.query" ARRAY = "l.querys" COUNT = "{ miva_splitstring( l.query_strings, '&', l.querys, 'trim' ) }">
+		<MvASSIGN NAME = "l.member" VALUE = "{ gettoken( l.query, '=', 1 ) }">
+
+		<MvIF EXPR = "{ ISNULL l.member }">
+			<MvFOREACHCONTINUE />
+		</MvIF>
+
+		<MvASSIGN NAME = "l.query_value" VALUE = "{ gettoken( l.query, '=', 2 ) }">
+
+		<MvIF EXPR = "{ ISNULL l.query_value }">
+			<MvASSIGN NAME = "l.query_value" VALUE = " " />
+		</MvIF>
+		<MvIF EXPR = "{ l.array EQ 1 }">
+			<MvASSIGN NAME = "l.return" INDEX = "{ ++l.index }" MEMBER = "{ l.member }" VALUE = "{ l.query_value }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.return" MEMBER = "{ l.member }" VALUE = "{ l.query_value }">
+		</MvIF>
+	</MvFOREACH>
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Add_Replace_QueryString" PARAMETERS = "module var, param, uri, query_string, value, return var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Replace_QueryString( uri, query_string, value, return var )
+	|
+	</MvCOMMENT>
+	<MvIF EXPR = "{ NOT URI_QueryStrings_To_Structure( l.module, l.param, l.uri, 1, l.output ) }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.uri_qm_index" VALUE = "{ indexof( '?&', l.uri, 1 ) }">
+
+	<MvIF EXPR = "{ l.uri_qm_index GT 0 }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.uri, 0, l.uri_qm_index + 1 ) }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.uri_qm_index" VALUE = "{ indexof( '?', l.uri, 1 ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.uri, 0, l.uri_qm_index ) }">
+	</MvIF>
+
+	<MvIF EXPR = "{ miva_array_search( l.output, 0, l.q, 'miva_member_exists( l.q, l.query_string )' ) }">
+		<MvASSIGN NAME = "l.q" MEMBER = "{ l.query_string }" VALUE = "{ l.value }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.temp" MEMBER = "{ l.query_string }" VALUE = "{ l.value }">
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert_var( l.output, l.temp, -1 ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.return" VALUE = "">
+
+	<MvFOREACH ITERATOR = "l.query" ARRAY = "l.output">
+
+		<MvIF EXPR = "{ NOT ISNULL l.return }">
+			<MvASSIGN NAME = "l.return" VALUE = "{ l.return $ '&' }">
+		</MvIF>
+
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_struct_members( l.query, l.query_members ) }">
+		<MvASSIGN NAME = "l.return" VALUE = "{ l.return $ l.query_members[1] $ '=' $ miva_variable_value( 'l.query:' $ l.query_members[1] ) }">
+	</MvFOREACH>
+
+	<MvASSIGN NAME = "l.return" VALUE = "{ l.original_uri $ l.return }">
+</MvFUNCTION>
