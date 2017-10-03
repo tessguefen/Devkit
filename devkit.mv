@@ -393,6 +393,16 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_QueryString', 'uri, query_string, value, return var') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Build_URI', 'uri var, output var') }">
+			</div>
+			<div class="devkit-function__docs">
+				Builds a URI based on the variable passed. The following memebers will be used:
+				scheme, user, pass, subdomain, domain, path, query, fragment
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -519,7 +529,8 @@
 					( l.function_name EQ 'assign_index' )									OR
 					( l.function_name EQ 'uri_querystrings_to_structure' )					OR
 					( l.function_name EQ 'uri_add_replace_querystring' )					OR
-					( l.function_name EQ 'parse_uri' )
+					( l.function_name EQ 'parse_uri' )										OR
+					( l.function_name EQ 'uri_build_uri' )
 				}">
 		<MvCOMMENT>
 		|

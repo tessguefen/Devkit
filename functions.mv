@@ -1371,6 +1371,7 @@
 	|
 	|	Parse_URI( uri, return var )
 	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
+	|	=> https://www.freeformatter.com/url-parser-query-string-splitter.html
 	|
 	</MvCOMMENT>
 
@@ -1397,6 +1398,7 @@
 	<MvCOMMENT>
 	|
 	|	Check for user:pass@ for auth.
+	|	Did you know the word aapstert is Afrikaans for Moneky Tail, and that is what they call the @ sign.
 	|
 	</MvCOMMENT>
 
@@ -1569,4 +1571,47 @@
 	</MvFOREACH>
 
 	<MvASSIGN NAME = "l.return" VALUE = "{ l.original_uri $ l.return }">
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Build_URI" PARAMETERS = "module var, param, uri var, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Build_URI( uri var, output var )
+	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
+	|
+	</MvCOMMENT>
+	
+	<MvASSIGN NAME = "l.output" VALUE = "">
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:scheme }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.uri:scheme }" />
+		<MvIF EXPR = "{ l.uri:scheme NE '//' }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '://' }" />
+		</Mvif>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:user AND NOT ISNULL l.uri:pass }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.uri:user $ ':' $ l.uri:pass $ '@' }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:subdomain }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.uri:subdomain $ '.' }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:domain }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.uri:domain }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:path }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.uri:path }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:query }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '?' $ l.uri:query }">
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT ISNULL l.uri:fragment }">
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '#' $ l.uri:fragment }">
+	</MvIF>
+	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
