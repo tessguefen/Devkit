@@ -32,6 +32,11 @@
 <mvt:item name="devkit" param="ReOrder_Order_Form( orderitems var, show_quantity_inputs, member )" />
 <mvt:item name="devkit" param="Replace_Special_Characters( input_string, outputstring var )" />
 <mvt:item name="devkit" param="Product_Images_Srcset( product_id, type_code, image_width, image_height, output var )" />
+<mvt:item name="devkit" param="Assign_Member( variable var, member, value )" />
+<mvt:item name="devkit" param="Assign_Index( array var, index, value )" />
+<mvt:item name="devkit" param="Parse_URI( uri, return var )" />
+<mvt:item name="devkit" param="URI_QueryStrings_To_Structure( uri, array, return var )" />
+<mvt:item name="devkit" param="URI_Add_Replace_QueryString( uri, query_string, value, return var )" />
 ```
 
 ## Load_Product
