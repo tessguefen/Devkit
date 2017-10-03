@@ -38,6 +38,8 @@
 <mvt:item name="devkit" param="URI_QueryStrings_To_Structure( uri, array, return var )" />
 <mvt:item name="devkit" param="URI_Add_Replace_QueryString( uri, query_string, value, return var )" />
 <mvt:item name="devkit" param="URI_Build_URI( uri var, output var )" />
+<mvt:item name="devkit" param="URI_Add_Replace_Subdomain( uri, new_subdomain, output var )" />
+<mvt:item name="devkit" param="URI_Add_Replace_UserPass( uri, user, pass, output var )" />
 ```
 
 ## Load_Product
