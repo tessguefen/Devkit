@@ -1482,6 +1482,10 @@
 
 		<MvASSIGN NAME = "l.return" MEMBER = "query" VALUE = "{ l.original_uri }">
 	</MvIF>
+
+	<MvIF EXPR = "{ ISNULL l.return:path }">
+		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "/" />
+	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
@@ -1664,6 +1668,21 @@
 
 	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
 		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "domain" VALUE = "{ glosub( l.parsed_uri:domain, '.' $ l.parsed_uri:tld, '.' $ l.new_tld) }" />
+		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "URI_Replace_Hash" PARAMETERS = "module var, param, uri, new_hash, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	URI_Replace_Hash( uri, new_hash, output var )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
+		<MvASSIGN NAME = "l.parsed_uri" MEMBER = "fragment" VALUE = "{ l.new_hash }" />
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
