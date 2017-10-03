@@ -1398,7 +1398,7 @@
 	<MvCOMMENT>
 	|
 	|	Check for user:pass@ for auth.
-	|	Did you know the word aapstert is Afrikaans for Moneky Tail, and that is what they call the @ sign.
+	|	Did you know the word aapstert is Afrikaans for Monkey Tail, and that is what they call the @ sign.
 	|
 	</MvCOMMENT>
 
@@ -1421,22 +1421,14 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.slash_start" VALUE = "{ indexof( '/', l.original_uri, 1 ) }">
-
-	<MvIF EXPR = "{ l.slash_start EQ 0 }">
-		<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ l.original_uri }">
-		<MvASSIGN NAME = "l.period_first" VALUE = "{ indexof( '.', l.return:host, 1 ) }">
-		<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
-
-		<MvIF EXPR = "{ l.period_first NE l.period_last }">
-			<MvASSIGN NAME = "l.return" MEMBER = "subdomain" VALUE = "{ substring_var( l.return:host, 1, l.period_first -1 ) }">
-			<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ substring_var( l.return:host, l.period_first + 1, len_var( l.return:host ) - l.period_first ) }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvIF EXPR = "{ NOT indexof( '/', l.original_uri, 1 ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE  = "{ l.original_uri $ '/' }">
+		<MvASSIGN NAME = "l.slash_start" VALUE = "{ indexof( '/', l.original_uri, 1 ) }">
 	</MvIF>
 
 	<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ substring_var( l.original_uri, 1, ( l.slash_start - 1 ) ) }">
+	<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.original_uri, len_var( l.original_uri ) ) }">
+	<MvASSIGN NAME = "l.return" MEMBER = "tld" VALUE = "{ substring_var( l.return:host, l.period_last + 1, ( len_var( l.return:host ) - l.period_last ) ) }">
 
 	<MvCOMMENT>
 	|
