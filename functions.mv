@@ -1366,6 +1366,130 @@
 	<MvASSIGN NAME = "l.array" INDEX = "{ l.index }" VALUE = "{ l.value }">
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Parse_URI" PARAMETERS = "module var, param, uri, return var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Parse_URI( uri, return var )
+	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.original_uri" VALUE = "{ l.uri }" />
+	<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
+
+	<MvCOMMENT>
+	|
+	|	Check for http:// and https:// and //
+	|
+	</MvCOMMENT>
+	
+	<MvIF EXPR = "{ 'HTTP://' EQ toupper( substring_var( l.original_uri, 0, 7 ) ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "http">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 8, ( l.original_uri_length - 7 ) ) }">
+	<MvELSEIF EXPR = "{ 'HTTPS://' EQ toupper( substring_var( l.original_uri, 0, 8 ) ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "https">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 9, ( l.original_uri_length - 8 ) ) }">
+	<MvELSEIF EXPR = "{ '//' EQ substring_var( l.original_uri, 0, 2 ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "//">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 3, ( l.original_uri_length - 2 ) ) }">
+	</MvIF>
+
+	<MvCOMMENT>
+	|
+	|	Check for user:pass@ for auth.
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.aapstert_start" VALUE = "{ indexof( '@', l.original_uri, 1 ) }">
+
+	<MvIF EXPR = "{ l.aapstert_start GT 0 }">
+		<MvASSIGN NAME = "l.return" MEMBER = "auth" VALUE = "{ substring_var( l.original_uri, 1, l.aapstert_start - 1 ) }">
+		<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.aapstert_start + 1, ( l.original_uri_length - l.aapstert_start ) ) }">
+
+		<MvASSIGN NAME = "l.success" VALUE = "{ miva_splitstring( l.return:auth, ':', l.split_auth, 'trim' ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "user" VALUE = "{ l.split_auth[1] }">
+		<MvASSIGN NAME = "l.return" MEMBER = "pass" VALUE = "{ l.split_auth[2] }">
+	</MvIF>
+
+	<MvCOMMENT>
+	|
+	|	Check for /
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.slash_start" VALUE = "{ indexof( '/', l.original_uri, 1 ) }">
+
+	<MvIF EXPR = "{ l.slash_start EQ 0 }">
+		<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ l.original_uri }">
+		<MvASSIGN NAME = "l.period_first" VALUE = "{ indexof( '.', l.return:host, 1 ) }">
+		<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
+
+		<MvIF EXPR = "{ l.period_first NE l.period_last }">
+			<MvASSIGN NAME = "l.return" MEMBER = "subdomain" VALUE = "{ substring_var( l.return:host, 1, l.period_first -1 ) }">
+			<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ substring_var( l.return:host, l.period_first + 1, len_var( l.return:host ) - l.period_first ) }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ substring_var( l.original_uri, 1, ( l.slash_start - 1 ) ) }">
+
+	<MvCOMMENT>
+	|
+	|	Check for subdomains / domain.
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.period_first" VALUE = "{ indexof( '.', l.return:host, 1 ) }">
+	<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
+
+	<MvIF EXPR = "{ l.period_first NE l.period_last }">
+		<MvASSIGN NAME = "l.return" MEMBER = "subdomain" VALUE = "{ substring_var( l.return:host, 1, l.period_first -1 ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ substring_var( l.return:host, l.period_first + 1, len_var( l.return:host ) - l.period_first ) }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.host_length" VALUE = "{ len_var( l.return:host ) }">
+
+	<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.host_length + 2, ( l.original_uri_length - l.host_length + 2 ) ) }">
+
+	<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
+
+	<MvCOMMENT>
+	|
+	|	Check for #
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.hash_start" VALUE = "{ indexof( '#', l.original_uri, 1 ) }">
+
+	<MvIF EXPR = "{ l.hash_start GT 0 }">
+		<MvASSIGN NAME = "l.return" MEMBER = "fragment" VALUE = "{ substring_var( l.original_uri, l.hash_start + 1, ( l.original_uri_length - l.hash_start + 1 ) ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 1, l.hash_start - 1 ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.query_start" VALUE = "{ indexof( '?', l.original_uri, 1 ) }">
+
+	<MvIF EXPR = "{ l.query_start GT 0 }">
+		<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
+		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ '/' $ substring_var( l.original_uri, 1, l.query_start - 1 ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.query_start, l.original_uri_length - 1 ) }">
+	<MvELSE>
+		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ l.original_uri }">
+	</MvIF>
+	
+	<MvIF EXPR = "{ NOT ISNULL l.original_uri }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?&', '' ) }">
+		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?', '' ) }">
+
+		<MvASSIGN NAME = "l.return" MEMBER = "query" VALUE = "{ l.original_uri }">
+	</MvIF>
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "URI_QueryStrings_To_Structure" PARAMETERS = "module var, param, uri, array, return var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
@@ -1445,119 +1569,4 @@
 	</MvFOREACH>
 
 	<MvASSIGN NAME = "l.return" VALUE = "{ l.original_uri $ l.return }">
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Parse_URI" PARAMETERS = "module var, param, uri, return var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Parse_URI( uri, return var )
-	|	scheme, host, user, pass, path, query, fragment, subdomain, domain
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.original_uri" VALUE = "{ l.uri }" />
-	<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
-
-	<MvCOMMENT>
-	|
-	|	Check for http:// and https:// and //
-	|
-	</MvCOMMENT>
-	
-	<MvIF EXPR = "{ 'HTTP://' EQ toupper( substring_var( l.original_uri, 0, 7 ) ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "http">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 8, ( l.original_uri_length - 7 ) ) }">
-	<MvELSEIF EXPR = "{ 'HTTPS://' EQ toupper( substring_var( l.original_uri, 0, 8 ) ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "https">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 9, ( l.original_uri_length - 8 ) ) }">
-	<MvELSEIF EXPR = "{ '//' EQ substring_var( l.original_uri, 0, 2 ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "//">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 3, ( l.original_uri_length - 2 ) ) }">
-	</MvIF>
-
-	<MvCOMMENT>
-	|
-	|	Check for user:pass@ for auth.
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.aapstert_start" VALUE = "{ indexof( '@', l.original_uri, 1 ) }">
-
-	<MvIF EXPR = "{ l.aapstert_start GT 0 }">
-		<MvASSIGN NAME = "l.return" MEMBER = "auth" VALUE = "{ substring_var( l.original_uri, 1, l.aapstert_start - 1 ) }">
-		<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.aapstert_start + 1, ( l.original_uri_length - l.aapstert_start ) ) }">
-
-		<MvASSIGN NAME = "l.success" VALUE = "{ miva_splitstring( l.return:auth, ':', l.split_auth, 'trim' ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "user" VALUE = "{ l.split_auth[1] }">
-		<MvASSIGN NAME = "l.return" MEMBER = "pass" VALUE = "{ l.split_auth[2] }">
-	</MvIF>
-
-	<MvCOMMENT>
-	|
-	|	Check for /
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.slash_start" VALUE = "{ indexof( '/', l.original_uri, 1 ) }">
-
-	<MvIF EXPR = "{ l.slash_start EQ 0 }">
-		<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ l.original_uri }">
-		<MvFUNCTIONRETURN VALUE = 1 />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.return" MEMBER = "host" VALUE = "{ substring_var( l.original_uri, 1, ( l.slash_start - 1 ) ) }">
-
-	<MvCOMMENT>
-	|
-	|	Check for subdomains / domain.
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.period_first" VALUE = "{ indexof( '.', l.return:host, 1 ) }">
-	<MvASSIGN NAME = "l.period_last" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
-
-	<MvIF EXPR = "{ l.period_first NE l.period_last }">
-		<MvASSIGN NAME = "l.return" MEMBER = "subdomain" VALUE = "{ substring_var( l.return:host, 1, l.period_first -1 ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ substring_var( l.return:host, l.period_first + 1, len_var( l.return:host ) - l.period_first ) }">
-	<MvELSE>
-		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
-	</MvIF>
-
-	<MvASSIGN NAME = "l.host_length" VALUE = "{ len_var( l.return:host ) }">
-
-	<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.host_length + 2, ( l.original_uri_length - l.host_length + 2 ) ) }">
-
-	<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
-
-	<MvCOMMENT>
-	|
-	|	Check for #
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.hash_start" VALUE = "{ indexof( '#', l.original_uri, 1 ) }">
-
-	<MvIF EXPR = "{ l.hash_start GT 0 }">
-		<MvASSIGN NAME = "l.return" MEMBER = "fragment" VALUE = "{ substring_var( l.original_uri, l.hash_start + 1, ( l.original_uri_length - l.hash_start + 1 ) ) }">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 1, l.hash_start - 1 ) }">
-	</MvIF>
-
-	<MvASSIGN NAME = "l.query_start" VALUE = "{ indexof( '?', l.original_uri, 1 ) }">
-
-	<MvIF EXPR = "{ l.query_start GT 0 }">
-		<MvASSIGN NAME = "l.original_uri_length" VALUE = "{ len_var( l.original_uri ) }">
-		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ '/' $ substring_var( l.original_uri, 1, l.query_start - 1 ) }">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, l.query_start, l.original_uri_length - 1 ) }">
-	<MvELSE>
-		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ l.original_uri }">
-	</MvIF>
-	
-	<MvIF EXPR = "{ NOT ISNULL l.original_uri }">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?&', '' ) }">
-		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?', '' ) }">
-
-		<MvASSIGN NAME = "l.return" MEMBER = "query" VALUE = "{ l.original_uri }">
-	</MvIF>
-	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>

@@ -374,6 +374,16 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Parse_URI', 'uri, return var') }">
+			</div>
+			<div class="devkit-function__docs">
+				Returns the following members to the return var:<br />
+				scheme, host, user, pass, path, query, fragment, subdomain, domain
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'URI_QueryStrings_To_Structure', 'uri, array, return var') }">
 			</div>
 		</div>
