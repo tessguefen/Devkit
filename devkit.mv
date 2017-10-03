@@ -508,7 +508,8 @@
 					( l.function_name EQ 'assign_member')									OR
 					( l.function_name EQ 'assign_index' )									OR
 					( l.function_name EQ 'uri_querystrings_to_structure' )					OR
-					( l.function_name EQ 'uri_add_replace_querystring' )
+					( l.function_name EQ 'uri_add_replace_querystring' )					OR
+					( l.function_name EQ 'parse_uri' )
 				}">
 		<MvCOMMENT>
 		|
