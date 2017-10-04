@@ -596,7 +596,8 @@
 					( l.function_name EQ 'uri_add_replace_userpass' )						OR
 					( l.function_name EQ 'uri_add_replace_scheme' )							OR
 					( l.function_name EQ 'uri_replace_tld' )								OR
-					( l.function_name EQ 'uri_replace_hash' )
+					( l.function_name EQ 'uri_replace_hash' )								OR
+					( l.function_name EQ 'time_ago' )
 				}">
 		<MvCOMMENT>
 		|
