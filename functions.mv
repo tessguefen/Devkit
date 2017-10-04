@@ -1713,7 +1713,6 @@
 
 	|
 	</MvCOMMENT>
-
 	<MvIF EXPR = "{ ISNULL l.now_time }">
 		<MvASSIGN NAME = "l.now_time" VALUE = "{ s.dyn_time_t }">
 	</MvIF>
@@ -1726,6 +1725,90 @@
 		<MvASSIGN NAME = "l.agoin" VALUE = "0" />
 	</MvIF>
 
-	<MvASSIGN NAME = "l.diff" VALUE = "{ abs( l.diff ) }">	
+	<MvASSIGN NAME = "l.diff" VALUE = "{ abs( l.diff ) }">
 
+	<MvIF EXPR = "{ l.diff EQ 0 }">
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "just now">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "right now">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_MINUTE_IN_SECONDS }">
+		<MvIF EXPR = "{ l.diff GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.diff $ ' second' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.diff $ ' second' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_HOUR_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_MINUTE_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' minute' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' minute' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_DAY_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_HOUR_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' hour' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' hour' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_WEEK_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_DAY_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' day' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' day' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_MONTH_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_WEEK_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' week' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' week' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff LT g.DK_YEAR_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_MONTH_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' month' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' month' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	<MvELSEIF EXPR = "{ l.diff GE g.DK_YEAR_IN_SECONDS }">
+		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_YEAR_IN_SECONDS, 0 ) }">
+		<MvIF EXPR = "{ l.elapsed GT 1 }">
+			<MvASSIGN NAME = "l.extra" VALUE = "s" />
+		</MvIF>
+		<MvIF EXPR = "{ l.agoin EQ 0 }">
+			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' year' $ l.extra $ ' ago' }">
+		<MvELSE>
+			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' year' $ l.extra }">
+		</MvIF>
+		<MvFUNCTIONRETURN VALUE = 1 />
+	</MvIF>
 </MvFUNCTION>
