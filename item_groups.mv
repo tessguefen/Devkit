@@ -29,7 +29,7 @@
 			<MvFOREACHCONTINUE>
 		</MvIF>
 
-		
+
 		<MvASSIGN NAME = "l.item_options_match"			VALUE = 1>
 
 		<MvFOREACH ITERATOR = "l.item_option" ARRAY = "l.item_options" COUNT = "{ l.item_option_count }">
@@ -91,7 +91,7 @@
 
 		<MvIF EXPR = "{ ( l.item:basketitem:new_quantity LT l.updated_line:quantity ) }">
 			<MvASSIGN NAME = "l.updated_line:quantity" VALUE = "{ l.updated_line:quantity - l.item:new_quantity }">
-			
+
 			<MvIF EXPR = "{ l.updated_line:quantity LT 1 }">
 				<MvFOREACHCONTINUE />
 			</MvIF>

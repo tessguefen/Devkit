@@ -85,7 +85,7 @@
 	<MvASSIGN NAME = "l.variant_count" VALUE = 0>
 	<MvWHILE EXPR = "{ NOT ProductVariants.d.EOF }">
 		<MvASSIGN NAME = "l.variant_count"												VALUE = "{ l.variant_count + 1 }">
-		
+
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "product_id"	VALUE = "{ ProductVariants.d.product_id }">
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "variant_id"	VALUE = "{ ProductVariants.d.variant_id }">
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "dimensions"	VALUE = "{ ProductVariants.d.dimensions }">
@@ -459,7 +459,7 @@
 	</MvCOMMENT>
 
 	<MvIF EXPR = "{ NOT len( l.parameters:query ) GT 0 }">
-		
+
 		<MvIF EXPR = "{ l.parameters:assign_error EQ 1 }">
 			<MvASSIGN NAME  =  "l.parameters:error" VALUE = "{ g.MvOPENVIEW_Error }">
 			<MvFUNCTIONRETURN VALUE  =  0 />
@@ -500,7 +500,7 @@
 			<MvELSE>
 				<MvASSIGN NAME = "l.parameters:bind_parameter_list" VALUE = "{ l.parameters:bind_parameter_list $ ', l.parameters:bind_parameters[' $ l.index $ ']' }" />
 			</MvIF>
-		</MvFOREACH>		
+		</MvFOREACH>
 	</MvIF>
 
 	<MvCOMMENT>If the passed parameter structure contains a result set, lets clear it out before loading the new one</MvCOMMENT>
@@ -521,7 +521,7 @@
 				</MvIF>
 			</MvIF>
 
-			
+
 			<MvCOMMENT>Determine what fields we have from this query result set to build the result array</MvCOMMENT>
 			<MvREVEALSTRUCTURE NAME = "MERCHANT" VIEW = "SQL" VARIABLE = "l.fields">
 
@@ -537,7 +537,7 @@
 			</MvWHILE>
 
 			<MvASSIGN NAME = "l.parameters:fields" VALUE = "{ l.fields }" />
-			
+
 		<MvCLOSEVIEW NAME = "Merchant" VIEW = "SQL">
 	<MvELSE>
 		<MvTRANSACT NAME = "Merchant">
@@ -551,7 +551,7 @@
 				<MvELSE>
 					<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'SQL-QUERIES-0001', g.MvQUERY_Error ) }">
 				</MvIF>
-				
+
 			</MvIF>
 
 			<MvASSIGN NAME = "l.parameters:results" VALUE = "1">
@@ -714,7 +714,7 @@
 	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Read_Basket( l.module, l.param, l.customfield_name, l.recently_viewed:product_codes ) }">
 
 	<MvASSIGN NAME = "l.recently_viewed:product_codes" VALUE = "{ miva_array_deserialize( l.recently_viewed:product_codes ) }">
-	
+
 	<MvASSIGN NAME = "l.recently_viewed:exsiting_index" VALUE = "{ miva_array_find( l.current_product_code, l.recently_viewed:product_codes, 0 ) }">
 
 	<MvIF EXPR = "{ l.recently_viewed:exsiting_index GT 0 }">
@@ -894,7 +894,7 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.output" VALUE = "0">
 		<MvFUNCTIONRETURN VALUE = "0" />
-	</MvIf>	
+	</MvIf>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv_Variable" PARAMETERS = "module var, param, code, all_settings var, output var" STANDARDOUTPUTLEVEL = "">
@@ -1030,7 +1030,7 @@
 
 		<MvCAPTURE VARIABLE = "l.headers"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailHeaders( l.mix_boundary, l.alt_boundary, l.body_message, l.crlf  ) }"></MvCAPTURE>
 		<MvCAPTURE VARIABLE = "l.message"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailMessage( l.mix_boundary, l.file_name, l.file_dir, l.file_location, l.crlf ) }"></MvCAPTURE>
-	
+
 		<MIVA MvCOMMERCE_ERROR = "nonfatal, nodisplay">
 		<MvCOMMERCE METHOD = "{ g.Domain:mailmeth }" FIELDS = "to,from,cc,subject,headers,message,mailhost">
 		</MvCOMMERCE>
@@ -1046,7 +1046,7 @@
 		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Format( l.from, l.from_header, l.from_address ) }">
 		<MvASSIGN NAME = "l.null" 				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.to, l.to_headers, l.to_addresses ) }">
 		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.cc, l.cc_headers, l.cc_addresses ) }">
-		
+
 		<MvIF EXPR = "{ g.Domain:mail_angl }">
 			<MvASSIGN NAME = "l.from_address" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.from_address ) }">
 			<MvASSIGN NAME = "l.to_addresses" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.to_addresses ) }">
@@ -1057,17 +1057,17 @@
 		<MvASSIGN NAME = "l.port" 				VALUE = "{ g.Domain:mailport }">
 		<MvASSIGN NAME = "l.username" 			VALUE = "{ g.Domain:mailuser }">
 		<MvASSIGN NAME = "l.password" 			VALUE = "{ [ g.Module_Library_Crypto ].Decrypt_Payment_Password( g.Domain:mailpass ) }">
-		
+
 		<MvIF EXPR = "{ NOT ISNULL g.Domain:mailflags }">
 			<MvASSIGN NAME = "l.flags" 			VALUE = "{ g.Domain:mailflags $ ', noheaders' }">
 		<MvELSE>
 			<MvASSIGN NAME = "l.flags" 			VALUE = "noheaders">
 		</MvIF>
 
-		<MvSMTP FROM 	 = "{ l.from_address }" 
-				TO 		 = "{ l.to_addresses }" 
-				CC 		 = "{ l.cc_addresses }" 
-				SUBJECT  = "{ l.subject }" 
+		<MvSMTP FROM 	 = "{ l.from_address }"
+				TO 		 = "{ l.to_addresses }"
+				CC 		 = "{ l.cc_addresses }"
+				SUBJECT  = "{ l.subject }"
 				MAILHOST = "{ l.mailhost }"
 				FLAGS 	 = "{ l.flags }"
 				PORT 	 = "{ l.port }"
@@ -1123,7 +1123,7 @@
 	<MvASSIGN NAME = "l.output:count" VALUE = 0>
 	<MvWHILE EXPR = "{ NOT Also_Purchased.d.EOF }">
 		<MvASSIGN NAME = "l.output:count"												VALUE = "{ l.output:count + 1 }">
-		
+
 		<MvASSIGN NAME = "l.output:products" INDEX = "{ l.output:count }" MEMBER = "id"	VALUE = "{ Also_Purchased.d.product_id }">
 
 		<MvSKIP NAME = "Merchant" VIEW = "Also_Purchased" ROWS = 1>
@@ -1383,7 +1383,7 @@
 	|	Check for http:// and https:// and //
 	|
 	</MvCOMMENT>
-	
+
 	<MvIF EXPR = "{ 'HTTP://' EQ toupper( substring_var( l.original_uri, 0, 7 ) ) }">
 		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "http">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 8, ( l.original_uri_length - 7 ) ) }">
@@ -1443,7 +1443,7 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
 	</MvIF>
-	
+
 	<MvASSIGN NAME = "l.period_first" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
 	<MvASSIGN NAME = "l.return" MEMBER = "tld" VALUE = "{ substring_var( l.return:host, l.period_last + 1, ( len_var( l.return:host ) - l.period_last ) ) }">
 
@@ -1475,7 +1475,7 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ l.original_uri }">
 	</MvIF>
-	
+
 	<MvIF EXPR = "{ NOT ISNULL l.original_uri }">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?&', '' ) }">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?', '' ) }">
