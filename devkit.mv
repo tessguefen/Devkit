@@ -59,7 +59,7 @@
 	|	Assign g.Module_Devkit, for use with mvt:dos.
 	|
 	</MvCOMMENT>
-	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'util/devkit.mvc' }">
+	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'modules/util/devkit.mvc' }">
 
 	<MvCOMMENT>
 	|
