@@ -1882,6 +1882,33 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Do_Minify_CSS_File_Check_Timestamp" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_CSS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ stime(l.source_path) GT stime(l.dest_path) }">
+		<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_CSS_File( l.source_path, l.dest_path ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_CSS_File_Check_Timestamp" PARAMETERS = "module var, param, source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_CSS_File_Check_Timestamp( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_CSS_File_Check_Timestamp( l.source_path, l.dest_path ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
@@ -1948,6 +1975,33 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_JS_File_Check_Timestamp" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_JS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvIF EXPR = "{ stime(l.source_path) GT stime(l.dest_path) }">
+		<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_JS_File_Check_Timestamp" PARAMETERS = "module var, param, source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_JS_File_Check_Timestamp( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File_Check_Timestamp( l.source_path, l.dest_path ) }">
 
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
