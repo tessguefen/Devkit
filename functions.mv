@@ -1814,11 +1814,6 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Do_Minify_CSS( input )
-	|
-	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
 
@@ -1847,11 +1842,6 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_CSS_File" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Do_Minify_CSS_File( source_path, dest_path )
-	|
-	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_css ) }">
 	<MvIF EXPR = "{ NOT l.result }">
@@ -1882,12 +1872,64 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Do_Minify_CSS_File_Check_Timestamp" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Do_Concat_Files" PARAMETERS = "source_paths" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.dest_content" VALUE = "" />
+
+	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+		<MvASSIGN NAME = "l.source_content" VALUE = "" />
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_content ) }" />
+		<MvASSIGN NAME = "l.dest_content" VALUE = "{ l.dest_content $ l.source_content}" />
+	</MvFOREACH>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.dest_content }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_Concat_CSS_Files" PARAMETERS = "source_paths, dest_path, check_time" STANDARDOUTPUTLEVEL = "text, html">
+
+	<MvCOMMENT>
+		| Find most recently modified time in array of file paths
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.most_recent_stime" VALUE = 0 />
+	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+		<MvASSIGN NAME = "l.soure_path_stime" VALUE = "{ stime( l.source_path ) }" />
+		<MvIF EXPR = "{ l.soure_path_stime GT l.most_recent_stime }">
+			<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ l.soure_path_stime }" />
+		</MvIF>
+	</MvFOREACH>
+
+	<MvIF EXPR = "{ stime(l.dest_path) GT l.most_recent_stime }">
+		<MvFUNCTIONRETURN />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.all_css" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
+	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.all_css ) }" />
+
+	<MvIF EXPR = "{ sexists( l.dest_path ) }">
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_css ) }" />
+	<MvELSE>
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_css ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_Concat_CSS_Files" PARAMETERS = "module var, param, source_paths, dest_path, check_time" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Do_Minify_CSS_File( source_path, dest_path )
+	|	Minify_Concat_CSS_Files( source_paths, dest_path, check_time )
 	|
 	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_CSS_Files( l.source_paths, l.dest_path, l.check_time ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_CSS_File_Check_Timestamp" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
 
 	<MvIF EXPR = "{ stime(l.source_path) GT stime(l.dest_path) }">
 		<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_CSS_File( l.source_path, l.dest_path ) }" />
@@ -1910,11 +1952,6 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Do_Minify_JS( input )
-	|
-	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
 
@@ -1944,11 +1981,6 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_JS_File" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Do_Minify_JS_File( source_path, dest_path )
-	|
-	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_js ) }">
 	<MvIF EXPR = "{ NOT l.result }">
@@ -1980,11 +2012,6 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_JS_File_Check_Timestamp" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Do_Minify_JS_File( source_path, dest_path )
-	|
-	</MvCOMMENT>
 
 	<MvIF EXPR = "{ stime(l.source_path) GT stime(l.dest_path) }">
 		<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path ) }" />

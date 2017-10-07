@@ -485,6 +485,12 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_CSS_Files', 'source_paths, dest_path, check_time') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS_File_Check_Timestamp', 'source_path, dest_path') }">
 			</div>
 		</div>
@@ -643,6 +649,7 @@
 					( l.function_name EQ 'minify_css' )										OR
 					( l.function_name EQ 'minify_css_file' )								OR
 					( l.function_name EQ 'minify_css_file_check_timestamp' )				OR
+					( l.function_name EQ 'minify_concat_css_files' )						OR
 					( l.function_name EQ 'minify_js' )										OR
 					( l.function_name EQ 'minify_js_file' )									OR
 					( l.function_name EQ 'minify_js_file_check_timestamp' )
