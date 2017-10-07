@@ -479,7 +479,19 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS_File', 'source_path, dest_path') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS', 'js_string, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS_File', 'source_path, dest_path') }">
 			</div>
 		</div>
 	</MvIF>
@@ -617,7 +629,9 @@
 					( l.function_name EQ 'uri_replace_hash' )								OR
 					( l.function_name EQ 'time_ago' )										OR
 					( l.function_name EQ 'minify_css' )										OR
-					( l.function_name EQ 'minify_js' )
+					( l.function_name EQ 'minify_css_file' )								OR
+					( l.function_name EQ 'minify_js' )										OR
+					( l.function_name EQ 'minify_js_file' )
 				}">
 		<MvCOMMENT>
 		|

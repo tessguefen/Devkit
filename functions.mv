@@ -1814,6 +1814,11 @@
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_CSS( input )
+	|
+	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
 
@@ -1829,7 +1834,6 @@
 
 </MvFUNCTION>
 
-
 <MvFUNCTION NAME = "Minify_CSS" PARAMETERS = "module var, param, css_string, output var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
@@ -1842,7 +1846,48 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Do_Minify_CSS_File" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_CSS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_css ) }">
+	<MvIF EXPR = "{ NOT l.result }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.source_css ) }" />
+
+	<MvIF EXPR = "{ sexists( l.dest_path ) }">
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_css ) }" />
+	<MvELSE>
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_css ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_CSS_File" PARAMETERS = "module var, param, source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_CSS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_CSS_File( l.source_path, l.dest_path ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_JS( input )
+	|
+	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
 
@@ -1867,6 +1912,42 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_JS( l.js_string ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_JS_File" PARAMETERS = "source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Do_Minify_JS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_js ) }">
+	<MvIF EXPR = "{ NOT l.result }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.source_js ) }" />
+
+	<MvIF EXPR = "{ sexists( l.dest_path ) }">
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_js ) }" />
+	<MvELSE>
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_js ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_JS_File" PARAMETERS = "module var, param, source_path, dest_path" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_JS_File( source_path, dest_path )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path ) }">
 
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
