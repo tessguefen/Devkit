@@ -43,6 +43,8 @@
 <mvt:item name="devkit" param="URI_Add_Replace_Scheme( uri, new_scheme, output var )" />
 <mvt:item name="devkit" param="URI_Replace_TLD( uri, new_tld, output var )" />
 <mvt:item name="devkit" param="URI_Replace_Hash( uri, new_hash, output var )" />
+<mvt:item name="devkit" param="Minify_CSS( css_string, output var )" />
+<mvt:item name="devkit" param="Minify_JS( js_string, output var )" />
 ```
 
 ## Load_Product
@@ -93,3 +95,28 @@
 | g.DK_MB_IN_BYTES | 1048576 |
 | g.DK_GB_IN_BYTES | 1073741824 |
 | g.DK_TB_IN_BYTES | 1099511627776 |
+
+
+## Minify CSS & JS
+
+```
+<h2>DevKit Minify_CSS</h2>
+<mvt:assign name="l.result" value="file_read( '/mm5/css/00000001/cssui.css', 'script' , l.settings:expanded_css )" />
+<mvt:item name="devkit" param="Minify_CSS( l.settings:expanded_css, l.settings:minified_css )" />
+&mvt:minified_css;
+
+<h2>mvt:do Do_Minify_CSS</h2>
+<mvt:assign name="l.result" value="file_read( '/mm5/css/00000001/cssui.css', 'script' , l.expanded_css )" />
+<mvt:do file="g.Module_Devkit" name="l.minified_css" value="Do_Minify_CSS( l.expanded_css )" />
+<mvt:eval expr="l.minified_css" />
+
+<h2>DevKit Minify_JS</h2>
+<mvt:assign name="l.result" value="file_read( '/js/mvscreen.js', 'script' , l.settings:expanded_js )" />
+<mvt:item name="devkit" param="Minify_JS( l.settings:expanded_js, l.settings:minified_js )" />
+&mvt:minified_js;
+
+<h2>mvt:do Do_Minify_JS</h2>
+<mvt:assign name="l.result" value="file_read( '/js/mvscreen.js', 'script' , l.expanded_js )" />
+<mvt:do file="g.Module_Devkit" name="l.minified_js" value="Do_Minify_JS( l.expanded_js )" />
+<mvt:eval expr="l.minified_js" />
+```

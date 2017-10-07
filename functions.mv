@@ -1812,3 +1812,61 @@
 		<MvFUNCTIONRETURN VALUE = 1 />
 	</MvIF>
 </MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.output" VALUE = "" />
+
+	<MvCALL ACTION = "{ 'https://cssminifier.com/raw' }"
+			METHOD = "POST"
+			FIELDS = "input">
+
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
+
+	</MvCALL>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
+
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "Minify_CSS" PARAMETERS = "module var, param, css_string, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_CSS( css_string, output var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_CSS( l.css_string ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.output" VALUE = "" />
+
+	<MvCALL ACTION = "{ 'https://javascript-minifier.com/raw' }"
+			METHOD = "POST"
+			FIELDS = "input">
+
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
+
+	</MvCALL>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
+
+</MvFUNCTION>
+
+
+<MvFUNCTION NAME = "Minify_JS" PARAMETERS = "module var, param, js_string, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_JS( js_string, output var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_JS( l.js_string ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>

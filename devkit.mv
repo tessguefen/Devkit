@@ -464,6 +464,24 @@
 				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_Hash', 'uri, new_hash, output var') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Time_Ago', 'time, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS', 'css_string, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS', 'js_string, output var') }">
+			</div>
+		</div>
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -597,7 +615,9 @@
 					( l.function_name EQ 'uri_add_replace_scheme' )							OR
 					( l.function_name EQ 'uri_replace_tld' )								OR
 					( l.function_name EQ 'uri_replace_hash' )								OR
-					( l.function_name EQ 'time_ago' )
+					( l.function_name EQ 'time_ago' )										OR
+					( l.function_name EQ 'minify_css' )										OR
+					( l.function_name EQ 'minify_js' )
 				}">
 		<MvCOMMENT>
 		|
