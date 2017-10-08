@@ -43,11 +43,14 @@
 <mvt:item name="devkit" param="URI_Add_Replace_Scheme( uri, new_scheme, output var )" />
 <mvt:item name="devkit" param="URI_Replace_TLD( uri, new_tld, output var )" />
 <mvt:item name="devkit" param="URI_Replace_Hash( uri, new_hash, output var )" />
+<mvt:item name="devkit" param="File_Write( path, location, content, append, result var )" />
+<mvt:item name="devkit" param="Concat_Files( source_paths, output var )" />
 <mvt:item name="devkit" param="Minify_CSS( css_string, output var )" />
-<mvt:item name="devkit" param="Minify_CSS_File( source_path, dest_path, check_modified )" />
-<mvt:item name="devkit" param="Minify_Concat_CSS_Files( source_paths, dest_path, check_modified )" />
 <mvt:item name="devkit" param="Minify_JS( js_string, output var )" />
+<mvt:item name="devkit" param="Minify_CSS_File( source_path, dest_path, check_modified )" />
 <mvt:item name="devkit" param="Minify_JS_File( source_path, dest_path, check_modified )" />
+<mvt:item name="devkit" param="Minify_Concat_CSS_Files( source_paths, dest_path, check_modified )" />
+<mvt:item name="devkit" param="Minify_Concat_JS_Files( source_paths, dest_path, check_modified )" />
 ```
 
 ## Load_Product
