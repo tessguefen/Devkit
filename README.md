@@ -44,12 +44,10 @@
 <mvt:item name="devkit" param="URI_Replace_TLD( uri, new_tld, output var )" />
 <mvt:item name="devkit" param="URI_Replace_Hash( uri, new_hash, output var )" />
 <mvt:item name="devkit" param="Minify_CSS( css_string, output var )" />
-<mvt:item name="devkit" param="Minify_CSS_File( source_path, dest_path )" />
-<mvt:item name="devkit" param="Minify_Concat_CSS_Files( source_paths, dest_path, check_time )" />
-<mvt:item name="devkit" param="Minify_CSS_File_Check_Timestamp( source_path, dest_path )" />
+<mvt:item name="devkit" param="Minify_CSS_File( source_path, dest_path, check_modified )" />
+<mvt:item name="devkit" param="Minify_Concat_CSS_Files( source_paths, dest_path, check_modified )" />
 <mvt:item name="devkit" param="Minify_JS( js_string, output var )" />
-<mvt:item name="devkit" param="Minify_JS_File( source_path, dest_path )" />
-<mvt:item name="devkit" param="Minify_JS_File_Check_Timestamp( source_path, dest_path )" />
+<mvt:item name="devkit" param="Minify_JS_File( source_path, dest_path, check_modified )" />
 ```
 
 ## Load_Product
@@ -126,38 +124,24 @@
 &mvt:minified_js;
 
 <h2>mvt:do Do_Minify_CSS_File</h2>
-<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_CSS_File( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css' )" />
+<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_CSS_File( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css', 1 )" />
 result=&mvt:result;
 
 <h2>DevKit Minify_CSS_File</h2>
-<mvt:item name="devkit" param="Minify_CSS_File( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css' )" />
+<mvt:item name="devkit" param="Minify_CSS_File( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css', 1 )" />
 
 <h2>mvt:do Do_Minify_JS_File</h2>
-<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_JS_File( '/js/mvscreen.js', '/js/mvscreen.min.js' )" />
+<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_JS_File( '/js/mvscreen.js', '/js/mvscreen.min.js', 1 )" />
 result=&mvt:result;
 
 <h2>DevKit Minify_JS_File</h2>
-<mvt:item name="devkit" param="Minify_JS_File( '/js/mvscreen.js', '/js/mvscreen.min.js' )" />
-
-<h2>mvt:do Do_Minify_CSS_File_Check_Timestamp</h2>
-<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_CSS_File_Check_Timestamp( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css' )" />
-result=&mvt:result;
-
-<h2>DevKit Minify_CSS_File_Check_Timestamp</h2>
-<mvt:item name="devkit" param="Minify_CSS_File_Check_Timestamp( '/mm5/css/00000001/cssui.css', '/mm5/css/00000001/cssui.min.css' )" />
-
-<h2>mvt:do Do_Minify_JS_File_Check_Timestamp</h2>
-<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_JS_File_Check_Timestamp( '/js/mvscreen.js', '/js/mvscreen.min.js' )" />
-result=&mvt:result;
-
-<h2>DevKit Minify_JS_File_Check_Timestamp</h2>
-<mvt:item name="devkit" param="Minify_JS_File_Check_Timestamp( '/js/mvscreen.js', '/js/mvscreen.min.js' )" />
+<mvt:item name="devkit" param="Minify_JS_File( '/js/mvscreen.js', '/js/mvscreen.min.js', 1 )" />
 
 <h2>mvt:do Do_Minify_Concat_CSS_Files</h2>
 <mvt:assign name="l.css_files[1]" value="'/mm5/css/00000001/cssui.css'" />
 <mvt:assign name="l.css_files[2]" value="'/mm5/css/00000001/minibasket.css'" />
 <mvt:assign name="l.css_files[3]" value="'/mm5/css/00000001/readytheme.css'" />
-<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_Concat_CSS_Files( l.css_files, '/mm5/css/00000001/all.min.css', 0 )" />
+<mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_Concat_CSS_Files( l.css_files, '/mm5/css/00000001/all.min.css', 1 )" />
 
 <h2>devkit Minify_Concat_CSS_Files</h2>
 <mvt:assign name="l.settings:css_files[1]" value="'/mm5/css/00000001/cssui.css'" />
