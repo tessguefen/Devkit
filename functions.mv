@@ -1813,6 +1813,58 @@
 	</MvIF>
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Do_File_Write" PARAMETERS = "path, location, content, append" STANDARDOUTPUTLEVEL = "">
+	<MvIF EXPR = "{ sexists( l.path ) }">
+		<MvIF EXPR = "{ l.append }">
+			<MvASSIGN NAME = "l.result" VALUE = "{ file_append( l.path, l.location, l.content ) }" />
+		<MvELSE>
+			<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.path, l.location, l.content ) }" />
+		</MvIF>
+	<MvELSE>
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.path, l.location, l.content ) }" />
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "File_Write" PARAMETERS = "module var, param, path, location, content, append, result" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	File_Write( path, location, content, append, result var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_File_Write( l.path, l.location, l.content, l.append ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Concat_Files" PARAMETERS = "source_paths" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.dest_content" VALUE = "" />
+
+	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+		<MvASSIGN NAME = "l.source_content" VALUE = "" />
+		<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_content ) }" />
+		<MvASSIGN NAME = "l.dest_content" VALUE = "{ l.dest_content $ l.source_content}" />
+	</MvFOREACH>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.dest_content }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Concat_Files" PARAMETERS = "module var, param, source_paths, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Concat_Files( source_paths, output var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Concat_Files( l.source_paths ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
@@ -1841,26 +1893,52 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.output" VALUE = "" />
+
+	<MvCALL ACTION = "{ 'https://javascript-minifier.com/raw' }"
+			METHOD = "POST"
+			CONTENT-TYPE = "text/javascript"
+			FIELDS = "input">
+
+		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
+
+	</MvCALL>
+
+	<MvCOMMENT>
+		| TODO: Debug error: "Runtime error in mm5/5.00/modules/util/devkit.mvc @ [0000004f:000000e2]: functions.mv: Line 1912: MvCALL: Found &quot;i&quot; in tag following / "
+	</MvCOMMENT>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_JS" PARAMETERS = "module var, param, js_string, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_JS( js_string, output var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_JS( l.js_string ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "Do_Minify_CSS_File" PARAMETERS = "source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
 	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT stime(l.source_path) }">
 		<MvFUNCTIONRETURN />
 	</MvIF>
 
-	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_css ) }">
-	<MvIF EXPR = "{ NOT l.result }">
+	<MvIF EXPR = "{ NOT file_read( l.source_path, 'script', l.source_css ) }">
 		<MvFUNCTIONRETURN VALUE = 0 />
 	</MvIF>
 
 	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.source_css ) }" />
 
-	<MvIF EXPR = "{ sexists( l.dest_path ) }">
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_css ) }" />
-	<MvELSE>
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_css ) }" />
-	</MvIF>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_css, 0 ) }" />
 
 </MvFUNCTION>
 
@@ -1876,21 +1954,35 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Do_Concat_Files" PARAMETERS = "source_paths" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Do_Minify_JS_File" PARAMETERS = "source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
-	<MvASSIGN NAME = "l.dest_content" VALUE = "" />
+	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT stime(l.source_path) }">
+		<MvFUNCTIONRETURN />
+	</MvIF>
 
-	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-		<MvASSIGN NAME = "l.source_content" VALUE = "" />
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_content ) }" />
-		<MvASSIGN NAME = "l.dest_content" VALUE = "{ l.dest_content $ l.source_content}" />
-	</MvFOREACH>
+	<MvIF EXPR = "{ NOT file_read( l.source_path, 'script', l.source_js ) }">
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = "{ l.dest_content }" />
+	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.source_js ) }" />
+
+	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_js, 0 ) }" />
 
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Do_Minify_Concat_CSS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "text, html">
+<MvFUNCTION NAME = "Minify_JS_File" PARAMETERS = "module var, param, source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_JS_File( source_path, dest_path, check_modified )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path, l.check_modified ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_Concat_CSS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
 	<MvCOMMENT>
 		| Find most recently modified time in array of file paths
@@ -1911,13 +2003,7 @@
 	<MvASSIGN NAME = "l.all_css" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
 	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.all_css ) }" />
 
-	<MvIF EXPR = "{ sexists( l.dest_path ) }">
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_css ) }" />
-	<MvELSE>
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_css ) }" />
-	</MvIF>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_css, 0 ) }" />
 
 </MvFUNCTION>
 
@@ -1933,66 +2019,40 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Do_Minify_Concat_JS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
-	<MvASSIGN NAME = "l.output" VALUE = "" />
-
-	<MvCALL ACTION = "{ 'https://javascript-minifier.com/raw' }"
-			METHOD = "POST"
-			FIELDS = "input">
-
-		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
-
-	</MvCALL>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
-
-</MvFUNCTION>
-
-
-<MvFUNCTION NAME = "Minify_JS" PARAMETERS = "module var, param, js_string, output var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
-	|
-	|	Minify_JS( js_string, output var )
-	|
+		| Find most recently modified time in array of file paths
 	</MvCOMMENT>
 
-	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_JS( l.js_string ) }">
+	<MvASSIGN NAME = "l.most_recent_stime" VALUE = 0 />
+	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+		<MvASSIGN NAME = "l.soure_path_stime" VALUE = "{ stime( l.source_path ) }" />
+		<MvIF EXPR = "{ l.soure_path_stime GT l.most_recent_stime }">
+			<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ l.soure_path_stime }" />
+		</MvIF>
+	</MvFOREACH>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_JS_File" PARAMETERS = "source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-
-	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT stime(l.source_path) }">
+	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT l.most_recent_stime }">
 		<MvFUNCTIONRETURN />
 	</MvIF>
 
-	<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_js ) }">
-	<MvIF EXPR = "{ NOT l.result }">
-		<MvFUNCTIONRETURN VALUE = 0 />
-	</MvIF>
+	<MvASSIGN NAME = "l.all_js" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
 
-	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.source_js ) }" />
+	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.all_js ) }" />
 
-	<MvIF EXPR = "{ sexists( l.dest_path ) }">
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.dest_path, 'script', l.minified_js ) }" />
-	<MvELSE>
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.dest_path, 'script', l.minified_js ) }" />
-	</MvIF>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
+	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_js, 0 ) }" />
 
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Minify_JS_File" PARAMETERS = "module var, param, source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Minify_Concat_JS_Files" PARAMETERS = "module var, param, source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Minify_JS_File( source_path, dest_path, check_modified )
+	|	Minify_Concat_JS_Files( source_paths, dest_path, check_modified )
 	|
 	</MvCOMMENT>
 
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path, l.check_modified ) }">
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_JS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
 
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>

@@ -473,19 +473,19 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'File_Write', 'path, location, content, append, result var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Concat_Files', 'source_paths, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS', 'css_string, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS_File', 'source_path, dest_path, check_modified') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_CSS_Files', 'source_paths, dest_path, check_modified') }">
 			</div>
 		</div>
 
@@ -497,9 +497,28 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS_File', 'source_path, dest_path, check_modified') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS_File', 'source_path, dest_path, check_modified') }">
 			</div>
 		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_CSS_Files', 'source_paths, dest_path, check_modified') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_JS_Files', 'source_paths, dest_path, check_modified') }">
+			</div>
+		</div>
+
 	</MvIF>
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
@@ -634,11 +653,14 @@
 					( l.function_name EQ 'uri_replace_tld' )								OR
 					( l.function_name EQ 'uri_replace_hash' )								OR
 					( l.function_name EQ 'time_ago' )										OR
+					( l.function_name EQ 'file_write' )										OR
+					( l.function_name EQ 'concat_files' )									OR
 					( l.function_name EQ 'minify_css' )										OR
-					( l.function_name EQ 'minify_css_file' )								OR
-					( l.function_name EQ 'minify_concat_css_files' )						OR
 					( l.function_name EQ 'minify_js' )										OR
-					( l.function_name EQ 'minify_js_file' )
+					( l.function_name EQ 'minify_css_file' )								OR
+					( l.function_name EQ 'minify_js_file' )									OR
+					( l.function_name EQ 'minify_concat_css_files' )						OR
+					( l.function_name EQ 'minify_concat_js_files' )
 				}">
 		<MvCOMMENT>
 		|
