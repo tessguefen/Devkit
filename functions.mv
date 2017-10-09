@@ -1865,6 +1865,39 @@
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>
 
+<MvFUNCTION NAME = "Do_Most_Recent_File_Time" PARAMETERS = "file_paths, location" STANDARDOUTPUTLEVEL = "">
+
+	<MvASSIGN NAME = "l.most_recent_File_time" VALUE = 0 />
+	<MvFOREACH ITERATOR = "l.file_path" ARRAY = "l.file_paths">
+		<MvIF EXPR = "{ l.location EQ 'data' }">
+			<MvASSIGN NAME = "l.soure_path_time" VALUE = "{ ftime( l.file_path ) }" />
+			<MvIF EXPR = "{ l.soure_path_time GT l.most_recent_File_time }">
+				<MvASSIGN NAME = "l.most_recent_File_time" VALUE = "{ l.soure_path_time }" />
+			</MvIF>
+		<MvELSE>
+			<MvASSIGN NAME = "l.soure_path_time" VALUE = "{ stime( l.file_path ) }" />
+			<MvIF EXPR = "{ l.soure_path_time GT l.most_recent_File_time }">
+				<MvASSIGN NAME = "l.most_recent_File_time" VALUE = "{ l.soure_path_time }" />
+			</MvIF>
+		</MvIF>
+	</MvFOREACH>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.most_recent_File_time }" />
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Most_Recent_File_Time" PARAMETERS = "module var, param, file_paths, location, output var" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Most_Recent_File_Time( file_paths, location, output var )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Most_Recent_File_Time( l.file_paths, l.location ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
 <MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
 
 	<MvASSIGN NAME = "l.output" VALUE = "" />
@@ -1984,20 +2017,11 @@
 
 <MvFUNCTION NAME = "Do_Minify_Concat_CSS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
-	<MvCOMMENT>
-		| Find most recently modified time in array of file paths
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.most_recent_stime" VALUE = 0 />
-	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-		<MvASSIGN NAME = "l.soure_path_stime" VALUE = "{ stime( l.source_path ) }" />
-		<MvIF EXPR = "{ l.soure_path_stime GT l.most_recent_stime }">
-			<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ l.soure_path_stime }" />
+	<MvIF EXPR = "{ l.check_modified }">
+		<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ Do_Most_Recent_File_Time(l.source_paths, 'script') }" />
+		<MvIF EXPR = "{ stime(l.dest_path) GT l.most_recent_stime }">
+			<MvFUNCTIONRETURN />
 		</MvIF>
-	</MvFOREACH>
-
-	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT l.most_recent_stime }">
-		<MvFUNCTIONRETURN />
 	</MvIF>
 
 	<MvASSIGN NAME = "l.all_css" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
@@ -2021,20 +2045,11 @@
 
 <MvFUNCTION NAME = "Do_Minify_Concat_JS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
 
-	<MvCOMMENT>
-		| Find most recently modified time in array of file paths
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.most_recent_stime" VALUE = 0 />
-	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-		<MvASSIGN NAME = "l.soure_path_stime" VALUE = "{ stime( l.source_path ) }" />
-		<MvIF EXPR = "{ l.soure_path_stime GT l.most_recent_stime }">
-			<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ l.soure_path_stime }" />
+	<MvIF EXPR = "{ l.check_modified }">
+		<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ Do_Most_Recent_File_Time(l.source_paths, 'script') }" />
+		<MvIF EXPR = "{ stime(l.dest_path) GT l.most_recent_stime }">
+			<MvFUNCTIONRETURN />
 		</MvIF>
-	</MvFOREACH>
-
-	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT l.most_recent_stime }">
-		<MvFUNCTIONRETURN />
 	</MvIF>
 
 	<MvASSIGN NAME = "l.all_js" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
@@ -2053,6 +2068,74 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_JS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_Concat_Link_Tags" PARAMETERS = "source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
+
+	<MvIF EXPR = "{ g.DK_Expand OR g.DK_Expand_CSS }">
+		<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+			<MvIF EXPR = "{ l.bust_cache }">
+				<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.source_path $ '?_=' $ stime(l.source_path) $ '" data-devkit>' }">
+			<MvELSE>
+				<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.source_path $ '" data-devkit>' }">
+			</MvIF>
+		</MvFOREACH>
+		<MvFUNCTIONRETURN />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_CSS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
+	<MvIF EXPR = "{ l.bust_cache }">
+		<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.dest_path $ '?_=' $ stime(l.dest_path) $ '" data-devkit>' }"/>
+	<MvELSE>
+		<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.dest_path $ '" data-devkit>' }"/>
+	</MvIF>
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_Concat_Link_Tags" PARAMETERS = "module var, param, source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_Concat_Link_Tags( source_paths, dest_path, check_modified, bust_cache )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_Link_Tags( l.source_paths, l.dest_path, l.check_modified, l.bust_cache ) }">
+
+	<MvFUNCTIONRETURN VALUE = 1 />
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Do_Minify_Concat_Script_Tags" PARAMETERS = "source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
+
+	<MvIF EXPR = "{ g.DK_Expand OR g.DK_Expand_JS }">
+		<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
+			<MvIF EXPR = "{ l.bust_cache }">
+				<MvEVAL EXPR = "{ '<script src="' $ l.source_path $ '?_=' $ stime(l.source_path) $ '" data-devkit></script>' }">
+			<MvELSE>
+				<MvEVAL EXPR = "{ '<script src="' $ l.source_path $ '" data-devkit></script>' }">
+			</MvIF>
+		</MvFOREACH>
+		<MvFUNCTIONRETURN />
+	</MvIF>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_JS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
+	<MvIF EXPR = "{ l.bust_cache }">
+		<MvEVAL EXPR = "{ '<script src="' $ l.dest_path $ '?_=' $ stime(l.dest_path) $ '" data-devkit></script>' }"/>
+	<MvELSE>
+		<MvEVAL EXPR = "{ '<script src="' $ l.dest_path $ '" data-devkit></script>' }"/>
+	</MvIF>
+
+</MvFUNCTION>
+
+<MvFUNCTION NAME = "Minify_Concat_Script_Tags" PARAMETERS = "module var, param, source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "">
+	<MvCOMMENT>
+	|
+	|	Minify_Concat_Script_Tags( source_paths, dest_path, check_modified, bust_cache )
+	|
+	</MvCOMMENT>
+
+	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_Script_Tags( l.source_paths, l.dest_path, l.check_modified, l.bust_cache ) }">
 
 	<MvFUNCTIONRETURN VALUE = 1 />
 </MvFUNCTION>

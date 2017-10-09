@@ -485,6 +485,12 @@
 
 		<div class="devkit-function-row">
 			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Most_Recent_File_Time', 'file_paths, location, output var') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS', 'css_string, output var') }">
 			</div>
 		</div>
@@ -516,6 +522,18 @@
 		<div class="devkit-function-row">
 			<div class="devkit-function">
 				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_JS_Files', 'source_paths, dest_path, check_modified') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_Link_Tags', 'source_paths, dest_path, check_modified, bust_cache') }">
+			</div>
+		</div>
+
+		<div class="devkit-function-row">
+			<div class="devkit-function">
+				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_Script_Tags', 'source_paths, dest_path, check_modified, bust_cache') }">
 			</div>
 		</div>
 
@@ -655,12 +673,15 @@
 					( l.function_name EQ 'time_ago' )										OR
 					( l.function_name EQ 'file_write' )										OR
 					( l.function_name EQ 'concat_files' )									OR
+					( l.function_name EQ 'most_recent_file_time' )							OR
 					( l.function_name EQ 'minify_css' )										OR
 					( l.function_name EQ 'minify_js' )										OR
 					( l.function_name EQ 'minify_css_file' )								OR
 					( l.function_name EQ 'minify_js_file' )									OR
 					( l.function_name EQ 'minify_concat_css_files' )						OR
-					( l.function_name EQ 'minify_concat_js_files' )
+					( l.function_name EQ 'minify_concat_js_files' )							OR
+					( l.function_name EQ 'minify_concat_link_tags' )						OR
+					( l.function_name EQ 'minify_concat_script_tags' )
 				}">
 		<MvCOMMENT>
 		|
