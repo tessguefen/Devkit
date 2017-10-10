@@ -51,6 +51,8 @@
 <mvt:item name="devkit" param="Minify_JS_File( source_path, dest_path, check_modified )" />
 <mvt:item name="devkit" param="Minify_Concat_CSS_Files( source_paths, dest_path, check_modified )" />
 <mvt:item name="devkit" param="Minify_Concat_JS_Files( source_paths, dest_path, check_modified )" />
+<mvt:item name="devkit" param="Minify_Concat_Link_Tags( source_paths, dest_path, check_modified, bust_cache )" />
+<mvt:item name="devkit" param="Minify_Concat_Script_Tags( source_paths, dest_path, check_modified, bust_cache )" />
 ```
 
 ## Load_Product
@@ -199,24 +201,36 @@ result=&mvt:result;
 <mvt:assign name="l.css_files[2]" value="'/mm5/css/00000001/minibasket.css'" />
 <mvt:assign name="l.css_files[3]" value="'/mm5/css/00000001/readytheme.css'" />
 <mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_Concat_Link_Tags( l.css_files, '/mm5/css/00000001/all.min.css', 1, 1 )" />
+<!--
+	Output:
+	<link rel="stylesheet" href="/mm5/css/00000001/all.min.css?_=1507484810" data-devkit>
+-->
 
 <h2>DevKit Minify_Concat_Link_Tags</h2>
 <mvt:assign name="l.settings:css_files[1]" value="'/mm5/css/00000001/cssui.css'" />
 <mvt:assign name="l.settings:css_files[2]" value="'/mm5/css/00000001/minibasket.css'" />
 <mvt:assign name="l.settings:css_files[3]" value="'/mm5/css/00000001/readytheme.css'" />
 <mvt:item name="devkit" param="Minify_Concat_Link_Tags( l.settings:css_files, '/mm5/css/00000001/all.min.css', 1, 1 )" />
+<!--
+	Output:
+	<link rel="stylesheet" href="/mm5/css/00000001/all.min.css?_=1507484810" data-devkit>
+-->
 
 <h2>mvt:do Do_Minify_Concat_Script_Tags</h2>
 <mvt:assign name="l.js_files[1]" value="'/mm5/themes/booc/js/jquery.min.js'" />
 <mvt:assign name="l.js_files[2]" value="'/mm5/themes/booc/js/plugins.js'" />
 <mvt:do file="g.Module_Devkit" name="l.settings:result" value="Do_Minify_Concat_Script_Tags( l.js_files, '/mm5/themes/booc/js/all.min.js', 1, 1 )" />
+<!--
+	Output:
+	<script src="/mm5/themes/booc/js/all.min.js?_=1507484810" data-devkit></script>
+-->
 
 <h2>DevKit Minify_Concat_Script_Tags</h2>
 <mvt:assign name="l.settings:js_files[1]" value="'/mm5/themes/booc/js/jquery.min.js'" />
 <mvt:assign name="l.settings:js_files[2]" value="'/mm5/themes/booc/js/plugins.js'" />
 <mvt:item name="devkit" param="Minify_Concat_Script_Tags( l.settings:js_files, '/mm5/themes/booc/js/all.min.js', 1, 1 )" />
-
-
 <!--
-TODO: Do_Site_CSS - Pass in array of css file paths, minify them, and output a single <link> tag for the minified & concatinated file (with ?v=1234 timestamp cache-buster). For debugging/development, pass g.DK_Expand OR g.DK_Expand_CSS to output each source-file <link> tag instead of minifed css file.-->
+	Output:
+	<script src="/mm5/themes/booc/js/all.min.js?_=1507484810" data-devkit></script>
+-->
 ```
