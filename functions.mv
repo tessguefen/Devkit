@@ -6,7 +6,6 @@
 |
 |	<MvFUNCTION NAME = "XXXXX"  PARAMETERS = "module var, param, param_1, param_2, param_3, etc var" STANDARDOUTPUTLEVEL = "">
 |
-|
 </MvCOMMENT>
 
 <MvFUNCTION NAME = "Test" PARAMETERS = "module var, param, test_the_first, test_the_second, destination var" STANDARDOUTPUTLEVEL = "">
@@ -85,7 +84,7 @@
 	<MvASSIGN NAME = "l.variant_count" VALUE = 0>
 	<MvWHILE EXPR = "{ NOT ProductVariants.d.EOF }">
 		<MvASSIGN NAME = "l.variant_count"												VALUE = "{ l.variant_count + 1 }">
-
+		
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "product_id"	VALUE = "{ ProductVariants.d.product_id }">
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "variant_id"	VALUE = "{ ProductVariants.d.variant_id }">
 		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "dimensions"	VALUE = "{ ProductVariants.d.dimensions }">
@@ -301,7 +300,7 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.product" VALUE = "{ _Load_Product( l.options ) }" />
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 
@@ -459,7 +458,7 @@
 	</MvCOMMENT>
 
 	<MvIF EXPR = "{ NOT len( l.parameters:query ) GT 0 }">
-
+		
 		<MvIF EXPR = "{ l.parameters:assign_error EQ 1 }">
 			<MvASSIGN NAME  =  "l.parameters:error" VALUE = "{ g.MvOPENVIEW_Error }">
 			<MvFUNCTIONRETURN VALUE  =  0 />
@@ -500,7 +499,7 @@
 			<MvELSE>
 				<MvASSIGN NAME = "l.parameters:bind_parameter_list" VALUE = "{ l.parameters:bind_parameter_list $ ', l.parameters:bind_parameters[' $ l.index $ ']' }" />
 			</MvIF>
-		</MvFOREACH>
+		</MvFOREACH>		
 	</MvIF>
 
 	<MvCOMMENT>If the passed parameter structure contains a result set, lets clear it out before loading the new one</MvCOMMENT>
@@ -521,7 +520,7 @@
 				</MvIF>
 			</MvIF>
 
-
+			
 			<MvCOMMENT>Determine what fields we have from this query result set to build the result array</MvCOMMENT>
 			<MvREVEALSTRUCTURE NAME = "MERCHANT" VIEW = "SQL" VARIABLE = "l.fields">
 
@@ -537,7 +536,7 @@
 			</MvWHILE>
 
 			<MvASSIGN NAME = "l.parameters:fields" VALUE = "{ l.fields }" />
-
+			
 		<MvCLOSEVIEW NAME = "Merchant" VIEW = "SQL">
 	<MvELSE>
 		<MvTRANSACT NAME = "Merchant">
@@ -551,7 +550,7 @@
 				<MvELSE>
 					<MvFUNCTIONRETURN VALUE = "{ [ g.Module_Library_Utilities ].Error( 'SQL-QUERIES-0001', g.MvQUERY_Error ) }">
 				</MvIF>
-
+				
 			</MvIF>
 
 			<MvASSIGN NAME = "l.parameters:results" VALUE = "1">
@@ -567,7 +566,7 @@
 	|
 	</MvCOMMENT>
 	<MvASSIGN NAME = "l.output" VALUE = "">
-	<MvASSIGN NAME = "l.offset" VALUE = "0">
+	<MvASSIGN NAME = "l.offset" VALUE = 0>
 
 	<MvWHILE EXPR = "{ ISNULL l.output }">
 		<MvASSIGN NAME = "l.products" VALUE = "">
@@ -714,7 +713,7 @@
 	<MvDO FILE = "{ g.Module_Root $ l.customfields:module }" NAME = "l.success" VALUE = "{ Read_Basket( l.module, l.param, l.customfield_name, l.recently_viewed:product_codes ) }">
 
 	<MvASSIGN NAME = "l.recently_viewed:product_codes" VALUE = "{ miva_array_deserialize( l.recently_viewed:product_codes ) }">
-
+	
 	<MvASSIGN NAME = "l.recently_viewed:exsiting_index" VALUE = "{ miva_array_find( l.current_product_code, l.recently_viewed:product_codes, 0 ) }">
 
 	<MvIF EXPR = "{ l.recently_viewed:exsiting_index GT 0 }">
@@ -794,9 +793,9 @@
 	</MvCOMMENT>
 
 	<MvASSIGN NAME = "l.temp_basket:cust_id"    VALUE = "{ l.basket:cust_id }" >
-	<MvASSIGN NAME = "l.temp_basket:order_id"   VALUE = "0" >
-	<MvASSIGN NAME = "l.temp_basket:order_proc" VALUE = "0" >
-	<MvASSIGN NAME = "l.temp_basket:ship_id"    VALUE = "0" >
+	<MvASSIGN NAME = "l.temp_basket:order_id"   VALUE = 0 >
+	<MvASSIGN NAME = "l.temp_basket:order_proc" VALUE = 0 >
+	<MvASSIGN NAME = "l.temp_basket:ship_id"    VALUE = 0 >
 	<MvASSIGN NAME = "l.temp_basket:session_id" VALUE = "{ MakeSessionID() }" >
 	<MvASSIGN NAME = "l.temp_basket:lastupdate" VALUE = "{ s.dyn_time_t }" >
 	<MvASSIGN NAME = "l.temp_basket:ship_fname" VALUE = "{ l.basket:ship_fname }" >
@@ -884,17 +883,17 @@
 	</MvCOMMENT>
 
 	<MvIF EXPR = "{ NOT [ g.Module_Feature_PGR_DB ].PriceGroup_Load_Name( l.pricegroup_name, l.pricegroup) }">
-		<MvASSIGN NAME = "l.output" VALUE = "0">
-		<MvFUNCTIONRETURN VALUE = "0" />
+		<MvASSIGN NAME = "l.output" VALUE = 0>
+		<MvFUNCTIONRETURN VALUE = 0 />
 	</MvIF>
 
 	<MvIF EXPR = "{ ( ( l.pricegroup:dt_start EQ 0 ) OR ( s.dyn_time_t GT l.pricegroup:dt_start) ) AND ( ( l.pricegroup:dt_start EQ 0 ) OR ( s.dyn_time_t LT l.pricegroup:dt_end ) ) }">
 		<MvASSIGN NAME = "l.output" VALUE = "1">
 		<MvFUNCTIONRETURN VALUE = "1" />
 	<MvELSE>
-		<MvASSIGN NAME = "l.output" VALUE = "0">
-		<MvFUNCTIONRETURN VALUE = "0" />
-	</MvIf>
+		<MvASSIGN NAME = "l.output" VALUE = 0>
+		<MvFUNCTIONRETURN VALUE = 0 />
+	</MvIf>	
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Readytheme_Load_ContentSection_NoDiv_Variable" PARAMETERS = "module var, param, code, all_settings var, output var" STANDARDOUTPUTLEVEL = "">
@@ -957,7 +956,7 @@
 		<MvFUNCTIONRETURN VALUE = 1>
 	</MvIF>
 
-	<MvASSIGN NAME = "l.output" MEMBER = "qualifies" VALUE = "0">
+	<MvASSIGN NAME = "l.output" MEMBER = "qualifies" VALUE = 0>
 	<MvASSIGN NAME = "l.output" MEMBER = "remaining" VALUE = "{ l.determine }">
 	<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.output:formatted_remaining" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.output:remaining ) }" />
 	<MvFUNCTIONRETURN VALUE = 0>
@@ -1030,7 +1029,7 @@
 
 		<MvCAPTURE VARIABLE = "l.headers"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailHeaders( l.mix_boundary, l.alt_boundary, l.body_message, l.crlf  ) }"></MvCAPTURE>
 		<MvCAPTURE VARIABLE = "l.message"><MvASSIGN NAME = "l.ok" VALUE = "{ [ g.Module_Library_Utilities ].BuildMIMEAttachmentEmailMessage( l.mix_boundary, l.file_name, l.file_dir, l.file_location, l.crlf ) }"></MvCAPTURE>
-
+	
 		<MIVA MvCOMMERCE_ERROR = "nonfatal, nodisplay">
 		<MvCOMMERCE METHOD = "{ g.Domain:mailmeth }" FIELDS = "to,from,cc,subject,headers,message,mailhost">
 		</MvCOMMERCE>
@@ -1046,7 +1045,7 @@
 		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Format( l.from, l.from_header, l.from_address ) }">
 		<MvASSIGN NAME = "l.null" 				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.to, l.to_headers, l.to_addresses ) }">
 		<MvASSIGN NAME = "l.null"				VALUE = "{ [ g.Module_Library_Utilities ].Create_Address_Formats( l.cc, l.cc_headers, l.cc_addresses ) }">
-
+		
 		<MvIF EXPR = "{ g.Domain:mail_angl }">
 			<MvASSIGN NAME = "l.from_address" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.from_address ) }">
 			<MvASSIGN NAME = "l.to_addresses" 	VALUE = "{ [ g.Module_Library_Utilities ].Email_Add_AngleBrackets( l.to_addresses ) }">
@@ -1057,17 +1056,17 @@
 		<MvASSIGN NAME = "l.port" 				VALUE = "{ g.Domain:mailport }">
 		<MvASSIGN NAME = "l.username" 			VALUE = "{ g.Domain:mailuser }">
 		<MvASSIGN NAME = "l.password" 			VALUE = "{ [ g.Module_Library_Crypto ].Decrypt_Payment_Password( g.Domain:mailpass ) }">
-
+		
 		<MvIF EXPR = "{ NOT ISNULL g.Domain:mailflags }">
 			<MvASSIGN NAME = "l.flags" 			VALUE = "{ g.Domain:mailflags $ ', noheaders' }">
 		<MvELSE>
 			<MvASSIGN NAME = "l.flags" 			VALUE = "noheaders">
 		</MvIF>
 
-		<MvSMTP FROM 	 = "{ l.from_address }"
-				TO 		 = "{ l.to_addresses }"
-				CC 		 = "{ l.cc_addresses }"
-				SUBJECT  = "{ l.subject }"
+		<MvSMTP FROM 	 = "{ l.from_address }" 
+				TO 		 = "{ l.to_addresses }" 
+				CC 		 = "{ l.cc_addresses }" 
+				SUBJECT  = "{ l.subject }" 
 				MAILHOST = "{ l.mailhost }"
 				FLAGS 	 = "{ l.flags }"
 				PORT 	 = "{ l.port }"
@@ -1123,7 +1122,7 @@
 	<MvASSIGN NAME = "l.output:count" VALUE = 0>
 	<MvWHILE EXPR = "{ NOT Also_Purchased.d.EOF }">
 		<MvASSIGN NAME = "l.output:count"												VALUE = "{ l.output:count + 1 }">
-
+		
 		<MvASSIGN NAME = "l.output:products" INDEX = "{ l.output:count }" MEMBER = "id"	VALUE = "{ Also_Purchased.d.product_id }">
 
 		<MvSKIP NAME = "Merchant" VIEW = "Also_Purchased" ROWS = 1>
@@ -1164,42 +1163,42 @@
 	<MvIF EXPR = "{ ( ISNULL l.email ) OR ( ISNULL l.password ) OR ( ISNULL l.password_confirm ) }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'Please fill in all required fields for creating a new account.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvIF EXPR = "{ NOT [ g.Module_Admin ].Validate_Email( l.email ) }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'Please make sure that your email address is a valid email.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvIF EXPR = "{ l.password NE l.password_confirm }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'The passwords do not match.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvIF EXPR = "{ [ g.Module_Feature_CUS_DB ].Customer_Load_Email( l.email, l.customer_exsists ) }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'The email address you entered is already in use.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvASSIGN NAME = "l.new_customer" MEMBER = "login"			VALUE = "{ l.email }">
 	<MvASSIGN NAME = "l.new_customer" MEMBER = "pw_email"		VALUE = "{ l.email }">
 	<MvASSIGN NAME = "l.new_customer" MEMBER = "password"		VALUE = "{ l.password }">
-	<MvASSIGN NAME = "l.new_customer" MEMBER = "pgrpcount"		VALUE = "0">
+	<MvASSIGN NAME = "l.new_customer" MEMBER = "pgrpcount"		VALUE = 0>
 
 	<MvIF EXPR = "{ NOT [ g.Module_Feature_CUS_UT ].CustomerLogin_Generate_Email( l.new_customer:pw_email, l.new_customer:login ) }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'An error has occured.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvIF EXPR = "{ NOT [ g.Module_Feature_CUS_DB ].Customer_Insert( l.new_customer ) }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:error_messages, 'An error has occured.', -1 ) }">
 		<MvASSIGN NAME = "l.messages:error_message_count" VALUE = "{ l.messages:error_message_count + 1 }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvASSIGN NAME = "g.Customer_LoginEmail"	VALUE = "{ l.new_customer:pw_email }">
@@ -1214,7 +1213,7 @@
 	<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_insert( l.messages:information_messages, 'You have successfully created an account!', -1 ) }">
 	<MvASSIGN NAME = "l.messages:information_message_count" VALUE = "{ l.messages:information_message_count + 1 }">
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "ReOrder_Order_Form" PARAMETERS = "module var, param, orderitems var, show_quantity_inputs, member" STANDARDOUTPUTLEVEL = "">
@@ -1228,7 +1227,7 @@
 	|
 	</MvCOMMENT>
 
-	<MvASSIGN NAME = "l.counter" VALUE = "0" />
+	<MvASSIGN NAME = "l.counter" VALUE = 0 />
 
 	<MvFOREACH ITERATOR = "l.item" ARRAY = "l.orderitems">
 		<MvIF EXPR = "{ l.item:reorder NE 1 }">
@@ -1236,7 +1235,7 @@
 		</MvIF>
 
 		<MvASSIGN NAME = "l.counter" VALUE = "{ l.counter + 1 }">
-		<MvASSIGN NAME = "l.option_counter" VALUE = "0">
+		<MvASSIGN NAME = "l.option_counter" VALUE = 0>
 
 		<MvASSIGN NAME = "l.output" VALUE = "{ '<input type="hidden" name="Products[' $ l.counter $ ']:code" value="' $ l.item:code $ '" />' }">
 
@@ -1383,7 +1382,7 @@
 	|	Check for http:// and https:// and //
 	|
 	</MvCOMMENT>
-
+	
 	<MvIF EXPR = "{ 'HTTP://' EQ toupper( substring_var( l.original_uri, 0, 7 ) ) }">
 		<MvASSIGN NAME = "l.return" MEMBER = "scheme" VALUE = "http">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ substring_var( l.original_uri, 8, ( l.original_uri_length - 7 ) ) }">
@@ -1443,7 +1442,7 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.return" MEMBER = "domain" VALUE  = "{ l.return:host }">
 	</MvIF>
-
+	
 	<MvASSIGN NAME = "l.period_first" VALUE = "{ indexofl( '.', l.return:host, len_var( l.return:host ) ) }">
 	<MvASSIGN NAME = "l.return" MEMBER = "tld" VALUE = "{ substring_var( l.return:host, l.period_last + 1, ( len_var( l.return:host ) - l.period_last ) ) }">
 
@@ -1475,7 +1474,7 @@
 	<MvELSE>
 		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "{ l.original_uri }">
 	</MvIF>
-
+	
 	<MvIF EXPR = "{ NOT ISNULL l.original_uri }">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?&', '' ) }">
 		<MvASSIGN NAME = "l.original_uri" VALUE = "{ glosub( l.original_uri, '?', '' ) }">
@@ -1486,7 +1485,7 @@
 	<MvIF EXPR = "{ ISNULL l.return:path }">
 		<MvASSIGN NAME = "l.return" MEMBER = "path" VALUE = "/" />
 	</MvIF>
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_QueryStrings_To_Structure" PARAMETERS = "module var, param, uri, array, return var" STANDARDOUTPUTLEVEL = "">
@@ -1501,7 +1500,7 @@
 	<MvASSIGN NAME = "l.success" VALUE = "{ Parse_URI( l.module, l.param, l.uri, l.parsed_uri ) }">
 
 	<MvIF EXPR = "{ ISNULL l.parsed_uri:query }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvFOREACH ITERATOR = "l.query" ARRAY = "l.querys" COUNT = "{ miva_splitstring( l.parsed_uri:query, '&', l.querys, 'trim' ) }">
@@ -1523,7 +1522,7 @@
 		</MvIF>
 	</MvFOREACH>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Add_Replace_QueryString" PARAMETERS = "module var, param, uri, query_string, value, return var" STANDARDOUTPUTLEVEL = "">
@@ -1534,7 +1533,7 @@
 	</MvCOMMENT>
 	<MvIF EXPR = "{ NOT URI_QueryStrings_To_Structure( l.module, l.param, l.uri, 1, l.output ) }">
 		<MvASSIGN NAME = "l.return" VALUE = "{ l.uri }">
-		<MvFUNCTIONRETURN VALUE = 0 />
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvASSIGN NAME = "l.uri_qm_index" VALUE = "{ indexof( '?&', l.uri, 1 ) }">
@@ -1610,7 +1609,7 @@
 	<MvIF EXPR = "{ NOT ISNULL l.uri:fragment }">
 		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '#' $ l.uri:fragment }">
 	</MvIF>
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Add_Replace_Subdomain" PARAMETERS = "module var, param, uri, new_subdomain, output var" STANDARDOUTPUTLEVEL = "">
@@ -1625,7 +1624,7 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Add_Replace_UserPass" PARAMETERS = "module var, param, uri, user, pass, output var" STANDARDOUTPUTLEVEL = "">
@@ -1641,7 +1640,7 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Add_Replace_Scheme" PARAMETERS = "module var, param, uri, new_scheme, output var" STANDARDOUTPUTLEVEL = "">
@@ -1656,7 +1655,7 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Replace_TLD" PARAMETERS = "module var, param, uri, new_tld, output var" STANDARDOUTPUTLEVEL = "">
@@ -1671,7 +1670,7 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "URI_Replace_Hash" PARAMETERS = "module var, param, uri, new_hash, output var" STANDARDOUTPUTLEVEL = "">
@@ -1686,456 +1685,5 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ URI_Build_URI( l.module, l.param, l.parsed_uri, l.output) }">
 	</MvIF>
 
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Time_Ago" PARAMETERS = "module var, param, now_time, time, output var" STANDARDOUTPUTLEVEL = "html,text">
-	<MvCOMMENT>
-	|
-	|	Time_Ago( time, output var )
-
-	PLEASE IGNORE.......IN PROGRESS.
-
-		['just now', 'right now'],
-		['%s seconds ago', 'in %s seconds'],
-		['1 minute ago', 'in 1 minute'],
-		['%s minutes ago', 'in %s minutes'],
-		['1 hour ago', 'in 1 hour'],
-		['%s hours ago', 'in %s hours'],
-		['1 day ago', 'in 1 day'],
-		['%s days ago', 'in %s days'],
-		['1 week ago', 'in 1 week'],
-		['%s weeks ago', 'in %s weeks'],
-		['1 month ago', 'in 1 month'],
-		['%s months ago', 'in %s months'],
-		['1 year ago', 'in 1 year'],
-		['%s years ago', 'in %s years']
-
-	|
-	</MvCOMMENT>
-	<MvIF EXPR = "{ ISNULL l.now_time }">
-		<MvASSIGN NAME = "l.now_time" VALUE = "{ s.dyn_time_t }">
-	</MvIF>
-
-	<MvASSIGN NAME = "l.diff" VALUE = "{ l.now_time - l.time }">
-
-	<MvIF EXPR = "{ l.diff LT 0 }">
-		<MvASSIGN NAME = "l.agoin" VALUE = "1" />
-	<MvELSE>
-		<MvASSIGN NAME = "l.agoin" VALUE = "0" />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.diff" VALUE = "{ abs( l.diff ) }">
-
-	<MvIF EXPR = "{ l.diff EQ 0 }">
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "just now">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "right now">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_MINUTE_IN_SECONDS }">
-		<MvIF EXPR = "{ l.diff GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.diff $ ' second' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.diff $ ' second' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_HOUR_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_MINUTE_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' minute' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' minute' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_DAY_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_HOUR_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' hour' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' hour' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_WEEK_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_DAY_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' day' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' day' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_MONTH_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_WEEK_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' week' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' week' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff LT g.DK_YEAR_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_MONTH_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' month' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' month' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	<MvELSEIF EXPR = "{ l.diff GE g.DK_YEAR_IN_SECONDS }">
-		<MvASSIGN NAME = "l.elapsed" VALUE = "{ rnd( l.diff / g.DK_YEAR_IN_SECONDS, 0 ) }">
-		<MvIF EXPR = "{ l.elapsed GT 1 }">
-			<MvASSIGN NAME = "l.extra" VALUE = "s" />
-		</MvIF>
-		<MvIF EXPR = "{ l.agoin EQ 0 }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.elapsed $ ' year' $ l.extra $ ' ago' }">
-		<MvELSE>
-			<MvASSIGN NAME = "l.output" VALUE = "{ 'in ' $ l.elapsed $ ' year' $ l.extra }">
-		</MvIF>
-		<MvFUNCTIONRETURN VALUE = 1 />
-	</MvIF>
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_File_Write" PARAMETERS = "path, location, content, append" STANDARDOUTPUTLEVEL = "">
-	<MvIF EXPR = "{ sexists( l.path ) }">
-		<MvIF EXPR = "{ l.append }">
-			<MvASSIGN NAME = "l.result" VALUE = "{ file_append( l.path, l.location, l.content ) }" />
-		<MvELSE>
-			<MvASSIGN NAME = "l.result" VALUE = "{ file_overwrite( l.path, l.location, l.content ) }" />
-		</MvIF>
-	<MvELSE>
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_create( l.path, l.location, l.content ) }" />
-	</MvIF>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.result }" />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "File_Write" PARAMETERS = "module var, param, path, location, content, append, result" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	File_Write( path, location, content, append, result var )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_File_Write( l.path, l.location, l.content, l.append ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Concat_Files" PARAMETERS = "source_paths" STANDARDOUTPUTLEVEL = "">
-
-	<MvASSIGN NAME = "l.dest_content" VALUE = "" />
-
-	<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-		<MvASSIGN NAME = "l.source_content" VALUE = "" />
-		<MvASSIGN NAME = "l.result" VALUE = "{ file_read( l.source_path, 'script', l.source_content ) }" />
-		<MvASSIGN NAME = "l.dest_content" VALUE = "{ l.dest_content $ l.source_content}" />
-	</MvFOREACH>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.dest_content }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Concat_Files" PARAMETERS = "module var, param, source_paths, output var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Concat_Files( source_paths, output var )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Concat_Files( l.source_paths ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Most_Recent_File_Time" PARAMETERS = "file_paths, location" STANDARDOUTPUTLEVEL = "">
-
-	<MvASSIGN NAME = "l.most_recent_File_time" VALUE = 0 />
-	<MvFOREACH ITERATOR = "l.file_path" ARRAY = "l.file_paths">
-		<MvIF EXPR = "{ l.location EQ 'data' }">
-			<MvASSIGN NAME = "l.soure_path_time" VALUE = "{ ftime( l.file_path ) }" />
-			<MvIF EXPR = "{ l.soure_path_time GT l.most_recent_File_time }">
-				<MvASSIGN NAME = "l.most_recent_File_time" VALUE = "{ l.soure_path_time }" />
-			</MvIF>
-		<MvELSE>
-			<MvASSIGN NAME = "l.soure_path_time" VALUE = "{ stime( l.file_path ) }" />
-			<MvIF EXPR = "{ l.soure_path_time GT l.most_recent_File_time }">
-				<MvASSIGN NAME = "l.most_recent_File_time" VALUE = "{ l.soure_path_time }" />
-			</MvIF>
-		</MvIF>
-	</MvFOREACH>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.most_recent_File_time }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Most_Recent_File_Time" PARAMETERS = "module var, param, file_paths, location, output var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Most_Recent_File_Time( file_paths, location, output var )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Most_Recent_File_Time( l.file_paths, l.location ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_CSS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
-
-	<MvASSIGN NAME = "l.output" VALUE = "" />
-
-	<MvCALL ACTION = "{ 'https://cssminifier.com/raw' }"
-			METHOD = "POST"
-			FIELDS = "input">
-
-		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
-
-	</MvCALL>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_CSS" PARAMETERS = "module var, param, css_string, output var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_CSS( css_string, output var )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_CSS( l.css_string ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_JS" PARAMETERS = "input" STANDARDOUTPUTLEVEL = "">
-
-	<MvASSIGN NAME = "l.output" VALUE = "" />
-
-	<MvCALL ACTION = "{ 'https://javascript-minifier.com/raw' }"
-			METHOD = "POST"
-			CONTENT-TYPE = "text/javascript"
-			FIELDS = "input">
-
-		<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ s.callvalue }" />
-
-	</MvCALL>
-
-	<MvCOMMENT>
-		| TODO: Debug error: "Runtime error in mm5/5.00/modules/util/devkit.mvc @ [0000004f:000000e2]: functions.mv: Line 1912: MvCALL: Found &quot;i&quot; in tag following / "
-	</MvCOMMENT>
-
-	<MvFUNCTIONRETURN VALUE = "{ l.output }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_JS" PARAMETERS = "module var, param, js_string, output var" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_JS( js_string, output var )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.output" VALUE = "{ Do_Minify_JS( l.js_string ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_CSS_File" PARAMETERS = "source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-
-	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT stime(l.source_path) }">
-		<MvFUNCTIONRETURN />
-	</MvIF>
-
-	<MvIF EXPR = "{ NOT file_read( l.source_path, 'script', l.source_css ) }">
-		<MvFUNCTIONRETURN VALUE = 0 />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.source_css ) }" />
-
-	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_css, 0 ) }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_CSS_File" PARAMETERS = "module var, param, source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_CSS_File( source_path, dest_path, check_modified )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_CSS_File( l.source_path, l.dest_path, l.check_modified ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_JS_File" PARAMETERS = "source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-
-	<MvIF EXPR = "{ l.check_modified AND stime(l.dest_path) GT stime(l.source_path) }">
-		<MvFUNCTIONRETURN />
-	</MvIF>
-
-	<MvIF EXPR = "{ NOT file_read( l.source_path, 'script', l.source_js ) }">
-		<MvFUNCTIONRETURN VALUE = 0 />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.source_js ) }" />
-
-	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_js, 0 ) }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_JS_File" PARAMETERS = "module var, param, source_path, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_JS_File( source_path, dest_path, check_modified )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_JS_File( l.source_path, l.dest_path, l.check_modified ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_Concat_CSS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-
-	<MvIF EXPR = "{ l.check_modified }">
-		<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ Do_Most_Recent_File_Time(l.source_paths, 'script') }" />
-		<MvIF EXPR = "{ stime(l.dest_path) GT l.most_recent_stime }">
-			<MvFUNCTIONRETURN />
-		</MvIF>
-	</MvIF>
-
-	<MvASSIGN NAME = "l.all_css" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
-	<MvASSIGN NAME = "l.minified_css" VALUE = "{ Do_Minify_CSS( l.all_css ) }" />
-
-	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_css, 0 ) }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_Concat_CSS_Files" PARAMETERS = "module var, param, source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_Concat_CSS_Files( source_paths, dest_path, check_modified )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_CSS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_Concat_JS_Files" PARAMETERS = "source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-
-	<MvIF EXPR = "{ l.check_modified }">
-		<MvASSIGN NAME = "l.most_recent_stime" VALUE = "{ Do_Most_Recent_File_Time(l.source_paths, 'script') }" />
-		<MvIF EXPR = "{ stime(l.dest_path) GT l.most_recent_stime }">
-			<MvFUNCTIONRETURN />
-		</MvIF>
-	</MvIF>
-
-	<MvASSIGN NAME = "l.all_js" VALUE = "{ Do_Concat_Files( l.source_paths ) }" />
-
-	<MvASSIGN NAME = "l.minified_js" VALUE = "{ Do_Minify_JS( l.all_js ) }" />
-
-	<MvFUNCTIONRETURN VALUE = "{ Do_File_Write( l.dest_path, 'script', l.minified_js, 0 ) }" />
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_Concat_JS_Files" PARAMETERS = "module var, param, source_paths, dest_path, check_modified" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_Concat_JS_Files( source_paths, dest_path, check_modified )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_JS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_Concat_Link_Tags" PARAMETERS = "source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
-
-	<MvIF EXPR = "{ g.DK_Expand OR g.DK_Expand_CSS }">
-		<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-			<MvIF EXPR = "{ l.bust_cache }">
-				<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.source_path $ '?_=' $ stime(l.source_path) $ '" data-devkit>' }">
-			<MvELSE>
-				<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.source_path $ '" data-devkit>' }">
-			</MvIF>
-		</MvFOREACH>
-		<MvFUNCTIONRETURN />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_CSS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
-	<MvIF EXPR = "{ l.bust_cache }">
-		<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.dest_path $ '?_=' $ stime(l.dest_path) $ '" data-devkit>' }"/>
-	<MvELSE>
-		<MvEVAL EXPR = "{ '<link rel="stylesheet" href="' $ l.dest_path $ '" data-devkit>' }"/>
-	</MvIF>
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_Concat_Link_Tags" PARAMETERS = "module var, param, source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_Concat_Link_Tags( source_paths, dest_path, check_modified, bust_cache )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_Link_Tags( l.source_paths, l.dest_path, l.check_modified, l.bust_cache ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Do_Minify_Concat_Script_Tags" PARAMETERS = "source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
-
-	<MvIF EXPR = "{ g.DK_Expand OR g.DK_Expand_JS }">
-		<MvFOREACH ITERATOR = "l.source_path" ARRAY = "l.source_paths">
-			<MvIF EXPR = "{ l.bust_cache }">
-				<MvEVAL EXPR = "{ '<script src="' $ l.source_path $ '?_=' $ stime(l.source_path) $ '" data-devkit></script>' }">
-			<MvELSE>
-				<MvEVAL EXPR = "{ '<script src="' $ l.source_path $ '" data-devkit></script>' }">
-			</MvIF>
-		</MvFOREACH>
-		<MvFUNCTIONRETURN />
-	</MvIF>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_JS_Files( l.source_paths, l.dest_path, l.check_modified ) }">
-	<MvIF EXPR = "{ l.bust_cache }">
-		<MvEVAL EXPR = "{ '<script src="' $ l.dest_path $ '?_=' $ stime(l.dest_path) $ '" data-devkit></script>' }"/>
-	<MvELSE>
-		<MvEVAL EXPR = "{ '<script src="' $ l.dest_path $ '" data-devkit></script>' }"/>
-	</MvIF>
-
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Minify_Concat_Script_Tags" PARAMETERS = "module var, param, source_paths, dest_path, check_modified, bust_cache" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Minify_Concat_Script_Tags( source_paths, dest_path, check_modified, bust_cache )
-	|
-	</MvCOMMENT>
-
-	<MvASSIGN NAME = "l.result" VALUE = "{ Do_Minify_Concat_Script_Tags( l.source_paths, l.dest_path, l.check_modified, l.bust_cache ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1 />
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>

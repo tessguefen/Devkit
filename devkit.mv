@@ -1,4 +1,4 @@
-<MvFUNCTION NAME = "Module_Description" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "Module_Description" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "">
 	<MvASSIGN NAME = "l.module:code"		VALUE = "devkit">
 	<MvASSIGN NAME = "l.module:name"		VALUE = "Devkit">
 	<MvASSIGN NAME = "l.module:provider"	VALUE = "Steven Soule and Tess Guefen">
@@ -9,9 +9,9 @@
 </MvFUNCTION>
 
 <MvCOMMENT>
-| ========================================================================================================================
-|	SYSTEM
-| ========================================================================================================================
+|
+|	SYSTEM 
+|
 </MvCOMMENT>
 
 <MvFUNCTION NAME = "SystemModule_Action" PARAMETERS = "module var, action" STANDARDOUTPUTLEVEL = "">
@@ -21,7 +21,8 @@
 	|		Check for `ADPR` & `ADPM`
 	|
 	</MvCOMMENT>
-	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">
+
+	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">	
 		<MvASSIGN NAME = "g.DKIG" VALUE = "">
 
 		<MvIF EXPR = "{ 'ADPR' CIN l.action }">
@@ -35,12 +36,14 @@
 			</MvFOREACH>
 		</MvIF>
 	</MvIF>
+
 	<MvCOMMENT>
 	|
-	| Check for `g.DKIG_Update`
+	|	Check for `g.DKIG_Update`
 	|	Check for `QTYG` & `RGRP`
 	|
 	</MvCOMMENT>
+
 	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Update ) }">
 		<MvIF EXPR = "{ 'QTYG' CIN l.action }">
 			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Quantity_Updates ) }">
@@ -49,9 +52,9 @@
 			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Remove_Updates ) }">
 		</MvIF>
 	</MvIF>
+
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
-
 
 <MvFUNCTION NAME = "SystemModule_Screen" PARAMETERS = "module var, screen" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
@@ -59,38 +62,8 @@
 	|	Assign g.Module_Devkit, for use with mvt:dos.
 	|
 	</MvCOMMENT>
-	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'modules/util/devkit.mvc' }">
 
-	<MvCOMMENT>
-	|
-	|	Assign Timespan Helpers
-	|
-	| 	Constants for expressing human-readable intervals in their respective number of seconds.
-	|	Please note that these values are approximate and are provided for convenience.
-	|	For example, MONTH_IN_SECONDS wrongly assumes every month has 30 days and
-	|	YEAR_IN_SECONDS does not take leap years into account.
-	| 	-- thanks WordPress :-)
-	|
-	</MvCOMMENT>
-	<MvASSIGN NAME = "g.DK_MINUTE_IN_SECONDS" VALUE = "60" />
-	<MvASSIGN NAME = "g.DK_HOUR_IN_SECONDS" VALUE = "{ 60 * g.DK_MINUTE_IN_SECONDS }" />
-	<MvASSIGN NAME = "g.DK_DAY_IN_SECONDS" VALUE = "{ 24 * g.DK_HOUR_IN_SECONDS }" />
-	<MvASSIGN NAME = "g.DK_WEEK_IN_SECONDS" VALUE = "{ 7 * g.DK_DAY_IN_SECONDS }" />
-	<MvASSIGN NAME = "g.DK_MONTH_IN_SECONDS" VALUE = "{ 30 * g.DK_DAY_IN_SECONDS }" />
-	<MvASSIGN NAME = "g.DK_YEAR_IN_SECONDS" VALUE = "{ 365 * g.DK_DAY_IN_SECONDS }" />
-
-	<MvCOMMENT>
-	|
-	|	Assign Filesize Helpers
-	|	Constants for expressing human-readable data sizes in their respective number of bytes
-	| 	-- thanks again WordPress :-)
-	|
-	</MvCOMMENT>
-	<MvASSIGN NAME = "g.DK_KB_IN_BYTES" VALUE = "1024" />
-	<MvASSIGN NAME = "g.DK_MB_IN_BYTES" VALUE = "{ 1024 * g.DK_KB_IN_BYTES }" />
-	<MvASSIGN NAME = "g.DK_GB_IN_BYTES" VALUE = "{ 1024 * g.DK_MB_IN_BYTES }" />
-	<MvASSIGN NAME = "g.DK_TB_IN_BYTES" VALUE = "{ 1024 * g.DK_GB_IN_BYTES }" />
-
+	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'util/devkit.mvc' }">
 
 	<MvIF EXPR = "{ g.DKIG:Updates }">
 		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Seperate_Products_Out( g.DKIG:Updates, g.DKIG_Code, g.DKIG_Value ) }">
@@ -112,511 +85,439 @@
 		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Remove_Grouped_Items( g.DKIG:Remove_Updates ) }">
 	</MvIF>
 
-	<MvCOMMENT>
-		Uncomment when complete. This is for debugging.
-		<MvASSIGN NAME = "g.DKIG" VALUE = "">
-	</MvCOMMENT>
+	<MvASSIGN NAME = "g.DKIG" VALUE = "">
+
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
-
 
 <MvFUNCTION NAME = "SystemModule_UIException" PARAMETERS = "module var, exception" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-
 <MvCOMMENT>
-| ========================================================================================================================
-|	VIS_UTIL
-| ========================================================================================================================
+|
+|	UTIL
+|
 </MvCOMMENT>
 
-<MvFUNCTION NAME = "StoreUtilityModule_Action" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "StoreUtilityModule_Action" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "StoreUtilityModule_LeftNavigation" PARAMETERS = "module var, ident" STANDARDOUTPUTLEVEL = "compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "StoreUtilityModule_LeftNavigation" PARAMETERS = "module var, ident" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "StoreUtilityModule_Screen" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "StoreUtilityModule_Screen" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "StoreUtilityModule_Validate" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "StoreUtilityModule_Validate" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
-
 
 <MvCOMMENT>
-| ========================================================================================================================
+|
 |	VIS_UTIL
-| ========================================================================================================================
+|
 </MvCOMMENT>
 
 <MvFUNCTION NAME = "Module_Utility_Content" PARAMETERS = "module var, tab, load_fields" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
-	<MvIF EXPR = "{ l.tab EQ 'DEVKIT' }">
-		<h1>List of Functions</h1>
-		<h3>This should be made pretty later.</h3>
-		<hr />
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Format_Currency', 'price, formatted_price var') }">
-			</div>
-			<div class="devkit-information">
-				This is more info on the function...blahblahblah. Style and fill this out later with examples.
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Upcharge', 'charge_name, charge_type, amount, tax_exempt') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Variant_Array', 'product_id, variants var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Date', 'format, timestamp, return var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Load_Product', 'options var, product var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Load_Imagetype', 'product_id, type_code, image_width, image_height, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'ProductArray_Load_Imagetype', 'product_array var, type_code, image_width, image_height, member') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'SQL', 'parameters var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Product_Image', 'category_id, type_code, image_width, image_height, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Variable', 'value var, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Floats_Variable', 'value var, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Next_Weekday', 'timestamp, dow, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Page_Render_Variable', 'page_code, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Recently_Viewed_Products', 'customfield_name, max, current_product_code, type_code, image_width, image_height, image_member, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'ShippingMethodList_ForItems', 'basket var, items var, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Tree_Image', 'category_id, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Category_Title_Image', 'category_id, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Scheduled_Promo_PriceGroup', 'pricegroup_name, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv_Variable', 'code, all_settings var, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv', 'code, all_settings var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Free_Shipping_Qualifying', 'threshold, basket_total, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Group_By_Member', 'array var, member, results var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Hidden_Fields', 'fields') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Send_Email_Attachment_Custom', 'from, to, cc, subject, body_message, file_name, file_dir, file_location, result var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Products_Also_Purchased_Query', 'product_id, max, type_code, image_width, image_height, image_member, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<strong>Item Groups</strong>
-			</div>
-			<div class="devkit-function__docs">
-				<p><strong>DKIG</strong> = Devkit Item Groups</p>
-
-				<p>To use Item Groups, you must include a few hidden inputs. The only actions this will trigger on is <strong>ADPR</strong> and <strong>ADPM</strong>.</p>
-
-				<p><strong>DKIG_Code</strong>: The value of this input will be the attribute code that will be used. <strong>Please Note</strong>: There is no validation on the text you send over (i.e. you could pass through text with spaces).</p>
-
-				<p><strong>DKIG_Value</strong>: The value of the attribute. This will be stored in the <strong>data</strong> member.</p>
-
-				<p>Example:<br />
-					<pre>
-						&lt;input type="hidden" name="DKIM_Code" value="My_Custom_Attribute_Code" /&gt;
-						&lt;input type="hidden" name="DKIM_Value" value="My Custom Value" /&gt;
-					</pre>
-				</p>
-
-				<p>If you want to tie the groups together when they are updated (this includes removal), you will need to include a hidden field in the form. <strong>Please Note</strong>: If you use this for the update function, it will also remove items if the update quantity is set to 0.</p>
-
-				<p><strong>DKIM_Update</strong>: The value of this must be the custom attribute code that you want to use. It will find all basket items with the same <strong>attr_code</strong>, and <strong>data</strong> from the Item that was updated (g.Basket_Group). This only triggers on the following actions: <strong>QTYG</strong> and <strong>RGRP</strong>.</p>
-
-				<p>Example:<br />
-					<pre>
-						&lt;input type="hidden" name="DKIM_Update" value="My_Custom_Attribute_Code" /&gt;
-					</pre>
-				</p>
-
-				<p>You can seperate out basket groups into 2 arrays by using the function <strong>ItemGroup_Group_Items</strong>. This will output 2 arrays: <strong>Regular/ Non-Grouped Items</strong> and <strong>Grouped Items</strong>.</p>
-
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'ItemGroup_Group_Items', 'items var, custom_attribute, regular_items var, grouped_items var') }">
-			</div>
-			<div class="devkit-function__docs">
-				This function is used to seperate out `grouped` items. This would need to be used in conjunction with `Item Groups`.
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Create_Customer_Email_Password', 'email, password, password_confirm, messages var, redirect_to') }">
-			</div>
-			<div class="devkit-function__docs">
-				Create a customer account with an email address, and password. There is validation on the email, password, and password confirmation. You can choose to redirect a customer after they have been successfully logged into their new account. If `redirect_to` is left blank (i.e. empty string), it will not redirect.
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'ReOrder_Order_Form', 'orderitems var, show_quantity_inputs, member') }">
-			</div>
-			<div class="devkit-function__docs">
-				This function will assign all the hidden inputs needed to re-order the order to a specific member.<br />
-				This will basically create an ADPM form, without the `&lt;form&gt;` tags wrapping it.<br />
-				This will not work with items using Variant Basket Replace (module).
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Replace_Special_Characters', 'input_string, outputstring var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Product_Images_Srcset', 'product_id, type_code, image_width, image_height, output var') }">
-			</div>
-			<div class="devkit-function__docs">
-				This will output to :src and :srcset in the output var.
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Member', 'variable var, member, value') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Index', 'array var, index, value') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Parse_URI', 'uri, return var') }">
-			</div>
-			<div class="devkit-function__docs">
-				Returns the following members to the return var:<br />
-				scheme, host, user, pass, path, query, fragment, subdomain, domain
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_QueryStrings_To_Structure', 'uri, array, return var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_QueryString', 'uri, query_string, value, return var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Build_URI', 'uri var, output var') }">
-			</div>
-			<div class="devkit-function__docs">
-				Builds a URI based on the variable passed. The following memebers will be used:
-				scheme, user, pass, subdomain, domain, path, query, fragment
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Subdomain', 'uri, new_subdomain, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_UserPass', 'uri, user, pass, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Scheme', 'uri, new_scheme, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_TLD', 'uri, new_tld, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_Hash', 'uri, new_hash, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Time_Ago', 'time, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'File_Write', 'path, location, content, append, result var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Concat_Files', 'source_paths, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Most_Recent_File_Time', 'file_paths, location, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS', 'css_string, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS', 'js_string, output var') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_CSS_File', 'source_path, dest_path, check_modified') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_JS_File', 'source_path, dest_path, check_modified') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_CSS_Files', 'source_paths, dest_path, check_modified') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_JS_Files', 'source_paths, dest_path, check_modified') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_Link_Tags', 'source_paths, dest_path, check_modified, bust_cache') }">
-			</div>
-		</div>
-
-		<div class="devkit-function-row">
-			<div class="devkit-function">
-				<MvEVAL EXPR = "{ Pretty_Code( 'Minify_Concat_Script_Tags', 'source_paths, dest_path, check_modified, bust_cache') }">
-			</div>
-		</div>
-
+	<MvIF EXPR = "{ l.tab NE 'DEVKIT' }">
+		<MvFUNCTIONRETURN VALUE = 1>
 	</MvIF>
-	<MvFUNCTIONRETURN VALUE = 1 />
+
+	<h1>List of Functions</h1>
+	<h3>This should be made pretty later.</h3>
+	<hr />
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Format_Currency', 'price, formatted_price var') }">
+		</div>
+		<div class="devkit-information">
+			This is more info on the function...blahblahblah. Style and fill this out later with examples.
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Upcharge', 'charge_name, charge_type, amount, tax_exempt') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Variant_Array', 'product_id, variants var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Date', 'format, timestamp, return var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Load_Product', 'options var, product var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Product_Load_Imagetype', 'product_id, type_code, image_width, image_height, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'ProductArray_Load_Imagetype', 'product_array var, type_code, image_width, image_height, member') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'SQL', 'parameters var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Category_Product_Image', 'category_id, type_code, image_width, image_height, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Variable', 'value var, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'JSON_Output_Floats_Variable', 'value var, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Next_Weekday', 'timestamp, dow, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Page_Render_Variable', 'page_code, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Recently_Viewed_Products', 'customfield_name, max, current_product_code, type_code, image_width, image_height, image_member, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'ShippingMethodList_ForItems', 'basket var, items var, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Category_Tree_Image', 'category_id, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Category_Title_Image', 'category_id, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Scheduled_Promo_PriceGroup', 'pricegroup_name, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv_Variable', 'code, all_settings var, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Readytheme_Load_ContentSection_WithoutDiv', 'code, all_settings var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Free_Shipping_Qualifying', 'threshold, basket_total, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Group_By_Member', 'array var, member, results var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Hidden_Fields', 'fields') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Send_Email_Attachment_Custom', 'from, to, cc, subject, body_message, file_name, file_dir, file_location, result var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Products_Also_Purchased_Query', 'product_id, max, type_code, image_width, image_height, image_member, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<strong>Item Groups</strong>
+		</div>
+		<div class="devkit-function__docs">
+			<p><strong>DKIG</strong> = Devkit Item Groups</p>
+
+			<p>To use Item Groups, you must include a few hidden inputs. The only actions this will trigger on is <strong>ADPR</strong> and <strong>ADPM</strong>.</p>
+
+			<p><strong>DKIG_Code</strong>: The value of this input will be the attribute code that will be used. <strong>Please Note</strong>: There is no validation on the text you send over (i.e. you could pass through text with spaces).</p>
+
+			<p><strong>DKIG_Value</strong>: The value of the attribute. This will be stored in the <strong>data</strong> member.</p>
+
+			<p>Example:<br />
+				<pre>
+					&lt;input type="hidden" name="DKIM_Code" value="My_Custom_Attribute_Code" /&gt;
+					&lt;input type="hidden" name="DKIM_Value" value="My Custom Value" /&gt;
+				</pre>
+			</p>
+
+			<p>If you want to tie the groups together when they are updated (this includes removal), you will need to include a hidden field in the form. <strong>Please Note</strong>: If you use this for the update function, it will also remove items if the update quantity is set to 0.</p>
+
+			<p><strong>DKIM_Update</strong>: The value of this must be the custom attribute code that you want to use. It will find all basket items with the same <strong>attr_code</strong>, and <strong>data</strong> from the Item that was updated (g.Basket_Group). This only triggers on the following actions: <strong>QTYG</strong> and <strong>RGRP</strong>.</p>
+
+			<p>Example:<br />
+				<pre>
+					&lt;input type="hidden" name="DKIM_Update" value="My_Custom_Attribute_Code" /&gt;
+				</pre>
+			</p>
+
+			<p>You can seperate out basket groups into 2 arrays by using the function <strong>ItemGroup_Group_Items</strong>. This will output 2 arrays: <strong>Regular/ Non-Grouped Items</strong> and <strong>Grouped Items</strong>.</p>
+
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'ItemGroup_Group_Items', 'items var, custom_attribute, regular_items var, grouped_items var') }">
+		</div>
+		<div class="devkit-function__docs">
+			This function is used to seperate out `grouped` items. This would need to be used in conjunction with `Item Groups`.
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Create_Customer_Email_Password', 'email, password, password_confirm, messages var, redirect_to') }">
+		</div>
+		<div class="devkit-function__docs">
+			Create a customer account with an email address, and password. There is validation on the email, password, and password confirmation. You can choose to redirect a customer after they have been successfully logged into their new account. If `redirect_to` is left blank (i.e. empty string), it will not redirect.
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'ReOrder_Order_Form', 'orderitems var, show_quantity_inputs, member') }">
+		</div>
+		<div class="devkit-function__docs">
+			This function will assign all the hidden inputs needed to re-order the order to a specific member.<br />
+			This will basically create an ADPM form, without the `&lt;form&gt;` tags wrapping it.<br />
+			This will not work with items using Variant Basket Replace (module).
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Replace_Special_Characters', 'input_string, outputstring var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Product_Images_Srcset', 'product_id, type_code, image_width, image_height, output var') }">
+		</div>
+		<div class="devkit-function__docs">
+			This will output to :src and :srcset in the output var.
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Member', 'variable var, member, value') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Assign_Index', 'array var, index, value') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'Parse_URI', 'uri, return var') }">
+		</div>
+		<div class="devkit-function__docs">
+			Returns the following members to the return var:<br />
+			scheme, host, user, pass, path, query, fragment, subdomain, domain
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_QueryStrings_To_Structure', 'uri, array, return var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_QueryString', 'uri, query_string, value, return var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Build_URI', 'uri var, output var') }">
+		</div>
+		<div class="devkit-function__docs">
+			Builds a URI based on the variable passed. The following memebers will be used:
+			scheme, user, pass, subdomain, domain, path, query, fragment
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Subdomain', 'uri, new_subdomain, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_UserPass', 'uri, user, pass, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Add_Replace_Scheme', 'uri, new_scheme, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_TLD', 'uri, new_tld, output var') }">
+		</div>
+	</div>
+
+	<div class="devkit-function-row">
+		<div class="devkit-function">
+			<MvEVAL EXPR = "{ Pretty_Code( 'URI_Replace_Hash', 'uri, new_hash, output var') }">
+		</div>
+	</div>
+
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvFUNCTION NAME = "Module_Utility_Head" PARAMETERS = "module var, tab" STANDARDOUTPUTLEVEL = "text, html, compresswhitespace">
-	<MvIF EXPR = "{ l.tab EQ 'DEVKIT' }">
-		<style>
-			.devkit-function-row {
-				padding-bottom: 1rem;
-				margin-bottom: 1rem;
-				border-bottom: 1px solid #ccc;
-			}
-			.devkit-information {
-				margin-top: 1rem;
-			}
-			.devkit-function pre {
-				font-size: 13.6px;
-			    background-color: #f6f8fa;
-			    padding: 16px;
-				font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-			}
-		</style>
+	<MvIF EXPR = "{ l.tab NE 'DEVKIT' }">
+		<MvFUNCTIONRETURN VALUE = 1>
 	</MvIF>
-	<MvFUNCTIONRETURN VALUE = 1 />
+
+	<style>
+		.devkit-function-row {
+			padding-bottom: 1rem;
+			margin-bottom: 1rem;
+			border-bottom: 1px solid #ccc;
+		}
+		.devkit-information {
+			margin-top: 1rem;
+		}
+		.devkit-function pre {
+			font-size: 13.6px;
+			background-color: #f6f8fa;
+			padding: 16px;
+			font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+		}
+	</style>
+
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Module_Utility_Tabs" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "Module_Utility_Tabs" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = "DEVKIT:Devkit Functions" />
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Module_Utility_Update" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "Module_Utility_Update" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Module_Utility_Validate" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "compresswhitespace">
-	<MvFUNCTIONRETURN VALUE = 1 />
+<MvFUNCTION NAME = "Module_Utility_Validate" PARAMETERS = "module_var" STANDARDOUTPUTLEVEL = "">
+	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
 <MvCOMMENT>
-| ============================
+|
 |	COMPONENT
-| ============================
+|
 </MvCOMMENT>
 
-<MvFUNCTION NAME = "ComponentModule_Initialize" PARAMETERS = "module var, item, all_settings var, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Initialize" PARAMETERS = "module var, item, all_settings var, settings var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Render_End" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Render_End" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "">
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Tabs" PARAMETERS = "module var, item, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Tabs" PARAMETERS = "module var, item, settings var" STANDARDOUTPUTLEVEL = "">
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Validate" PARAMETERS = "module var, item, field_prefix, fields var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Validate" PARAMETERS = "module var, item, field_prefix, fields var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Update" PARAMETERS = "module var, item, field_prefix, fields var, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Update" PARAMETERS = "module var, item, field_prefix, fields var, settings var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Content" PARAMETERS = "module var, item, tab, load_fields, field_prefix, fields var, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Content" PARAMETERS = "module var, item, tab, load_fields, field_prefix, fields var, settings var" STANDARDOUTPUTLEVEL = "">
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Defaults" PARAMETERS = "module var, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Defaults" PARAMETERS = "module var, settings var" STANDARDOUTPUTLEVEL = "">
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Page_Assign" PARAMETERS = "module var, page var, item, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Page_Assign" PARAMETERS = "module var, page var, item, settings var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Page_Unassign" PARAMETERS = "module var, page var, item, settings var" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Page_Unassign" PARAMETERS = "module var, page var, item, settings var" STANDARDOUTPUTLEVEL = "">
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Prerender" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Prerender" PARAMETERS = "module var, item, all_settings var, settings var, param" STANDARDOUTPUTLEVEL = "">
 </MVFUNCTION>
 
-<MvFUNCTION NAME = "ComponentModule_Render_Start" PARAMETERS = "module var, item, settings var, item_settings var, param" STANDARDOUTPUTLEVEL = "compresswhitespace">
+<MvFUNCTION NAME = "ComponentModule_Render_Start" PARAMETERS = "module var, item, settings var, item_settings var, param" STANDARDOUTPUTLEVEL = "">
 	<MvIF EXPR = "{ NOT Parse_Function_Parameters( l.param, l.function_name, l.parameters, l.parameter_count ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
@@ -669,28 +570,17 @@
 					( l.function_name EQ 'uri_add_replace_userpass' )						OR
 					( l.function_name EQ 'uri_add_replace_scheme' )							OR
 					( l.function_name EQ 'uri_replace_tld' )								OR
-					( l.function_name EQ 'uri_replace_hash' )								OR
-					( l.function_name EQ 'time_ago' )										OR
-					( l.function_name EQ 'file_write' )										OR
-					( l.function_name EQ 'concat_files' )									OR
-					( l.function_name EQ 'most_recent_file_time' )							OR
-					( l.function_name EQ 'minify_css' )										OR
-					( l.function_name EQ 'minify_js' )										OR
-					( l.function_name EQ 'minify_css_file' )								OR
-					( l.function_name EQ 'minify_js_file' )									OR
-					( l.function_name EQ 'minify_concat_css_files' )						OR
-					( l.function_name EQ 'minify_concat_js_files' )							OR
-					( l.function_name EQ 'minify_concat_link_tags' )						OR
-					( l.function_name EQ 'minify_concat_script_tags' )
+					( l.function_name EQ 'uri_replace_hash' )
 				}">
 		<MvCOMMENT>
 		|
 		|	We need to add checks for how many "Parameters" there are. - Tess
 		|
 		</MvCOMMENT>
+
 		<MvASSIGN NAME = "l.new_param" VALUE = "{ l.function_name $ '( l.module, l.param, ' $ l.parameters $ ' )' }">
 	</MvIF>
-
+	
 	<MvCOMMENT>
 	|
 	|	tagerror
@@ -731,7 +621,6 @@
 			retn
 		L_asm_success:
 	</MvASSEMBLY>
-
 </MvFUNCTION>
 
 <MvCOMMENT>
@@ -749,11 +638,6 @@
 |		Helper functions for `Item Groups`
 |
 </MvCOMMENT>
-
-
-<MvINCLUDE FILE = "functions.mv">
-<MvINCLUDE FILE = "item_groups.mv">
-
 
 <MvFUNCTION NAME = "Parse_Function_Parameters" PARAMETERS = "string, function_name var, parameters var, parameter_count var" STANDARDOUTPUTLEVEL = "">
 	<MvASSIGN NAME = "l.parameter_count" 	VALUE = 0>
@@ -892,3 +776,6 @@
 <pre style="margin: 0; line-height: 125%;"><span style="color: #446fbd">&lt;mvt:item</span> <span style="color: #6d8600">name=</span><span style="color: #535353">&quot;devkit&quot;</span> <span style="color: #6d8600">param=</span><span style="color: #535353">&quot;<span style="color: #446fbd"><MvEVAL EXPR = "{ l.function_name }"></span>( <MvEVAL EXPR = "{ l.parameters }"> )&quot;</span> <span style="color: #446fbd">/&gt;</span></pre>
 </div>
 </MvFUNCTION>
+
+<MvINCLUDE FILE = "functions.mv">
+<MvINCLUDE FILE = "item_groups.mv">
