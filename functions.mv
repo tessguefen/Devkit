@@ -42,10 +42,10 @@
 	</MvCOMMENT>
 
 	<MvFOREACH ITERATOR = "l.charge" ARRAY = "l.charges" COUNT = "{ [ g.Module_Library_DB ].BasketChargeList_Load_Basket( g.Basket:basket_id, l.charges ) }">
-		<MvIF EXPR = "{ ( l.basketcharge:type EQ 'SHIPPING' ) AND ( NOT l.settings:shipping ) }">												<MvFOREACHCONTINUE>
-		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'HANDLING' ) AND ( NOT l.settings:handling ) }">											<MvFOREACHCONTINUE>
-		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'TAX' ) AND ( NOT l.settings:salestax ) }">												<MvFOREACHCONTINUE>
-		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'DISCOUNT' ) AND ( NOT ISNULL l.settings:discounts ) AND ( NOT l.settings:discounts ) }">	<MvFOREACHCONTINUE>
+		<MvIF EXPR = "{ ( l.basketcharge:type EQ 'SHIPPING' ) AND ( NOT l.basket:shipping ) }">												<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'HANDLING' ) AND ( NOT l.basket:handling ) }">											<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'TAX' ) AND ( NOT l.basket:salestax ) }">												<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'DISCOUNT' ) AND ( NOT ISNULL l.basket:discounts ) AND ( NOT l.basket:discounts ) }">	<MvFOREACHCONTINUE>
 		</MvIF>
 
 		<MvASSIGN NAME = "l.output_charge_count"												VALUE = "{ l.output_charge_count + 1 }">
@@ -107,14 +107,14 @@
 			<MvASSIGN NAME = "l.attribute:part_count" VALUE = 0>
 
 			<MvIF EXPR = "{ l.attribute:attmpat_id GT 0 }">
-				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplateAttr_Load_ID( l.attribute:attmpat_id, l.attribute:attr ) }">
-				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplate_Load_ID( l.attribute:attr:attemp_id, l.attribute:template ) }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplateAttr_Load_ID( l.attribute:attmpat_id, l.attribute:attribute ) }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplate_Load_ID( l.attribute:attribute:attemp_id, l.attribute:template ) }">
 
 				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
 					<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplateOption_Load_ID( l.attribute:option_id, l.attribute:option ) }">
 				</MvIF>
 			<MvELSE>
-				<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ Attribute_Load_ID( l.attribute:attr_id, l.attribute:attr ) }">
+				<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ Attribute_Load_ID( l.attribute:attr_id, l.attribute:attribute ) }">
 
 				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
 					<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ Option_Load_ID( l.attribute:option_id, l.attribute:option ) }">
@@ -127,17 +127,12 @@
 </MvFUNCTION>
 
 
-<MvFUNCTION NAME = "Date" PARAMETERS = "module var, param, format, timestamp, return var" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Date" PARAMETERS = "format, timestamp, return var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
 	|	Date( format, timestamp, return var )
 	|
-	</MvCOMMENT>
-
-
-	<MvCOMMENT>
-	|
-	| Using some of PHP's Date Formatting
+	|	Using some of PHP's Date Formatting
 	|
 	|	DAY
 	|		d, j, N, S, z, l, D
@@ -156,16 +151,12 @@
 	|
 	</MvCOMMENT>
 
-
-	<MvASSIGN NAME = "l.time_zone"	VALUE = "{ g.Merchant_Local_Timezone }">
-
-	<MvASSIGN NAME = "l.output" VALUE = "">
-
-	<MvASSIGN NAME = "l.months_long" VALUE = "{ miva_array_deserialize( 'January,February,March,April,May,June,July,August,September,October,November,December' ) }">
-	<MvASSIGN NAME = "l.months_short" VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sept,Oct,Nov,Dec' ) }">
-
-	<MvASSIGN NAME = "l.days_long" VALUE = "{ miva_array_deserialize( 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday' ) }">
-	<MvASSIGN NAME = "l.days_short" VALUE = "{ miva_array_deserialize( 'Sun,Mon,Tues,Wed,Thurs,Fri,Sat' ) }">
+	<MvASSIGN NAME = "l.output"			VALUE = "">
+	<MvASSIGN NAME = "l.time_zone"		VALUE = "{ g.Merchant_Local_Timezone }">
+	<MvASSIGN NAME = "l.months_long"	VALUE = "{ miva_array_deserialize( 'January,February,March,April,May,June,July,August,September,October,November,December' ) }">
+	<MvASSIGN NAME = "l.months_short"	VALUE = "{ miva_array_deserialize( 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sept,Oct,Nov,Dec' ) }">
+	<MvASSIGN NAME = "l.days_long"		VALUE = "{ miva_array_deserialize( 'Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday' ) }">
+	<MvASSIGN NAME = "l.days_short"		VALUE = "{ miva_array_deserialize( 'Sun,Mon,Tues,Wed,Thurs,Fri,Sat' ) }">
 
 	<MvFOR INDEX = "l.pos" COUNT = "{ len_var( l.format ) }">
 		<MvASSIGN NAME = "l.char" VALUE = "{ substring_var( l.format, l.pos, 1 ) }">
@@ -176,30 +167,26 @@
 		</MvIF>
 
 		<MvIF EXPR = "{ l.char EQ 'd' }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
+			<MvASSIGN NAME = "l.output"	VALUE = "{ l.output $ padl( time_t_dayofmonth( l.timestamp, l.time_zone ), 2, 0 ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'j' }">
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+			<MvASSIGN NAME = "l.output"	VALUE = "{ l.output $ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'N' }">
-			<MvCOMMENT>
-			|
-			| (Sunday=1) :|
-			|
-			</MvCOMMENT>
-			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofweek( l.timestamp, l.time_zone ) }">
+			<MvASSIGN NAME = "l.output"	VALUE = "{ l.output $ time_t_dayofweek( l.timestamp, l.time_zone ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'S' }">
-			<MvASSIGN NAME = "l.dow" VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
-			<MvASSIGN NAME = "l.dow_a" VALUE = "{ l.dow MOD 10 }">
-			<MvASSIGN NAME = "l.dow_b" VALUE = "{ l.dow MOD 100 }">
+			<MvASSIGN NAME = "l.dow"	VALUE = "{ time_t_dayofmonth( l.timestamp, l.time_zone ) }">
+			<MvASSIGN NAME = "l.dow_a"	VALUE = "{ l.dow MOD 10 }">
+			<MvASSIGN NAME = "l.dow_b"	VALUE = "{ l.dow MOD 100 }">
 
 			<MvIF EXPR = "{ ( l.dow_a EQ 1 ) AND ( l.dow_b NE 11) }">
-				<MvASSIGN NAME = "l.S" VALUE = "st">
+				<MvASSIGN NAME = "l.S"	VALUE = "st">
 			<MvELSEIF EXPR = "{ ( l.dow_a EQ 2) AND ( l.dow_b NE 12 ) }">
-				<MvASSIGN NAME = "l.S" VALUE = "nd">
+				<MvASSIGN NAME = "l.S"	VALUE = "nd">
 			<MvELSEIF EXPR = "{ ( l.dow_a EQ 3 ) AND ( l.dow_b NE 13 ) }">
-				<MvASSIGN NAME = "l.S" VALUE = "rd">
+				<MvASSIGN NAME = "l.S"	VALUE = "rd">
 			<MvELSE>
-				<MvASSIGN NAME = "l.S" VALUE = "th">
+				<MvASSIGN NAME = "l.S"	VALUE = "th">
 			</MvIF>
+
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.S }">
 		<MvELSEIF EXPR = "{ l.char EQ 'z' }">
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_dayofyear( l.timestamp, l.time_zone ) }">
@@ -221,6 +208,7 @@
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ substring_var( time_t_year( l.timestamp, l.time_zone ), 3, 2) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'L' }">
 			<MvASSIGN NAME = "l.year" VALUE = "{ time_t_year( l.timestamp, l.time_zone ) }">
+
 			<MvIF EXPR = "{ ( ( ( l.year MOD 400 ) EQ 0 ) OR ( ( l.year MOD 100 ) NE 0 ) ) AND ( ( l.year MOD 4 ) EQ 0 ) }">
 				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ '1' }">
 			<MvELSE>
@@ -228,6 +216,7 @@
 			</MvIF>
 		<MvELSEIF EXPR = "{ l.char EQ 'a' }">
 			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+
 			<MvIF EXPR = "{ l.hour GT 11 }">
 				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'pm' }">
 			<MvELSE>
@@ -235,6 +224,7 @@
 			</MvIF>
 		<MvELSEIF EXPR = "{ l.char EQ 'A' }">
 			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+
 			<MvIF EXPR = "{ l.hour GT 11 }">
 				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ 'PM' }">
 			<MvELSE>
@@ -242,6 +232,7 @@
 			</MvIF>
 		<MvELSEIF EXPR = "{ l.char EQ 'g' }">
 			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+
 			<MvIF EXPR = "{ l.hour GT 12 }">
 				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ ( l.hour - 12 ) }">
 			<MvELSE>
@@ -251,6 +242,7 @@
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ time_t_hour( l.timestamp, l.time_zone ) }">
 		<MvELSEIF EXPR = "{ l.char EQ 'h' }">
 			<MvASSIGN NAME = "l.hour" VALUE = "{ time_t_hour( l.timestamp, l.time_zone ) }">
+
 			<MvIF EXPR = "{ l.hour GT 12 }">
 				<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ padl( ( l.hour - 12 ), 2, 0 ) }">
 			<MvELSE>
@@ -275,7 +267,6 @@
 		<MvELSE>
 			<MvASSIGN NAME = "l.output" VALUE = "{ l.output $ l.char }">
 		</MvIF>
-
 	</MvFOR>
 
 	<MvASSIGN NAME = "l.return" VALUE = "{ l.output }">
@@ -382,23 +373,24 @@
 
 <MvFUNCTION NAME = "Product_Load_Imagetype_LowLevel" PARAMETERS = "module var, param, product_id, type_id, image_width, image_height" STANDARDOUTPUTLEVEL = "">
 
-	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].ProductImage_Load_Type( l.product_id, l.type_id, l.product_imagetype ) }">
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].ProductImage_Load_Type( l.product_id, l.type_id, l.product_imagetype ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
-	<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_Load_Dimensions( l.product_imagetype:image_id, l.image_width, l.image_height, l.cropped_image ) }">
-		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_ID( l.product_imagetype:image_id, l.imagedata ) }">
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].GeneratedImage_Load_Dimensions( l.product_imagetype:image_id, l.image_width, l.image_height, l.cropped_image ) }">
+		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Image_Load_ID( l.product_imagetype:image_id, l.imagedata ) }">
 			<MvFUNCTIONRETURN VALUE = 0>
 		</MvIF>
 
-		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].Image_Load_File( l.imagedata:image, l.product_image ) }">
+		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Image_Load_File( l.imagedata:image, l.product_image ) }">
 			<MvFUNCTIONRETURN VALUE = 0>
 		</MvIF>
 
-		<MvIF EXPR = "{ NOT [g.Module_Library_DB ].GeneratedImage_FindOrInsert_Image_Dimensions( l.product_image, l.image_width, l.image_height, l.cropped_image ) }">
+		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].GeneratedImage_FindOrInsert_Image_Dimensions( l.product_image, l.image_width, l.image_height, l.cropped_image ) }">
 			<MvFUNCTIONRETURN VALUE = 0>
 		</MvIF>
 	</MvIF>
+
 	<MvFUNCTIONRETURN VALUE = "{ l.cropped_image:image }">
 </MvFUNCTION>
 
@@ -566,20 +558,25 @@
 	|	Retrieves an image from the first runtime product from the category.
 	|
 	</MvCOMMENT>
+
 	<MvASSIGN NAME = "l.output" VALUE = "">
 	<MvASSIGN NAME = "l.offset" VALUE = 0>
 
 	<MvWHILE EXPR = "{ ISNULL l.output }">
 		<MvASSIGN NAME = "l.products" VALUE = "">
+
 		<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Runtime_ProductList_Load_Offset_Category( l.category_id, l.offset, 1, l.next_offset, l.products ) }">
 			<MvWHILESTOP />
 		</MvIF>
+
 		<MvIF EXPR = "{ l.offset EQ l.next_offset }">
 			<MvWHILESTOP />
 		</MvIF>
+
 		<MvIF EXPR = "{ miva_array_elements( l.products ) EQ 0 }">
 			<MvWHILESTOP />
 		</MvIF>
+
 		<MvASSIGN NAME = "l.offset"			VALUE = "{ l.next_offset }">
 		<MvASSIGN NAME = "l.next_offset"	VALUE = "">
 		<MvASSIGN NAME = "l.product" VALUE = "{ l.products[1] }">

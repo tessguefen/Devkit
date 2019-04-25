@@ -1,0 +1,25 @@
+<MvCOMMENT>
+|
+|	JSON API Functions
+|
+</MvCOMMENT>
+
+<MvFUNCTION NAME = "JSON_Variant_Array" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "text, compresswhitespace"  ERROROUTPUTLEVEL = "">
+	<MvIF EXPR = "{ NOT [ g.Module_JSON ].JSON_Store_Open() }">
+		<MvFUNCTIONRETURN>
+	</MvIF>
+
+	<MvIF EXPR = "{ NOT [ g.Module_JSON ].JSON_Product_Load( l.product ) }">
+		<MvFUNCTIONRETURN VALUE = "{ [ g.Module_JSON ].JSON_Response_Error( g.Error_Code, g.Error_Message ) }">
+	</MvIF>
+
+	<MvASSIGN NAME = "l.variant_count" VALUE = "{ Variant_Array( l.product:id, l.variants ) }">
+
+	<MvEVAL EXPR = "{ [ g.Module_JSON ].JSON_Response_Start() }">
+		{
+			"data": <MvDO FILE = "{ g.Module_JSON }" NAME = "l.null" VALUE = "{ JSON_Output( l.variants ) }">,
+			"total_count": <MvEVAL EXPR = "{ int( l.variant_count ) }">
+		}
+		<MvCLOSEVIEW NAME = "Merchant" VIEW = "TGWaitlist">
+	}
+</MvFUNCTION>

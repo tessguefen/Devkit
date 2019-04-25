@@ -5,7 +5,21 @@
 	<MvASSIGN NAME = "l.module:version"		VALUE = "1.000">
 	<MvASSIGN NAME = "l.module:api_ver"		VALUE = "9.12">
 	<MvASSIGN NAME = "l.module:description"	VALUE = "Super Fantastic Awesome Magic Fireworks developer toolkit.">
-	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component, system">
+	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component, system, json_api">
+</MvFUNCTION>
+
+<MvCOMMENT>
+|
+|	JSON_API
+|
+</MvCOMMENT>
+
+<MvFUNCTION NAME = "Module_JSON_API" PARAMETERS = "module var, function" STANDARDOUTPUTLEVEL = "">
+	<MvASSIGN NAME = "l.void" VALUE = "{ miva_output_header( 'Content-Type', 'application/json' ) }" >
+	<MvIF EXPR = "{ l.function EQ 'Variant_Array' }"> <MvFUNCTIONRETURN VALUE = "{ JSON_Variant_Array( l.module ) }">
+	</MvIF>
+
+	<MvFUNCTIONRETURN VALUE = "{ [ g.Module_JSON ].JSON_Response_Error( 'UTIL-DEVKIT-0001', 'Invalid function.' ) }">
 </MvFUNCTION>
 
 <MvCOMMENT>
@@ -719,3 +733,4 @@
 
 <MvINCLUDE FILE = "functions.mv">
 <MvINCLUDE FILE = "item_groups.mv">
+<MvINCLUDE FILE = "json_api.mv">
