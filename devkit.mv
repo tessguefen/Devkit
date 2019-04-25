@@ -1,9 +1,9 @@
 <MvFUNCTION NAME = "Module_Description" PARAMETERS = "module var" STANDARDOUTPUTLEVEL = "">
 	<MvASSIGN NAME = "l.module:code"		VALUE = "devkit">
 	<MvASSIGN NAME = "l.module:name"		VALUE = "Devkit">
-	<MvASSIGN NAME = "l.module:provider"	VALUE = "Steven Soule and Tess Guefen">
+	<MvASSIGN NAME = "l.module:provider"	VALUE = "Miva Professional Services">
 	<MvASSIGN NAME = "l.module:version"		VALUE = "1.000">
-	<MvASSIGN NAME = "l.module:api_ver"		VALUE = "9.00">
+	<MvASSIGN NAME = "l.module:api_ver"		VALUE = "9.12">
 	<MvASSIGN NAME = "l.module:description"	VALUE = "Super Fantastic Awesome Magic Fireworks developer toolkit.">
 	<MvASSIGN NAME = "l.module:features"	VALUE = "util, vis_util, component, system">
 </MvFUNCTION>
@@ -15,44 +15,6 @@
 </MvCOMMENT>
 
 <MvFUNCTION NAME = "SystemModule_Action" PARAMETERS = "module var, action" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Check for `g.DKIG_Code` & `g.DKIG_Value`
-	|		Check for `ADPR` & `ADPM`
-	|
-	</MvCOMMENT>
-
-	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Code ) AND ( NOT ISNULL g.DKIG_Value ) }">	
-		<MvASSIGN NAME = "g.DKIG" VALUE = "">
-
-		<MvIF EXPR = "{ 'ADPR' CIN l.action }">
-			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Determine_Same( g.Product_Code, g.Quantity, g.Attributes, g.Product_Attributes, g.DKIG_Code, g.DKIG_Value, g.DKIG:Updates, g.DKIG:New ) }">
-		</MvIF>
-
-		<MvIF EXPR = "{ ( 'ADPM' CIN l.action ) AND g.Products }">
-			<MvASSIGN NAME = "l.success" VALUE = "{ miva_array_collapse( g.Products ) }">
-			<MvFOREACH ITERATOR = "l.product" ARRAY = "g.Products">
-				<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Determine_Same( l.product:code, l.product:quantity, g.Attributes, l.product:attributes, g.DKIG_Code, g.DKIG_Value, g.DKIG:Updates, g.DKIG:New ) }">
-			</MvFOREACH>
-		</MvIF>
-	</MvIF>
-
-	<MvCOMMENT>
-	|
-	|	Check for `g.DKIG_Update`
-	|	Check for `QTYG` & `RGRP`
-	|
-	</MvCOMMENT>
-
-	<MvIF EXPR = "{ ( NOT ISNULL g.DKIG_Update ) }">
-		<MvIF EXPR = "{ 'QTYG' CIN l.action }">
-			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Quantity_Updates ) }">
-		</MvIF>
-		<MvIF EXPR = "{ 'RGRP' CIN l.action }">
-			<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Find_Update_Grouped_Items( g.Basket_Group, g.DKIG_Update, g.DKIG:Remove_Updates ) }">
-		</MvIF>
-	</MvIF>
-
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>
 
@@ -63,29 +25,7 @@
 	|
 	</MvCOMMENT>
 
-	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ 'util/devkit.mvc' }">
-
-	<MvIF EXPR = "{ g.DKIG:Updates }">
-		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Seperate_Products_Out( g.DKIG:Updates, g.DKIG_Code, g.DKIG_Value ) }">
-	</MvIF>
-
-	<MvIF EXPR = "{ g.DKIG:New }">
-		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Update_New_Products( g.DKIG:New ) }">
-	</MvIF>
-
-	<MvIF EXPR = "{ g.DKIG:Updates OR g.DKIG:New }">
-		<MvASSIGN NAME = "l.success" VALUE = "{ [ g.Module_Feature_PGR_RT ].Runtime_Discount_Basket( g.Basket ) }">
-	</MvIF>
-
-	<MvIF EXPR = "{ g.DKIG:Quantity_Updates }">
-		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Update_Grouped_Items( g.DKIG:Quantity_Updates, g.Quantity ) }">
-	</MvIF>
-
-	<MvIF EXPR = "{ g.DKIG:Remove_Updates }">
-		<MvASSIGN NAME = "l.success" VALUE = "{ ItemGroup_Remove_Grouped_Items( g.DKIG:Remove_Updates ) }">
-	</MvIF>
-
-	<MvASSIGN NAME = "g.DKIG" VALUE = "">
+	<MvASSIGN NAME = "g.Module_Devkit" VALUE = "{ g.Module_Root $ l.module:module }">
 
 	<MvFUNCTIONRETURN VALUE = 1>
 </MvFUNCTION>

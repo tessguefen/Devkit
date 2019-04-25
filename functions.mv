@@ -4,33 +4,24 @@
 |
 |	Function Setup:
 |
-|	<MvFUNCTION NAME = "XXXXX"  PARAMETERS = "module var, param, param_1, param_2, param_3, etc var" STANDARDOUTPUTLEVEL = "">
+|	<MvFUNCTION NAME = "XXXXX"  PARAMETERS = "param_1, param_2, param_3, etc var" STANDARDOUTPUTLEVEL = "">
 |
 </MvCOMMENT>
 
-<MvFUNCTION NAME = "Test" PARAMETERS = "module var, param, test_the_first, test_the_second, destination var" STANDARDOUTPUTLEVEL = "">
-	<MvASSIGN NAME = "l.destination" VALUE = "Helllo world">
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Format_Currency" PARAMETERS = "module var, param, plain_price, formatted_price var" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Upcharge" PARAMETERS = "charge_name, charge_type, amount, tax_exempt, basket var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
-	|	Format_Currency( plain_price, formatted_price var )
+	|	Upcharge( 'Gift Wrap', 'CUSTOM', 10.00, 0, l.settings:basket )
 	|
 	</MvCOMMENT>
 
-	<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.formatted_price" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.plain_price ) }" />
-</MvFUNCTION>
-
-<MvFUNCTION NAME = "Upcharge" PARAMETERS = "module var, param, charge_name, charge_type, amount, tax_exempt" STANDARDOUTPUTLEVEL = "">
-	<MvCOMMENT>
-	|
-	|	Upcharge( charge_name, charge_type, amount, tax_exempt )
-	|
-	</MvCOMMENT>
+	<MvASSIGN NAME = "l.charge_name"	VALUE = "{ trim( l.charge_name ) }">
+	<MvASSIGN NAME = "l.charge_type"	VALUE = "{ trim( l.charge_type ) }">
+	<MvASSIGN NAME = "l.amount"			VALUE = "{ trim( l.amount ) }">
+	<MvASSIGN NAME = "l.tax_exempt"		VALUE = "{ [ g.Module_Admin ].Trim_Boolean( l.tax_exempt ) }">
 
 	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].BasketCharge_Delete_All_Type( g.Basket:basket_id, l.charge_type ) }">
-		<MvFUNCTIONRETURN VALUE = "{ Parameter_Error( l.param, 'An error occured' ) }">
+		<MvFUNCTIONRETURN>
 	</MvIF>
 
 	<MvIF EXPR = "{ l.amount GT 0 }">
@@ -40,7 +31,8 @@
 		<MvASSIGN NAME = "l.basket_charge:amount"		VALUE = "{ l.amount }">
 		<MvASSIGN NAME = "l.basket_charge:disp_amt"		VALUE = "{ l.amount }">
 		<MvASSIGN NAME = "l.basket_charge:tax_exempt"	VALUE = "{ l.tax_exempt }">
-		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.sucess" VALUE = "{ BasketCharge_Insert( l.basket_charge ) }">
+
+		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ BasketCharge_Insert( l.basket_charge ) }">
 	</MvIF>
 
 	<MvCOMMENT>
@@ -50,26 +42,37 @@
 	</MvCOMMENT>
 
 	<MvFOREACH ITERATOR = "l.charge" ARRAY = "l.charges" COUNT = "{ [ g.Module_Library_DB ].BasketChargeList_Load_Basket( g.Basket:basket_id, l.charges ) }">
-		<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.charge:formatted_amount" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:amount ) }" />
-		<MvDO FILE = "{ g.Module_Root $ g.Store:currncy_mod:module }" NAME = "l.charge:formatted_disp_amt" VALUE = "{ CurrencyModule_AddFormatting( g.Store:currncy_mod, l.charge:disp_amt ) }" />
+		<MvIF EXPR = "{ ( l.basketcharge:type EQ 'SHIPPING' ) AND ( NOT l.settings:shipping ) }">												<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'HANDLING' ) AND ( NOT l.settings:handling ) }">											<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'TAX' ) AND ( NOT l.settings:salestax ) }">												<MvFOREACHCONTINUE>
+		<MvELSEIF EXPR = "{ ( l.basketcharge:type EQ 'DISCOUNT' ) AND ( NOT ISNULL l.settings:discounts ) AND ( NOT l.settings:discounts ) }">	<MvFOREACHCONTINUE>
+		</MvIF>
+
+		<MvASSIGN NAME = "l.output_charge_count"												VALUE = "{ l.output_charge_count + 1 }">
+		<MvASSIGN NAME = "l.basket:charges"	INDEX = "{ l.output_charge_count }"					VALUE = "{ l.basketcharge }">
+
+		<MvIF EXPR = "{ NOT [ g.Module_Feature_TUI_UT ].CommonComponentFields_Initialize_BasketCharge( l.all_settings:basket:charges[ l.output_charge_count ] ) }">
+			<MvFUNCTIONRETURN>
+		</MvIF>
+
+		<MvASSIGN NAME = "l.total"					VALUE = "{ l.total + ( l.basketcharge:amount ROUND 2 ) }">
 	</MvFOREACH>
-	<MvASSIGN NAME = "l.all_settings:basket:charges" VALUE = "{ l.charges }">
 
-	<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.all_settings:basket:total" VALUE = "{ Basket_Total( g.Basket:basket_id ) }">
-	<MvDO FILE = "{ g.Module_Store_Module_Currency }" NAME = "l.all_settings:basket:formatted_total" VALUE = "{ CurrencyModule_AddFormatting( g.Store_Module_Currency, l.all_settings:basket:total ) }">
-
-	<MvFUNCTIONRETURN VALUE = 1>
+	<MvASSIGN NAME = "l.basket:total"				VALUE = "{ [ g.Module_Library_Utilities ].IEEE754_Normalize( 2, l.total ) ROUND 2 }">
+	<MvASSIGN NAME = "l.basket:formatted_total"		VALUE = "{ [ g.Module_Root $ g.Store:currncy_mod:module ].CurrencyModule_AddFormatting( g.Store:currncy_mod, l.basket:total ) }">
 </MvFUNCTION>
 
-<MvFUNCTION NAME = "Variant_Array" PARAMETERS = "module var, param, product_id, variants var" STANDARDOUTPUTLEVEL = "">
+<MvFUNCTION NAME = "Variant_Array" PARAMETERS = "product_id, variants var" STANDARDOUTPUTLEVEL = "">
 	<MvCOMMENT>
 	|
 	|	Variant_Array( product_id, variants var )
-	|	Yaaaas, Kween.
 	|
 	</MvCOMMENT>
 
-	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.loaded_product ) }">
+	<MvASSIGN NAME = "l.product_id"	VALUE = "{ int( l.product_id ) }">
+	<MvASSIGN NAME = "l.variants"	VALUE = "">
+
+	<MvIF EXPR = "{ NOT [ g.Module_Library_DB ].Product_Load_ID( l.product_id, l.master_product ) }">
 		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
@@ -78,51 +81,49 @@
 				QUERY	= "{ 'SELECT * FROM ' $ g.Store_Table_Prefix $ 'ProductVariants WHERE product_id = ? GROUP BY variant_id' }"
 				FIELDS	= "l.product_id">
 	<MvIF EXPR = "{ g.MvOPENVIEW_Error }">
-		<MvFUNCTIONRETURN VALUE = "{ [ g.Library_Filename_Utilities ].Error( 'MER-DBE-ATT-00009', g.MvOPENVIEW_Error ) }">
+		<MvFUNCTIONRETURN VALUE = 0>
 	</MvIF>
 
 	<MvASSIGN NAME = "l.variant_count" VALUE = 0>
-	<MvWHILE EXPR = "{ NOT ProductVariants.d.EOF }">
-		<MvASSIGN NAME = "l.variant_count"												VALUE = "{ l.variant_count + 1 }">
-		
-		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "product_id"	VALUE = "{ ProductVariants.d.product_id }">
-		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "variant_id"	VALUE = "{ ProductVariants.d.variant_id }">
-		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "dimensions"	VALUE = "{ ProductVariants.d.dimensions }">
-		<MvASSIGN NAME = "l.variants" INDEX = "{ l.variant_count }" MEMBER = "part_count"	VALUE = "{ ProductVariants.d.part_count }">
 
+	<MvWHILE EXPR = "{ NOT ProductVariants.d.EOF }">
+		<MvEVAL EXPR = "{ [ g.Module_Library_DB ].ProductVariant_Read( l.variants[ ++l.variant_count ] ) }">
 		<MvSKIP NAME = "Merchant" VIEW = "ProductVariants" ROWS = 1>
 	</MvWHILE>
+
 	<MvCLOSEVIEW NAME = "Merchant" VIEW = "ProductVariants">
 
-	<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Product_Load_ID( l.product_id, l.master_product ) }">
+	<MvFOREACH ITERATOR = "l.variant" ARRAY = "l.variants">
+		<MvASSIGN NAME = "l.variant:inventory" VALUE = "{ l.master_product }">
 
-	<MvFOREACH ITERATOR = "l.variant" ARRAY = "l.variants" INDEX = "l.vpos">
-		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:parts ) }">
-		<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ ProductVariantList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:attributes ) }">
-
-		<MvASSIGN NAME = "l.variant:overall_inventory" VALUE = "{ l.master_product }">
-		<MvDO FILE = "{ g.Module_Feature_INV_RT }" NAME = "l.success" VALUE = "{ Inventory_Load_Variant( l.variant:overall_inventory, l.variant:variant_id ) }">
+		<MvDO FILE = "{ g.Module_Library_DB }"		NAME = "l.null" VALUE = "{ ProductList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:parts ) }">
+		<MvDO FILE = "{ g.Module_Library_DB }"		NAME = "l.null" VALUE = "{ ProductVariantList_Load_Variant( l.variant:product_id, l.variant:variant_id, l.variant:attributes ) }">
+		<MvDO FILE = "{ g.Module_Feature_INV_RT }"	NAME = "l.null" VALUE = "{ Inventory_Load_Variant( l.variant:inventory, l.variant:variant_id ) }">
 
 		<MvFOREACH ITERATOR = "l.attribute" ARRAY = "l.variant:attributes">
-			<MvASSIGN NAME = "l.attribute:dimensions" VALUE = "">
-			<MvASSIGN NAME = "l.attribute:variant_id" VALUE = "">
-			<MvASSIGN NAME = "l.attribute:product_id" VALUE = "">
-			<MvASSIGN NAME = "l.attribute:part_count" VALUE = "">
+			<MvASSIGN NAME = "l.attribute:dimensions" VALUE = 0>
+			<MvASSIGN NAME = "l.attribute:variant_id" VALUE = 0>
+			<MvASSIGN NAME = "l.attribute:product_id" VALUE = 0>
+			<MvASSIGN NAME = "l.attribute:part_count" VALUE = 0>
 
 			<MvIF EXPR = "{ l.attribute:attmpat_id GT 0 }">
-				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplateAttr_Load_ID( l.attribute:attmpat_id, l.attribute:attr ) }">
-				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplate_Load_ID( l.attribute:attr:attemp_id, l.attribute:template ) }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplateAttr_Load_ID( l.attribute:attmpat_id, l.attribute:attr ) }">
+				<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplate_Load_ID( l.attribute:attr:attemp_id, l.attribute:template ) }">
+
 				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
-					<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.success" VALUE = "{ AttributeTemplateOption_Load_ID( l.attribute:option_id, l.attribute:option ) }">
+					<MvDO FILE = "{ g.Module_Feature_ATT_DB }" NAME = "l.null" VALUE = "{ AttributeTemplateOption_Load_ID( l.attribute:option_id, l.attribute:option ) }">
 				</MvIF>
 			<MvELSE>
-				<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Attribute_Load_ID( l.attribute:attr_id, l.attribute:attr ) }">
+				<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ Attribute_Load_ID( l.attribute:attr_id, l.attribute:attr ) }">
+
 				<MvIF EXPR = "{ l.attribute:option_id GT 0 }">
-					<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.success" VALUE = "{ Option_Load_ID( l.attribute:option_id, l.attribute:option ) }">
+					<MvDO FILE = "{ g.Module_Library_DB }" NAME = "l.null" VALUE = "{ Option_Load_ID( l.attribute:option_id, l.attribute:option ) }">
 				</MvIF>
 			</MvIF>
 		</MvFOREACH>
 	</MvFOREACH>
+
+	<MvFUNCTIONRETURN VALUE = "{ l.variant_count }">
 </MvFUNCTION>
 
 
